@@ -55,7 +55,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Bars",
     slug: "bars",
     description: "Thick, layered, and perfect for sharing. Bars that feel like a warm hug.",
-    image: "/images/treat-bars.jpg",
+    image: "/images/cloudbar_stretch.png",
     items: [
       {
         name: "Lemon Bars",
@@ -77,7 +77,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Brownies",
     slug: "brownies",
     description: "Dense, fudgy, and unapologetically chocolatey. Made for serious chocolate lovers.",
-    image: "/images/treat-brownies.jpg",
+    image: "/images/biscoff-butter-cloud-bar.png",
     items: [
       {
         name: "Classic Fudge Brownie",
@@ -99,7 +99,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Seasonal Treats",
     slug: "seasonal",
     description: "Limited-time flavors inspired by the season. Follow along on Instagram to see what's baking.",
-    image: "/images/treat-seasonal.jpg",
+    image: "/images/seasonal-feature.png",
     items: [
       {
         name: "Seasonal Flavor",
@@ -113,7 +113,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Gift Boxes",
     slug: "gift-boxes",
     description: "A curated box of treats, wrapped with care and ready to brighten someone's day.",
-    image: "/images/treat-gift-boxes.jpg",
+    image: "/images/cloud-bar-in-package.png",
     items: [
       {
         name: "The Classic Gift Box",
@@ -133,7 +133,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Comfort Boxes",
     slug: "comfort-boxes",
     description: "A little something for a hard week, a new chapter, or just because. Comfort, delivered.",
-    image: "/images/treat-comfort-boxes.jpg",
+    image: "/images/oatmeal-cookie.png",
     items: [
       {
         name: "The Comfort Box",

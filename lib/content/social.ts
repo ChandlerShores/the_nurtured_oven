@@ -17,33 +17,33 @@ export const socialLinks = {
 
 export const recentBakes: SocialPost[] = [
   {
-    image: "/images/social-1.jpg",
-    caption: "Brown butter chocolate chip — the one that started it all." /* confirm with owner */,
-    alt: "Fresh-baked chocolate chip cookies cooling on parchment paper",
+    image: "/images/biscoff_cookie.png",
+    caption: "Biscoff oatmeal cookies — fresh-baked happiness." /* confirm with owner */,
+    alt: "Biscoff oatmeal cookie with label and packaging",
   },
   {
-    image: "/images/social-2.jpg",
-    caption: "Comfort boxes packed and ready for pickup this weekend." /* confirm with owner */,
-    alt: "Gift boxes of baked goods wrapped in kraft paper",
+    image: "/images/marshmallow-cloud-bar.png",
+    caption: "Marshmallow cloud bars, pulled warm from the pan." /* confirm with owner */,
+    alt: "Homemade marshmallow cereal bar with a gooey pull",
   },
   {
-    image: "/images/social-3.jpg",
-    caption: "Snickerdoodles rolled in cinnamon sugar, just like you remember." /* confirm with owner */,
-    alt: "Cinnamon sugar cookies on a baking sheet",
+    image: "/images/cloud-bar-in-package.png",
+    caption: "Packed with care for pickup weekend." /* confirm with owner */,
+    alt: "Cloud bars in clear packaging ready to go",
   },
   {
-    image: "/images/social-4.jpg",
-    caption: "A little something for a friend going through it." /* confirm with owner */,
-    alt: "A care package of homemade baked goods with a handwritten note",
+    image: "/images/sour-dough-loaf.png",
+    caption: "Slow bread days — comfort from the oven." /* confirm with owner */,
+    alt: "Rustic sourdough loaf on a warm surface",
   },
   {
-    image: "/images/social-5.jpg",
-    caption: "Saturday morning baking — oat crumble bars with seasonal fruit." /* confirm with owner */,
-    alt: "Oat crumble bars with fruit filling on a kitchen counter",
+    image: "/images/biscoff-butter-cloud-bar.png",
+    caption: "Small-batch treats for sharing (or not)." /* confirm with owner */,
+    alt: "Biscoff butter cloud bar treat",
   },
   {
-    image: "/images/social-6.jpg",
-    caption: "Fresh from the oven. This batch is spoken for." /* confirm with owner */,
-    alt: "Golden brown baked goods fresh from the oven",
+    image: "/images/seasonal-feature.png",
+    caption: "Something sweet on the counter." /* confirm with owner */,
+    alt: "Seasonal bake from the kitchen",
   },
 ]

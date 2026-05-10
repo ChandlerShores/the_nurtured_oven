@@ -5,10 +5,10 @@ import Divider from "@/components/ui/Divider"
 const categories = [
   { name: "Cookies", image: "/images/biscoff_cookie.png", href: "/menu#cookies" },
   { name: "Bars", image: "/images/cloudbar_stretch.png", href: "/menu#bars" },
-  { name: "Brownies", image: "/images/treat-brownies.jpg", href: "/menu#brownies" },
-  { name: "Seasonal Treats", image: "/images/treat-seasonal.jpg", href: "/menu#seasonal" },
-  { name: "Gift Boxes", image: "/images/treat-gift-boxes.jpg", href: "/gifts" },
-  { name: "Comfort Boxes", image: "/images/treat-comfort-boxes.jpg", href: "/gifts" },
+  { name: "Brownies", image: "/images/biscoff-butter-cloud-bar.png", href: "/menu#brownies" },
+  { name: "Seasonal Treats", image: "/images/seasonal-feature.png", href: "/menu#seasonal" },
+  { name: "Gift Boxes", image: "/images/cloud-bar-in-package.png", href: "/gifts" },
+  { name: "Comfort Boxes", image: "/images/oatmeal-cookie.png", href: "/gifts" },
 ]
 
 export default function TreatGrid() {

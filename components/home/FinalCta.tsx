@@ -5,8 +5,8 @@ export default function FinalCta() {
   return (
     <section className="relative py-24 sm:py-32 lg:py-40">
       <Image
-        src="/images/cta-background.jpg"
-        alt="Warm bakery scene"
+        src="/images/marshmallow-cloud-bar.png"
+        alt="Homemade marshmallow cloud bar"
         fill
         className="object-cover"
         sizes="100vw"

@@ -20,8 +20,8 @@
 .DS_Store
 *.pem
 
-# Drop-zone duplicates (canonical assets live in public/images)
-/biscoff_cookie.png
+# Dropped-in source images at repo root (canonical copies live in public/images)
+/*.png
 
 # debug
 npm-debug.log*
