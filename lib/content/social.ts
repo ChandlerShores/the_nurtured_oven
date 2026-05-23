@@ -37,9 +37,9 @@ export const recentBakes: SocialPost[] = [
     alt: "Rustic sourdough loaf on a warm surface",
   },
   {
-    image: "/images/biscoff-butter-cloud-bar.png",
+    image: "/images/oatmeal_cookie_spring.png",
     caption: "Small-batch treats for sharing (or not)." /* confirm with owner */,
-    alt: "Biscoff butter cloud bar treat",
+    alt: "Stack of thick oatmeal cookies on a wooden board with spring flowers",
   },
   {
     image: "/images/chai-brownie.png",
