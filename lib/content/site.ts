@@ -15,7 +15,7 @@ export const siteConfig = {
       handle: "@thenurturedoven",
     },
     facebook: {
-      url: "https://www.facebook.com/thenurturedoven/" /* confirm with owner */,
+      url: "https://www.facebook.com/profile.php?id=61573256227837",
       handle: "The Nurtured Oven",
     },
   },

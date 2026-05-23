@@ -9,13 +9,16 @@ Owner photography and exports live in this folder. The site references these fil
 | `rustic_bread_hero.png` | Homepage hero |
 | `oatmeal_cookie_tulips.png` | Emotional section backdrop, gift section photo |
 | `cloudbar_stretch.png` | Bars category tile & menu |
-| `oatmeal-cookie.png` | Comfort boxes category & related |
+| `comfort-box.png` | Comfort boxes category, Comfort Box gift, menu |
+| `oatmeal-cookie.png` | Spare / legacy |
 | `marshmallow-cloud-bar.png` | Final CTA background, custom gift visual, social |
 | `sour-dough-loaf.png` | Social / spare |
 | `cloud-bar-in-package.png` | Gift boxes category, menu gift section |
 | `biscoff_cookie.png` | Cookies category & menu |
-| `biscoff-butter-cloud-bar.png` | Brownies category & menu |
-| `seasonal-feature.png` | Seasonal treats category & menu, social tile |
+| `caramel-brownie.png` | Brownies category & menu |
+| `biscoff-butter-cloud-bar.png` | Biscoff cloud bar product |
+| `chai-brownie.png` | Seasonal treats category, menu, recent bakes |
+| `seasonal-feature.png` | Spare / legacy |
 | `vanilla-bean-buttercream.png` | Available for future sections or swaps |
 | `founder_family.png` | About + homepage founder story |
 | `nurtured-oven-flowers-logo.png` | Brand mark (optional future use in header) |

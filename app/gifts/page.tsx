@@ -48,7 +48,7 @@ export default function GiftsPage() {
                   src={box.image}
                   alt={box.name}
                   fill
-                  className="object-cover"
+                  className={`object-cover ${box.imageClassName ?? ""}`}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               </div>

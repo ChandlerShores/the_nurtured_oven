@@ -4,15 +4,20 @@ import Button from "@/components/ui/Button"
 export default function Hero() {
   return (
     <section className="relative min-h-[85vh] sm:min-h-[80vh] flex items-center">
-      <Image
-        src="/images/rustic_bread_hero.png"
-        alt="Rustic artisan bread on a warm cream surface with dried flowers"
-        fill
-        priority
-        className="object-cover"
-        sizes="100vw"
+      <div className="absolute inset-0 overflow-hidden">
+        <Image
+          src="/images/rustic_bread_hero.png"
+          alt="Rustic artisan bread on a warm cream surface with dried flowers"
+          fill
+          priority
+          className="object-cover scale-[1.12] object-[16%_50%]"
+          sizes="100vw"
+        />
+      </div>
+      <div
+        className="absolute inset-0 pointer-events-none bg-gradient-to-r from-espresso/85 from-0% via-espresso/55 via-[42%] to-transparent to-[72%]"
+        aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-espresso/60 via-espresso/30 to-transparent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">

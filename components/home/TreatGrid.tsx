@@ -2,13 +2,18 @@ import Image from "next/image"
 import Link from "next/link"
 import Divider from "@/components/ui/Divider"
 
-const categories = [
+const categories: {
+  name: string
+  image: string
+  href: string
+  imageClassName?: string
+}[] = [
   { name: "Cookies", image: "/images/biscoff_cookie.png", href: "/menu#cookies" },
   { name: "Bars", image: "/images/cloudbar_stretch.png", href: "/menu#bars" },
-  { name: "Brownies", image: "/images/biscoff-butter-cloud-bar.png", href: "/menu#brownies" },
-  { name: "Seasonal Treats", image: "/images/seasonal-feature.png", href: "/menu#seasonal" },
+  { name: "Brownies", image: "/images/caramel-brownie.png", href: "/menu#brownies" },
+  { name: "Seasonal Treats", image: "/images/chai-brownie.png", href: "/menu#seasonal" },
   { name: "Gift Boxes", image: "/images/cloud-bar-in-package.png", href: "/gifts" },
-  { name: "Comfort Boxes", image: "/images/oatmeal-cookie.png", href: "/gifts" },
+  { name: "Comfort Boxes", image: "/images/comfort-box.png", href: "/gifts", imageClassName: "scale-[1.15]" },
 ]
 
 export default function TreatGrid() {
@@ -34,7 +39,7 @@ export default function TreatGrid() {
                 src={cat.image}
                 alt={cat.name}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                className={`object-cover transition-transform duration-700 group-hover:scale-105 ${cat.imageClassName ?? ""}`}
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-espresso/50 via-espresso/10 to-transparent" />

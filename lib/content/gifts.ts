@@ -4,6 +4,7 @@ export interface GiftBox {
   description: string
   longDescription: string
   image: string
+  imageClassName?: string
   startingPrice?: string
   occasions: string[]
 }
@@ -15,7 +16,8 @@ export const giftBoxes: GiftBox[] = [
     description: "A warm care package of fresh-baked treats for someone who needs a little comfort.",
     longDescription:
       "Sometimes the best thing you can send is something homemade. The Comfort Box is a curated collection of our most-loved cookies and bars, packed with care and ready to brighten a hard day, a long week, or a season that needs a little sweetness.",
-    image: "/images/oatmeal-cookie.png",
+    image: "/images/comfort-box.png",
+    imageClassName: "scale-[1.15]",
     startingPrice: "Confirm with owner" /* confirm with owner */,
     occasions: [
       "Hard weeks",

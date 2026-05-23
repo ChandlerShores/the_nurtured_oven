@@ -11,6 +11,7 @@ export interface MenuCategory {
   slug: string
   description: string
   image: string
+  imageClassName?: string
   items: MenuItem[]
 }
 
@@ -77,7 +78,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Brownies",
     slug: "brownies",
     description: "Dense, fudgy, and unapologetically chocolatey. Made for serious chocolate lovers.",
-    image: "/images/biscoff-butter-cloud-bar.png",
+    image: "/images/caramel-brownie.png",
     items: [
       {
         name: "Classic Fudge Brownie",
@@ -99,7 +100,7 @@ export const menuCategories: MenuCategory[] = [
     name: "Seasonal Treats",
     slug: "seasonal",
     description: "Limited-time flavors inspired by the season. Follow along on Instagram to see what's baking.",
-    image: "/images/seasonal-feature.png",
+    image: "/images/chai-brownie.png",
     items: [
       {
         name: "Seasonal Flavor",
@@ -133,7 +134,8 @@ export const menuCategories: MenuCategory[] = [
     name: "Comfort Boxes",
     slug: "comfort-boxes",
     description: "A little something for a hard week, a new chapter, or just because. Comfort, delivered.",
-    image: "/images/oatmeal-cookie.png",
+    image: "/images/comfort-box.png",
+    imageClassName: "scale-[1.15]",
     items: [
       {
         name: "The Comfort Box",

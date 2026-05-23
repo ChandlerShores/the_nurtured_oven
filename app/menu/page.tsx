@@ -35,7 +35,7 @@ export default function MenuPage() {
                   src={cat.image}
                   alt={cat.name}
                   fill
-                  className="object-cover"
+                  className={`object-cover ${cat.imageClassName ?? ""}`}
                   sizes="(max-width: 1024px) 100vw, 40vw"
                 />
               </div>

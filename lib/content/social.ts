@@ -10,7 +10,7 @@ export const socialLinks = {
     handle: "@thenurturedoven",
   },
   facebook: {
-    url: "https://www.facebook.com/thenurturedoven/" /* confirm with owner */,
+    url: "https://www.facebook.com/profile.php?id=61573256227837",
     handle: "The Nurtured Oven",
   },
 }
@@ -42,8 +42,8 @@ export const recentBakes: SocialPost[] = [
     alt: "Biscoff butter cloud bar treat",
   },
   {
-    image: "/images/seasonal-feature.png",
+    image: "/images/chai-brownie.png",
     caption: "Something sweet on the counter." /* confirm with owner */,
-    alt: "Seasonal bake from the kitchen",
+    alt: "Chai brownie with spiced glaze on a warm plate",
   },
 ]

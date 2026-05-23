@@ -1,7 +1,7 @@
-import Image from "next/image"
 import { recentBakes, socialLinks } from "@/lib/content/social"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
+import RecentBakesGallery from "./RecentBakesGallery"
 
 export default function RecentBakes() {
   return (
@@ -19,24 +19,7 @@ export default function RecentBakes() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
-          {recentBakes.map((post, i) => (
-            <div key={i} className="group">
-              <div className="relative aspect-square rounded-2xl overflow-hidden shadow-gentle mb-3">
-                <Image
-                  src={post.image}
-                  alt={post.alt}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 640px) 50vw, 33vw"
-                />
-              </div>
-              <p className="text-brown-sugar/70 text-sm leading-relaxed font-body px-1">
-                {post.caption}
-              </p>
-            </div>
-          ))}
-        </div>
+        <RecentBakesGallery posts={recentBakes} />
 
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button href={socialLinks.instagram.url} variant="outline">

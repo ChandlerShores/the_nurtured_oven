@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
 import { availability } from "@/lib/content/availability"
@@ -20,12 +21,22 @@ export default function Header() {
       )}
       <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-linen/40">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between h-16 sm:h-20">
-          <Link href="/" className="group flex flex-col items-start">
-            <span className="font-heading text-xl sm:text-2xl text-espresso tracking-wide">
-              {siteConfig.brandName}
-            </span>
-            <span className="font-accent text-xs text-brown-sugar/60 -mt-0.5 hidden sm:block">
-              fresh-baked happiness
+          <Link href="/" className="group flex items-center gap-2.5 sm:gap-3 shrink-0">
+            <Image
+              src="/images/nurtured-oven-flowers-logo-cream.png"
+              alt=""
+              width={56}
+              height={72}
+              className="h-11 w-auto sm:h-14 shrink-0"
+              priority
+            />
+            <span className="flex flex-col items-start">
+              <span className="font-heading text-xl sm:text-2xl text-espresso tracking-wide leading-tight">
+                {siteConfig.brandName}
+              </span>
+              <span className="font-accent text-xs text-brown-sugar/60 -mt-0.5 hidden sm:block">
+                fresh-baked happiness
+              </span>
             </span>
           </Link>
 
