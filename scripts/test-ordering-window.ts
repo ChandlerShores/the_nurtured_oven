@@ -10,7 +10,8 @@ console.log("Friday ~10am ET:", label(isWeeklyOrderingWindowOpen(new Date("2026-
 console.log("Wed noon ET:", label(isWeeklyOrderingWindowOpen(new Date("2026-05-27T16:00:00.000Z"))))
 console.log("Wed 12:10pm ET:", label(isWeeklyOrderingWindowOpen(new Date("2026-05-27T16:10:00.000Z"))))
 
-process.env.NODE_ENV = "development"
-process.env.ORDERING_TEST_WEEKDAY = "4"
+const env = process.env as Record<string, string | undefined>
+env.NODE_ENV = "development"
+env.ORDERING_TEST_WEEKDAY = "4"
 console.log("\n--- Dev override ORDERING_TEST_WEEKDAY=4 (Thursday) ---")
 console.log("Simulated Thursday:", label(isWeeklyOrderingWindowOpen()))
