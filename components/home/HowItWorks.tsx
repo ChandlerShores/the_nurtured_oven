@@ -2,24 +2,24 @@ import Divider from "@/components/ui/Divider"
 
 const steps = [
   {
-    icon: "🍪",
-    title: "Choose your treats",
-    description: "Browse cookies, bars, brownies, or pick a gift box.",
+    icon: "📋",
+    title: "Saturday: menu drops",
+    description: "We post the weekly menu every Saturday — follow along or sign up for reminders.",
   },
   {
-    icon: "💌",
-    title: "Send an inquiry",
-    description: "Fill out our simple order form with your details.",
+    icon: "🛒",
+    title: "Order by Wednesday noon",
+    description: "Pick your items or grab a Weekly Comfort Box. Submit your order before the cutoff.",
   },
   {
-    icon: "♡",
-    title: "We confirm details",
-    description: "The owner will reach out to finalize your order.",
+    icon: "💳",
+    title: "Pay to confirm",
+    description: "We\u2019ll send a Square payment link. Your order is locked in once payment is received.",
   },
   {
     icon: "🏡",
-    title: "Pickup or delivery",
-    description: "Grab your fresh-baked treats or have them delivered.",
+    title: "Friday: pickup or delivery",
+    description: "Grab your fresh-baked treats or have them delivered locally on Friday.",
   },
 ]
 
@@ -28,9 +28,9 @@ export default function HowItWorks() {
     <section className="bg-cream">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-28">
         <div className="text-center mb-14">
-          <p className="font-accent text-brown-sugar/60 text-lg mb-2">simple &amp; personal</p>
+          <p className="font-accent text-brown-sugar/60 text-lg mb-2">simple &amp; weekly</p>
           <h2 className="font-heading text-3xl sm:text-4xl text-espresso tracking-wide">
-            How ordering works
+            How it works
           </h2>
           <Divider icon="dot" className="mt-4 mb-0" />
         </div>

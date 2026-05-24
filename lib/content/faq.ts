@@ -5,34 +5,54 @@ export interface FaqEntry {
 
 export const faqEntries: FaqEntry[] = [
   {
-    question: "How do I order?",
+    question: "How does weekly ordering work?",
     answer:
-      "Just fill out our order inquiry form on the Contact page. Let us know what you're interested in, your preferred pickup date, and any details — and we'll get back to you to confirm everything.",
+      "Every Saturday we post a new weekly menu with 3\u20135 items plus the Weekly Comfort Box. Place your order by Wednesday at noon, and we\u2019ll send a Square payment link to confirm. Orders are fulfilled on Friday via pickup or limited local delivery.",
   },
   {
-    question: "Where are you located?",
+    question: "What is the Weekly Comfort Box?",
     answer:
-      "The Nurtured Oven is a cottage bakery based in Central Kentucky. All treats are baked fresh in a home kitchen with love and care." /* confirm with owner — specific city/area */,
+      "It\u2019s our signature product \u2014 a curated mix of this week\u2019s best bakes (cookies, bars, and a seasonal surprise), beautifully boxed and ready to enjoy or share. It\u2019s the easiest way to get a taste of everything we\u2019re baking.",
+  },
+  {
+    question: "When is the ordering cutoff?",
+    answer:
+      "Wednesday at noon. Orders placed after the cutoff will be held for the following week. We cannot add items after the cutoff because ingredients are pre-planned.",
+  },
+  {
+    question: "How do I pay?",
+    answer:
+      "After you submit your order, we\u2019ll send a Square payment link via email. Your order is confirmed once payment is received \u2014 no payment, no confirmation.",
   },
   {
     question: "Do you offer local pickup?",
     answer:
-      "Yes! Local pickup is available on Fridays and Saturdays. We'll confirm the details when you place your order." /* confirm with owner — pickup days/location */,
+      "Yes! Friday pickup is our primary fulfillment method. We\u2019ll confirm the pickup details when your order is confirmed.",
   },
   {
     question: "Do you offer local delivery?",
     answer:
-      "We offer limited local delivery within about 15 miles. Reach out with your address and we'll let you know if delivery is available for your area." /* confirm with owner — radius */,
+      "We offer limited local delivery within about 15 miles on Fridays. A delivery fee or minimum may apply. Reach out with your address and we\u2019ll let you know if delivery is available for your area.",
   },
   {
-    question: "How much notice do you need?",
+    question: "What are the Comfort Box gift tiers?",
     answer:
-      "Please allow at least 3–5 days lead time for all orders. For larger orders, gift boxes, or custom requests, a little extra notice is always appreciated." /* confirm with owner */,
+      "We offer three sizes: Mini Comfort Box ($16\u201322), Classic Comfort Box ($32\u201342), and Gathering Box ($55\u201375+). Each is filled with an assortment of this week\u2019s bakes, beautifully packaged. You can include a personal gift message.",
   },
   {
-    question: "Can I send a gift box to someone?",
+    question: "What are Little Extras?",
     answer:
-      "Absolutely! Gift boxes are one of our favorite things. Choose a Comfort Box or New Mom Gift Box, or request something custom. We'll package it with care and include a personal note if you'd like.",
+      "Sometimes there are leftover batches, test flavors, or beautifully imperfect pieces after a bake day. When available, we box them up at a friendly price ($8\u201315) and post them on Fridays. They\u2019re first-paid, first-claimed \u2014 once they\u2019re gone, they\u2019re gone.",
+  },
+  {
+    question: "What if ordering is closed when I visit the site?",
+    answer:
+      "You can sign up for menu reminders so you\u2019ll know the moment the next menu drops. You can also request a future gift box, ask about a custom order, or check if Little Extras are available on Friday.",
+  },
+  {
+    question: "Do you take custom orders?",
+    answer:
+      "On a limited basis, with advance notice and based on availability. Custom work is not our primary offering, but we\u2019re happy to discuss it. Use the general contact form and let us know what you have in mind.",
   },
   {
     question: "Do I need to be a mom to order?",
@@ -40,19 +60,9 @@ export const faqEntries: FaqEntry[] = [
       "Not at all. The Nurtured Oven is mom-forward in its story and gifting, but the treats are for anyone who wants something homemade, familiar, and comforting. We bake for families, friends, coworkers, neighbors, and anyone who appreciates a really good cookie.",
   },
   {
-    question: "Do you handle custom orders?",
-    answer:
-      "Yes — we're happy to work with you on custom assortments, larger quantities, or special requests. Just reach out through the order form and let us know what you have in mind.",
-  },
-  {
     question: "What about allergens?",
     answer:
-      "The Nurtured Oven is a home kitchen. Our products may contain or come into contact with wheat, eggs, dairy, nuts, soy, and other common allergens. If you have specific concerns, please note them in your order and we'll do our best to accommodate.",
-  },
-  {
-    question: "Are these lactation cookies?",
-    answer:
-      "Some treats may include oat-forward ingredients commonly associated with lactation-friendly recipes, but The Nurtured Oven is broader than that. These are comforting, small-batch sweets made for moms, families, gifting, and everyday nostalgia.",
+      "The Nurtured Oven is a home kitchen. Our products may contain or come into contact with wheat, eggs, dairy, nuts, soy, and other common allergens. If you have specific concerns, please note them in your order and we\u2019ll do our best to accommodate.",
   },
   {
     question: "What should I know about Kentucky cottage bakery rules?",
@@ -61,18 +71,8 @@ export const faqEntries: FaqEntry[] = [
   },
 ]
 
-export const homepageFaqSlugs = [
-  "How do I order?",
-  "Do you offer local pickup or delivery?",
-  "Can I send a gift box to someone?",
-]
-
 export const homepageFaq: FaqEntry[] = [
   faqEntries[0],
-  {
-    question: "Do you offer local pickup or delivery?",
-    answer:
-      "Yes! Local pickup is available on Fridays and Saturdays, and we offer limited delivery within about 15 miles. We'll confirm all the details when you place your order.",
-  },
-  faqEntries[5],
+  faqEntries[1],
+  faqEntries[6],
 ]

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "FAQ | The Nurtured Oven",
   description:
-    "Answers to common questions about ordering, delivery, gifting, allergens, and more from The Nurtured Oven.",
+    "Answers to common questions about weekly ordering, Comfort Boxes, Little Extras, payment, delivery, allergens, and more.",
 }
 
 export default function FaqLayout({

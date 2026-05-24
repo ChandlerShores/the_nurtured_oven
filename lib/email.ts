@@ -1,34 +1,85 @@
 interface InquiryData {
+  intent: "weekly-order" | "gift" | "reminder" | "general"
   name: string
   email: string
   phone?: string
-  items: string
-  fulfillment: string
-  date: string
+  items?: string
+  fulfillment?: string
+  deliveryAddress?: string
+  giftRecipient?: string
+  giftMessage?: string
+  giftOccasion?: string
   dietary?: string
   message?: string
 }
 
+const intentSubjects: Record<InquiryData["intent"], string> = {
+  "weekly-order": "Weekly Order Request",
+  gift: "Gift Box Request",
+  reminder: "Menu Reminder Signup",
+  general: "General Inquiry",
+}
+
 function formatEmailBody(data: InquiryData): string {
-  const lines = [
-    `New Order Inquiry from ${data.name}`,
-    `${"=".repeat(40)}`,
-    ``,
+  const heading = `${intentSubjects[data.intent]} from ${data.name}`
+  const divider = "=".repeat(40)
+
+  const lines: (string | null)[] = [
+    heading,
+    divider,
+    "",
+    `Type: ${intentSubjects[data.intent]}`,
     `Name: ${data.name}`,
     `Email: ${data.email}`,
     data.phone ? `Phone: ${data.phone}` : null,
-    ``,
-    `Interested in: ${data.items}`,
-    `Fulfillment: ${data.fulfillment}`,
-    `Desired date: ${data.date}`,
-    data.dietary ? `\nDietary/allergy notes: ${data.dietary}` : null,
-    data.message ? `\nMessage: ${data.message}` : null,
-    ``,
-    `${"=".repeat(40)}`,
-    `This inquiry was sent from The Nurtured Oven website.`,
   ]
 
-  return lines.filter(Boolean).join("\n")
+  if (data.intent === "weekly-order") {
+    lines.push(
+      "",
+      `Items: ${data.items}`,
+      `Fulfillment: ${data.fulfillment || "pickup"}`,
+      data.deliveryAddress ? `Delivery address: ${data.deliveryAddress}` : null,
+      data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
+      data.message ? `\nAdditional notes: ${data.message}` : null,
+      "",
+      ">> Send Square payment link to confirm this order.",
+    )
+  }
+
+  if (data.intent === "gift") {
+    lines.push(
+      "",
+      `Box: ${data.items}`,
+      data.giftRecipient ? `Recipient: ${data.giftRecipient}` : null,
+      data.giftOccasion ? `Occasion: ${data.giftOccasion}` : null,
+      data.giftMessage ? `Gift message: ${data.giftMessage}` : null,
+      `Fulfillment: ${data.fulfillment || "pickup"}`,
+      data.deliveryAddress ? `Delivery address: ${data.deliveryAddress}` : null,
+      data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
+      data.message ? `\nAdditional notes: ${data.message}` : null,
+      "",
+      ">> Send Square payment link to confirm this gift order.",
+    )
+  }
+
+  if (data.intent === "reminder") {
+    lines.push(
+      "",
+      ">> Add to Saturday menu reminder list.",
+    )
+  }
+
+  if (data.intent === "general") {
+    lines.push(
+      "",
+      data.message ? `Message: ${data.message}` : null,
+    )
+  }
+
+  lines.push("", divider, "Sent from The Nurtured Oven website.")
+
+  return lines.filter((l): l is string => l !== null).join("\n")
 }
 
 export async function sendInquiryEmail(
@@ -54,7 +105,7 @@ export async function sendInquiryEmail(
         from: "The Nurtured Oven <orders@thenurturedoven.com>",
         to: [ownerEmail],
         reply_to: data.email,
-        subject: `New Order Inquiry from ${data.name}`,
+        subject: `${intentSubjects[data.intent]} from ${data.name}`,
         text: formatEmailBody(data),
       }),
     })

@@ -15,9 +15,9 @@ export default function Footer() {
             <Link href="/" className="font-heading text-2xl text-cream tracking-wide">
               {siteConfig.brandName}
             </Link>
-            <p className="font-accent text-cream/50 text-sm mt-1">fresh-baked happiness</p>
+            <p className="font-accent text-cream/50 text-sm mt-1">comfort sweets, made weekly</p>
             <p className="mt-4 text-cream/60 text-sm leading-relaxed max-w-xs">
-              Small-batch cookies, bars, and nostalgic sweets made in Kentucky with warmth, intention, and care.
+              {siteConfig.tagline}
             </p>
           </div>
 
@@ -47,8 +47,8 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5 text-sm text-cream/70">
               <li>
-                <Link href="/contact" className="hover:text-cream transition-colors">
-                  Request an Order
+                <Link href="/menu" className="hover:text-cream transition-colors">
+                  {siteConfig.orderCta}
                 </Link>
               </li>
               <li>{siteConfig.serviceArea.label}</li>
@@ -76,6 +76,9 @@ export default function Footer() {
           </p>
           <p className="text-cream/25 text-xs mt-4">
             &copy; {year} {siteConfig.brandName}. Made with ♡ in Kentucky.
+          </p>
+          <p className="text-cream/20 text-[10px] mt-2 tracking-wide">
+            Built by Chandler Shores Advisory
           </p>
         </div>
       </div>

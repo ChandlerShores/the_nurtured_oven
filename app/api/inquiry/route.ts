@@ -6,12 +6,31 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
-    const { name, email, phone, items, fulfillment, date, dietary, message } =
-      body
+    const {
+      intent,
+      name,
+      email,
+      phone,
+      items,
+      fulfillment,
+      deliveryAddress,
+      giftRecipient,
+      giftMessage,
+      giftOccasion,
+      dietary,
+      message,
+    } = body
 
-    if (!name || !email || !items) {
+    if (!name || !email) {
       return NextResponse.json(
-        { error: "Name, email, and items are required." },
+        { error: "Name and email are required." },
+        { status: 400 }
+      )
+    }
+
+    if ((intent === "weekly-order" || intent === "gift") && !items) {
+      return NextResponse.json(
+        { error: "Please specify what you'd like to order." },
         { status: 400 }
       )
     }
@@ -20,7 +39,20 @@ export async function POST(req: NextRequest) {
       process.env.OWNER_EMAIL || siteConfig.ownerEmail
 
     const result = await sendInquiryEmail(
-      { name, email, phone, items, fulfillment, date, dietary, message },
+      {
+        intent: intent || "general",
+        name,
+        email,
+        phone,
+        items,
+        fulfillment,
+        deliveryAddress,
+        giftRecipient,
+        giftMessage,
+        giftOccasion,
+        dietary,
+        message,
+      },
       ownerEmail
     )
 

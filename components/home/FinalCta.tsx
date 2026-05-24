@@ -14,9 +14,9 @@ export default function FinalCta() {
       <div className="absolute inset-0 bg-espresso/50" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-5 sm:px-8 text-center">
-        <p className="font-accent text-cream/60 text-xl mb-3">one last thing</p>
+        <p className="font-accent text-cream/60 text-xl mb-3">don&apos;t miss this week</p>
         <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-warm-white leading-snug tracking-wide">
-          Ready to send a little comfort?
+          Ready to order?
         </h2>
 
         <div className="flex items-center justify-center gap-3 my-6">
@@ -28,12 +28,16 @@ export default function FinalCta() {
         </div>
 
         <p className="text-cream/70 text-base sm:text-lg font-body leading-relaxed">
-          Whether it&apos;s for you, a friend, or someone who needs a warm
-          reminder they&apos;re loved — we&apos;d love to bake for you.
+          Order by Wednesday at noon for Friday pickup or local delivery.
+          Whether it&apos;s for you or someone who needs a warm reminder
+          they&apos;re loved — we&apos;d love to bake for you.
         </p>
-        <div className="mt-8">
-          <Button href="/contact" size="lg">
-            Request an Order
+        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+          <Button href="/menu" size="lg">
+            View This Week&apos;s Menu
+          </Button>
+          <Button href="/contact?intent=reminder" variant="outline" size="lg" className="border-cream/40 text-cream hover:bg-cream/10 hover:text-cream">
+            Get Menu Reminders
           </Button>
         </div>
       </div>

@@ -1,154 +1,60 @@
-export interface MenuItem {
+export interface WeeklyMenuItem {
   name: string
   description: string
   allergenTags?: string[]
-  price?: string
+  priceLabel: string
   slug: string
 }
 
-export interface MenuCategory {
-  name: string
-  slug: string
-  description: string
-  image: string
-  imageClassName?: string
-  items: MenuItem[]
+export interface WeeklyMenu {
+  weekLabel: string
+  fulfillmentDate: string
+  cutoffNote: string
+  items: WeeklyMenuItem[]
+  comfortBox: {
+    name: string
+    slug: string
+    description: string
+    priceLabel: string
+    includes: string
+    image: string
+  }
 }
 
-export const menuCategories: MenuCategory[] = [
-  {
-    name: "Cookies",
-    slug: "cookies",
-    description: "Classic, comforting, and made from scratch. Every batch is small and baked with care.",
-    image: "/images/biscoff_cookie.png",
-    items: [
-      {
-        name: "Brown Butter Chocolate Chip",
-        slug: "brown-butter-chocolate-chip",
-        description: "Rich brown butter, dark chocolate, and a sprinkle of sea salt.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Oatmeal Raisin",
-        slug: "oatmeal-raisin",
-        description: "Old-fashioned oats, plump raisins, warm cinnamon, and a soft chewy center.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Snickerdoodle",
-        slug: "snickerdoodle",
-        description: "Buttery, soft, and rolled in cinnamon sugar. A nostalgic favorite.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Peanut Butter",
-        slug: "peanut-butter",
-        description: "Thick, crumbly, and packed with real peanut butter flavor.",
-        allergenTags: ["wheat", "eggs", "dairy", "peanuts"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-    ],
-  },
-  {
-    name: "Bars",
-    slug: "bars",
-    description: "Thick, layered, and perfect for sharing. Bars that feel like a warm hug.",
-    image: "/images/cloudbar_stretch.png",
-    items: [
-      {
-        name: "Lemon Bars",
-        slug: "lemon-bars",
-        description: "Bright lemon curd over a buttery shortbread crust, dusted with powdered sugar.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Oat Crumble Bars",
-        slug: "oat-crumble-bars",
-        description: "Buttery oat crust with a seasonal fruit filling and golden crumble topping.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-    ],
-  },
-  {
-    name: "Brownies",
-    slug: "brownies",
-    description: "Dense, fudgy, and unapologetically chocolatey. Made for serious chocolate lovers.",
-    image: "/images/caramel-brownie.png",
-    items: [
-      {
-        name: "Classic Fudge Brownie",
-        slug: "classic-fudge-brownie",
-        description: "Rich, dense, and deeply chocolatey with a crackly top.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Salted Caramel Brownie",
-        slug: "salted-caramel-brownie",
-        description: "Fudgy brownie swirled with homemade salted caramel.",
-        allergenTags: ["wheat", "eggs", "dairy"],
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-    ],
-  },
-  {
-    name: "Seasonal Treats",
-    slug: "seasonal",
-    description: "Limited-time flavors inspired by the season. Follow along on Instagram to see what's baking.",
-    image: "/images/chai-brownie.png",
-    items: [
-      {
-        name: "Seasonal Flavor",
-        slug: "seasonal-flavor",
-        description: "Check Instagram or reach out for the current seasonal menu." /* confirm with owner */,
-        price: "Varies",
-      },
-    ],
-  },
-  {
-    name: "Gift Boxes",
-    slug: "gift-boxes",
-    description: "A curated box of treats, wrapped with care and ready to brighten someone's day.",
-    image: "/images/cloud-bar-in-package.png",
-    items: [
-      {
-        name: "The Classic Gift Box",
-        slug: "classic-gift-box",
-        description: "An assortment of our most-loved cookies and bars, beautifully packaged.",
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "Custom Gift Box",
-        slug: "custom-gift-box",
-        description: "Choose your favorites — we'll put it together for you.",
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-    ],
-  },
-  {
-    name: "Comfort Boxes",
-    slug: "comfort-boxes",
-    description: "A little something for a hard week, a new chapter, or just because. Comfort, delivered.",
+export const weeklyMenu: WeeklyMenu = {
+  weekLabel: "This Week's Menu",
+  fulfillmentDate: "Friday pickup & limited local delivery",
+  cutoffNote: "Order by Wednesday at noon — orders confirmed once payment is received via Square.",
+  items: [
+    {
+      name: "Brown Butter Chocolate Chip Cookies",
+      slug: "brown-butter-chocolate-chip-cookies",
+      description: "Rich brown butter, dark chocolate, and a sprinkle of sea salt.",
+      allergenTags: ["wheat", "eggs", "dairy"],
+      priceLabel: "$18–24 / 6-pack",
+    },
+    {
+      name: "Salted Caramel Brownies",
+      slug: "salted-caramel-brownies",
+      description: "Fudgy brownie swirled with homemade salted caramel.",
+      allergenTags: ["wheat", "eggs", "dairy"],
+      priceLabel: "$14–18 / 4-pack",
+    },
+    {
+      name: "Biscoff Cloud Bars",
+      slug: "biscoff-cloud-bars",
+      description: "Crispy, gooey, and layered with Biscoff spread and marshmallow.",
+      allergenTags: ["wheat", "dairy", "soy"],
+      priceLabel: "$14–18 / 4-pack",
+    },
+  ],
+  comfortBox: {
+    name: "Weekly Comfort Box",
+    slug: "weekly-comfort-box",
+    description:
+      "A curated mix of this week's best — cookies, bars, and a seasonal surprise, boxed and ready to enjoy or share.",
+    priceLabel: "$28–38",
+    includes: "An assortment of this week's bakes, beautifully boxed.",
     image: "/images/comfort-box.png",
-    imageClassName: "scale-[1.15]",
-    items: [
-      {
-        name: "The Comfort Box",
-        slug: "comfort-box",
-        description: "A thoughtful mix of fresh-baked treats to lift someone's spirits.",
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-      {
-        name: "New Mom Comfort Box",
-        slug: "new-mom-comfort-box",
-        description: "A warm care package for the early days of motherhood.",
-        price: "Confirm with owner" /* confirm with owner */,
-      },
-    ],
   },
-]
+}

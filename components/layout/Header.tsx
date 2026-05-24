@@ -14,16 +14,16 @@ export default function Header() {
 
   return (
     <>
-      {availability.availabilityNote && (
+      {(availability.orderingOpen ? availability.openNote : availability.closedNote) && (
         <div className="bg-oatmeal/60 text-brown-sugar text-center text-xs sm:text-sm py-2 px-4 font-body tracking-wide">
-          ♡ {availability.availabilityNote}
+          ♡ {availability.orderingOpen ? availability.openNote : availability.closedNote}
         </div>
       )}
       <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-linen/40">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex items-center justify-between h-16 sm:h-20">
           <Link href="/" className="group flex items-center gap-2.5 sm:gap-3 shrink-0">
             <Image
-              src="/images/nurtured-oven-flowers-logo-cream.png"
+              src="/images/nurtured-oven-flowers-logo-transparent.png"
               alt=""
               width={56}
               height={72}
@@ -35,7 +35,7 @@ export default function Header() {
                 {siteConfig.brandName}
               </span>
               <span className="font-accent text-xs text-brown-sugar/60 -mt-0.5 hidden sm:block">
-                fresh-baked happiness
+                comfort sweets, made weekly
               </span>
             </span>
           </Link>
@@ -54,8 +54,8 @@ export default function Header() {
 
           <div className="hidden md:flex items-center gap-4">
             <SocialIcons iconSize={17} />
-            <Button href="/contact" size="sm">
-              Request an Order
+            <Button href="/menu" size="sm">
+              {siteConfig.orderCta}
             </Button>
           </div>
 

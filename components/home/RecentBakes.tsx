@@ -14,8 +14,8 @@ export default function RecentBakes() {
           </h2>
           <Divider icon="heart" className="mt-4 mb-2" />
           <p className="text-brown-sugar/70 text-base font-body max-w-md mx-auto leading-relaxed">
-            Not ready to order? Follow along for recent bakes, seasonal boxes,
-            and ordering updates.
+            Follow along for weekly menu drops, seasonal boxes,
+            and behind-the-scenes baking.
           </p>
         </div>
 

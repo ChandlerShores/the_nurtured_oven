@@ -5,23 +5,23 @@ import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
 
 export const metadata: Metadata = {
-  title: "Gift Boxes | The Nurtured Oven",
+  title: "Comfort Boxes | The Nurtured Oven",
   description:
-    "Send fresh-baked comfort to someone you love. Gift boxes for new moms, hard weeks, meal trains, birthdays, and everyday care.",
+    "Send fresh-baked comfort to someone you love. Choose a Mini, Classic, or Gathering Comfort Box — beautifully boxed and ready for any occasion.",
 }
 
 export default function GiftsPage() {
   return (
     <div className="bg-cream">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-16 sm:pt-20 pb-10 text-center">
-        <p className="font-accent text-brown-sugar/60 text-lg mb-2">thoughtfully wrapped</p>
+        <p className="font-accent text-brown-sugar/60 text-lg mb-2">beautifully boxed</p>
         <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso tracking-wide">
           Send something sweeter than flowers.
         </h1>
         <Divider icon="heart" className="mt-4 mb-2" />
         <p className="text-brown-sugar/70 text-lg font-body max-w-xl mx-auto leading-relaxed">
-          A box of fresh-baked comfort, wrapped with care and ready to brighten
-          someone&apos;s day.
+          Fresh-baked comfort, wrapped with care and ready to brighten
+          someone&apos;s day. Choose the size that fits the moment.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           {giftingMoments.map((m) => (
@@ -80,13 +80,11 @@ export default function GiftsPage() {
                   </div>
                 )}
 
-                {box.startingPrice && (
-                  <p className="text-sm text-brown-sugar/50 mb-4 font-body">
-                    Starting at {box.startingPrice}
-                  </p>
-                )}
+                <p className="font-heading text-xl text-espresso mb-6">
+                  {box.priceLabel}
+                </p>
 
-                <Button href={`/contact?item=${encodeURIComponent(box.name)}`}>
+                <Button href={`/contact?item=${encodeURIComponent(box.name)}&intent=gift`}>
                   Request a {box.name}
                 </Button>
               </div>
@@ -98,16 +96,16 @@ export default function GiftsPage() {
       <div className="bg-oatmeal/40">
         <div className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
           <h2 className="font-heading text-2xl sm:text-3xl text-espresso tracking-wide">
-            Not sure what to send?
+            Not sure which size?
           </h2>
           <Divider icon="heart" />
           <p className="text-brown-sugar/70 font-body text-lg leading-relaxed">
-            Tell us about the person and the occasion, and we&apos;ll help you
-            choose the perfect box.
+            Tell us about the person and the occasion — we&apos;ll help you
+            choose the perfect box and fulfillment date.
           </p>
           <div className="mt-6">
-            <Button href="/contact?item=Custom%20Gift%20Request" size="lg">
-              Send a Custom Gift Request
+            <Button href="/contact?intent=gift" size="lg">
+              Request a Gift Box
             </Button>
           </div>
         </div>

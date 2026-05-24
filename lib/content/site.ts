@@ -1,13 +1,13 @@
 export const siteConfig = {
   brandName: "The Nurtured Oven",
-  tagline: "Fresh-baked comfort for mothers and the people who love them.",
+  tagline: "Small-batch comfort sweets, made weekly, boxed beautifully, and shared with care.",
   founderName: "Owner" /* confirm with owner */,
   ownerEmail: "hello@thenurturedoven.com" /* confirm with owner */,
-  responseWindow: "within 24–48 hours" /* confirm with owner */,
+  responseWindow: "within 24 hours" /* confirm with owner */,
   phone: "" /* confirm with owner */,
   serviceArea: {
     label: "Central Kentucky" /* confirm with owner */,
-    deliveryNote: "Local pickup and limited delivery available",
+    deliveryNote: "Friday pickup and limited local delivery",
   },
   social: {
     instagram: {
@@ -20,12 +20,13 @@ export const siteConfig = {
     },
   },
   nav: [
-    { label: "Menu", href: "/menu" },
-    { label: "Gifts", href: "/gifts" },
+    { label: "This Week", href: "/menu" },
+    { label: "Comfort Boxes", href: "/gifts" },
+    { label: "Little Extras", href: "/little-extras" },
     { label: "About", href: "/about" },
     { label: "FAQ", href: "/faq" },
-    { label: "Contact", href: "/contact" },
   ],
+  orderCta: "Order This Week",
   cottageBakeryDisclosure:
     "The Nurtured Oven is a Kentucky cottage bakery. All products are made in a home kitchen that is not inspected by the health department. Products may contain or come into contact with common allergens including wheat, eggs, dairy, nuts, and soy.",
 }

@@ -6,24 +6,24 @@ export default function Hero() {
     <section className="relative min-h-[85vh] sm:min-h-[80vh] flex items-center">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src="/images/rustic_bread_hero.png"
-          alt="Rustic artisan bread on a warm cream surface with dried flowers"
+          src="/images/weekly_comfort_box.png"
+          alt="The Nurtured Oven Weekly Comfort Box — cookies, brownies, and cloud bars in an open gift box"
           fill
           priority
-          className="object-cover scale-[1.12] object-[16%_50%]"
+          className="object-cover object-[58%_30%]"
           sizes="100vw"
         />
       </div>
       <div
-        className="absolute inset-0 pointer-events-none bg-gradient-to-r from-espresso/85 from-0% via-espresso/55 via-[42%] to-transparent to-[72%]"
+        className="absolute inset-0 pointer-events-none bg-gradient-to-r from-espresso from-0% via-espresso/80 via-[48%] to-transparent to-[85%]"
         aria-hidden="true"
       />
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">
-          <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">from our kitchen to yours</p>
+          <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">new menu every saturday</p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-warm-white leading-snug tracking-wide">
-            Fresh-baked comfort for mothers and the people who love them.
+            Small-batch comfort sweets, made weekly and shared with care.
           </h1>
 
           <div className="flex items-center gap-3 my-6">
@@ -35,14 +35,14 @@ export default function Hero() {
           </div>
 
           <p className="text-cream/80 text-base sm:text-lg leading-relaxed font-body">
-            Small-batch cookies, bars, and nostalgic sweets made in Kentucky with warmth, intention, and care.
+            Order by Wednesday at noon. Pick up or get local delivery on Friday. Cookies, bars, brownies, and our signature Weekly Comfort Box.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <Button href="/contact" size="lg">
-              Request an Order
+            <Button href="/menu" size="lg">
+              View This Week&apos;s Menu
             </Button>
             <Button href="/gifts" variant="outline" size="lg" className="border-cream/40 text-cream hover:bg-cream/10 hover:text-cream">
-              View Gift Boxes
+              Send a Comfort Box
             </Button>
           </div>
         </div>

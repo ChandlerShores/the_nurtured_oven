@@ -8,7 +8,7 @@ const moments = [
   "Thank-you gifts",
   "Birthdays",
   "Hard weeks",
-  "Everyday comfort",
+  "Team appreciation",
 ]
 
 export default function GiftSection() {
@@ -27,15 +27,15 @@ export default function GiftSection() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <p className="font-accent text-brown-sugar/60 text-lg mb-2">thoughtfully wrapped</p>
+            <p className="font-accent text-brown-sugar/60 text-lg mb-2">beautifully boxed</p>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] text-espresso leading-snug tracking-wide">
               Send something sweeter than flowers.
             </h2>
             <Divider icon="heart" className="my-5 justify-start [&::after]:hidden" />
             <p className="text-brown-sugar/80 text-lg leading-relaxed font-body">
-              A box of fresh-baked comfort, wrapped with care and ready to
-              brighten someone&apos;s day. Because sometimes the most thoughtful
-              gift is something homemade.
+              Choose a Mini, Classic, or Gathering Comfort Box — filled with
+              this week&apos;s best bakes, wrapped with care, and ready to
+              brighten someone&apos;s day.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-2">
@@ -51,7 +51,7 @@ export default function GiftSection() {
 
             <div className="mt-8">
               <Button href="/gifts" size="lg">
-                Explore Gift Boxes
+                Explore Comfort Boxes
               </Button>
             </div>
           </div>

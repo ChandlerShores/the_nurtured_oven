@@ -18,7 +18,7 @@ export default function FaqPage() {
           </h1>
           <Divider icon="heart" className="mt-4 mb-2" />
           <p className="text-brown-sugar/70 text-lg font-body">
-            Everything you need to know about ordering from The Nurtured Oven.
+            Everything you need to know about weekly ordering, Comfort Boxes, payment, and more.
           </p>
         </div>
 
@@ -70,9 +70,9 @@ export default function FaqPage() {
           </h2>
           <Divider icon="heart" />
           <p className="text-brown-sugar/70 font-body mb-6">
-            Reach out through our order form and we&apos;ll be happy to help.
+            Reach out and we&apos;ll be happy to help.
           </p>
-          <Button href="/contact">Get in Touch</Button>
+          <Button href="/contact?intent=general">Get in Touch</Button>
         </div>
       </div>
     </div>

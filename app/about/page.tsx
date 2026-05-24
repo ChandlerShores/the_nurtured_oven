@@ -93,13 +93,13 @@ export default function AboutPage() {
           </h2>
           <Divider icon="heart" />
           <p className="text-brown-sugar/70 font-body text-lg mb-6">
-            Follow along for recent bakes, seasonal updates, and the occasional
-            kitchen-counter photo.
+            Follow along for weekly menu drops, seasonal updates, and the
+            occasional kitchen-counter photo.
           </p>
           <div className="flex justify-center mb-8">
             <SocialIcons iconSize={22} />
           </div>
-          <Button href="/contact">Request an Order</Button>
+          <Button href="/menu">View This Week&apos;s Menu</Button>
         </div>
       </div>
 

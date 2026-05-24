@@ -45,7 +45,7 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
             <span className="font-heading text-lg text-espresso tracking-wide">
               {siteConfig.brandName}
             </span>
-            <span className="block font-accent text-xs text-brown-sugar/50">fresh-baked happiness</span>
+            <span className="block font-accent text-xs text-brown-sugar/50">comfort sweets, made weekly</span>
           </div>
           <button
             type="button"
@@ -74,8 +74,8 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
         </nav>
 
         <div className="px-6 mt-4 space-y-6">
-          <Button href="/contact" className="w-full" onClick={onClose}>
-            Request an Order
+          <Button href="/menu" className="w-full" onClick={onClose}>
+            {siteConfig.orderCta}
           </Button>
           <div className="flex justify-center">
             <SocialIcons iconSize={20} />
