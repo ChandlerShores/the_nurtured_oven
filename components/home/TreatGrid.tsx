@@ -18,20 +18,20 @@ const categories: {
   {
     name: "Weekly Comfort Box",
     description: "A curated mix of this week\u2019s best",
-    image: "/images/comfort-box.png",
+    image: "/images/tulip_gift_box.png",
     href: "/menu",
     imageClassName: "scale-[1.15]",
   },
   {
     name: "Comfort Boxes",
     description: "Mini, Classic, or Gathering \u2014 for any occasion",
-    image: "/images/cloud-bar-in-package.png",
+    image: "/images/weekly_comfort_box.png",
     href: "/gifts",
   },
   {
     name: "Little Extras",
     description: "Friday surprises, first paid, first claimed",
-    image: "/images/marshmallow-cloud-bar.png",
+    image: "/images/oatmeal-cookie.png",
     href: "/little-extras",
   },
 ]

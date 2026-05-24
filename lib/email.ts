@@ -1,3 +1,5 @@
+import { formatDeliveryLine } from "@/lib/content/fulfillment"
+
 interface InquiryData {
   intent: "weekly-order" | "gift" | "reminder" | "general"
   name: string
@@ -5,6 +7,7 @@ interface InquiryData {
   phone?: string
   items?: string
   fulfillment?: string
+  deliveryCity?: string
   deliveryAddress?: string
   giftRecipient?: string
   giftMessage?: string
@@ -39,7 +42,9 @@ function formatEmailBody(data: InquiryData): string {
       "",
       `Items: ${data.items}`,
       `Fulfillment: ${data.fulfillment || "pickup"}`,
-      data.deliveryAddress ? `Delivery address: ${data.deliveryAddress}` : null,
+      formatDeliveryLine(data.deliveryCity, data.deliveryAddress)
+        ? `Delivery: ${formatDeliveryLine(data.deliveryCity, data.deliveryAddress)}`
+        : null,
       data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
       data.message ? `\nAdditional notes: ${data.message}` : null,
       "",
@@ -55,7 +60,9 @@ function formatEmailBody(data: InquiryData): string {
       data.giftOccasion ? `Occasion: ${data.giftOccasion}` : null,
       data.giftMessage ? `Gift message: ${data.giftMessage}` : null,
       `Fulfillment: ${data.fulfillment || "pickup"}`,
-      data.deliveryAddress ? `Delivery address: ${data.deliveryAddress}` : null,
+      formatDeliveryLine(data.deliveryCity, data.deliveryAddress)
+        ? `Delivery: ${formatDeliveryLine(data.deliveryCity, data.deliveryAddress)}`
+        : null,
       data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
       data.message ? `\nAdditional notes: ${data.message}` : null,
       "",

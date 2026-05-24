@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import type { ContactIntent } from "@/components/contact/ContactIntentSelector"
+import DeliveryFields from "@/components/contact/DeliveryFields"
 import GiftFormFields from "@/components/contact/GiftFormFields"
 import WeeklyOrderCart from "@/components/order/WeeklyOrderCart"
 import Divider from "@/components/ui/Divider"
@@ -57,6 +58,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
             phone: form.phone,
             lineItems: cartItems,
             fulfillment: form.fulfillment,
+            deliveryCity: form.deliveryCity,
             deliveryAddress: form.deliveryAddress,
             dietary: form.dietary,
             message: form.message,
@@ -199,12 +201,12 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                     className={contactInputClassName}
                     value={form.phone}
                     onChange={(e) => update("phone", e.target.value)}
-                    placeholder="(555) 123-4567"
+                    placeholder="(859) 555-1234"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div>
+                <div className="space-y-5">
+                  <div className="max-w-md">
                     <label
                       htmlFor="fulfillment"
                       className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
@@ -215,7 +217,14 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                       id="fulfillment"
                       className={contactInputClassName}
                       value={form.fulfillment}
-                      onChange={(e) => update("fulfillment", e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value
+                        if (value === "pickup") {
+                          update("deliveryCity", "")
+                          update("deliveryAddress", "")
+                        }
+                        update("fulfillment", value)
+                      }}
                     >
                       <option value="pickup">
                         {fulfillmentPolicy.pickupOptionLabel}
@@ -226,24 +235,11 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                     </select>
                   </div>
                   {form.fulfillment === "delivery" && (
-                    <div>
-                      <label
-                        htmlFor="deliveryAddress"
-                        className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
-                      >
-                        Delivery address
-                      </label>
-                      <input
-                        id="deliveryAddress"
-                        type="text"
-                        className={contactInputClassName}
-                        value={form.deliveryAddress}
-                        onChange={(e) =>
-                          update("deliveryAddress", e.target.value)
-                        }
-                        placeholder={fulfillmentPolicy.deliveryAddressPlaceholder}
-                      />
-                    </div>
+                    <DeliveryFields
+                      form={form}
+                      update={update}
+                      inputClassName={contactInputClassName}
+                    />
                   )}
                 </div>
 
@@ -379,7 +375,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                       className={contactInputClassName}
                       value={form.phone}
                       onChange={(e) => update("phone", e.target.value)}
-                      placeholder="(555) 123-4567"
+                      placeholder="(859) 555-1234"
                     />
                   </div>
                   <div>

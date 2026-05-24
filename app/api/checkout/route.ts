@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { isDeliveryCity } from "@/lib/content/fulfillment"
 import { getCatalogItem } from "@/lib/order/catalog"
 import { isMenuOpen } from "@/lib/menu/ordering"
 import { createWeeklyCheckout } from "@/lib/square/checkout"
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
       phone,
       lineItems,
       fulfillment,
+      deliveryCity,
       deliveryAddress,
       dietary,
       message,
@@ -64,11 +66,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (fulfillment === "delivery" && !deliveryAddress?.trim()) {
-      return NextResponse.json(
-        { error: "Please enter a delivery address." },
-        { status: 400 }
-      )
+    if (fulfillment === "delivery") {
+      if (!deliveryCity?.trim() || !isDeliveryCity(deliveryCity.trim())) {
+        return NextResponse.json(
+          { error: "Please select Georgetown or Lexington for delivery." },
+          { status: 400 }
+        )
+      }
+      if (!deliveryAddress?.trim()) {
+        return NextResponse.json(
+          { error: "Please enter your street address for delivery." },
+          { status: 400 }
+        )
+      }
     }
 
     const { checkoutUrl } = await createWeeklyCheckout({
@@ -80,6 +90,8 @@ export async function POST(req: NextRequest) {
         quantity: Math.min(20, Math.floor(item.quantity)),
       })),
       fulfillment: fulfillment === "delivery" ? "delivery" : "pickup",
+      deliveryCity:
+        fulfillment === "delivery" ? deliveryCity?.trim() : undefined,
       deliveryAddress: deliveryAddress?.trim(),
       dietary: dietary?.trim(),
       message: message?.trim(),

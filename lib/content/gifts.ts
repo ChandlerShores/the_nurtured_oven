@@ -34,7 +34,7 @@ export const giftBoxes: GiftBox[] = [
     description: "Our most popular gift — a generous box of fresh-baked favorites.",
     longDescription:
       "The Classic Comfort Box is made for the moments that matter. Filled with a generous assortment of this week's cookies, bars, and seasonal treats, it's the kind of gift that says 'I see you, and you're doing an amazing job.'",
-    image: "/images/comfort-box.png",
+    image: "/images/weekly_comfort_box.png",
     imageClassName: "scale-[1.15]",
     priceLabel: "$32–42",
     occasions: [
@@ -52,7 +52,7 @@ export const giftBoxes: GiftBox[] = [
     description: "Comfort at scale — a generous spread for groups, gatherings, and celebrations.",
     longDescription:
       "Hosting, celebrating, or feeding a crowd? The Gathering Box is a beautifully arranged assortment of our best bakes, designed to share around a table, at an office, or anywhere people come together.",
-    image: "/images/marshmallow-cloud-bar.png",
+    image: "/images/cloudbar_stretch.png",
     priceLabel: "$55–75+",
     occasions: [
       "Office gifts",

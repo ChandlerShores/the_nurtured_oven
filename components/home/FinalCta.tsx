@@ -5,29 +5,34 @@ export default function FinalCta() {
   return (
     <section className="relative py-24 sm:py-32 lg:py-40">
       <Image
-        src="/images/marshmallow-cloud-bar.png"
-        alt="Homemade marshmallow cloud bar"
+        src="/images/seasonal-feature.png"
+        alt="Seasonal comfort sweets from The Nurtured Oven"
         fill
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-espresso/50" />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-espresso/85 via-espresso/65 to-espresso/50"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 max-w-2xl mx-auto px-5 sm:px-8 text-center">
-        <p className="font-accent text-cream/60 text-xl mb-3">don&apos;t miss this week</p>
-        <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
+        <p className="font-accent text-cream/90 text-xl mb-3 drop-shadow-sm">
+          don&apos;t miss this week
+        </p>
+        <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide drop-shadow-sm">
           Ready to order?
         </h2>
 
         <div className="flex items-center justify-center gap-3 my-6">
-          <span className="h-px bg-cream/25 w-10" />
-          <svg width="12" height="11" viewBox="0 0 14 13" fill="currentColor" className="text-blush/60">
+          <span className="h-px bg-cream/45 w-10" />
+          <svg width="12" height="11" viewBox="0 0 14 13" fill="currentColor" className="text-blush/80">
             <path d="M7 12.5s-5.5-3.5-5.5-7A3 3 0 0 1 7 3a3 3 0 0 1 5.5 2.5c0 3.5-5.5 7-5.5 7z" />
           </svg>
-          <span className="h-px bg-cream/25 w-10" />
+          <span className="h-px bg-cream/45 w-10" />
         </div>
 
-        <p className="text-cream/70 text-base sm:text-lg font-body leading-relaxed">
+        <p className="text-cream/95 text-base sm:text-lg font-body leading-relaxed drop-shadow-sm">
           Order by Wednesday at noon for free Friday pickup or local delivery in Georgetown & Lexington.
           Whether it&apos;s for you or someone who needs a warm reminder
           they&apos;re loved — we&apos;d love to bake for you.

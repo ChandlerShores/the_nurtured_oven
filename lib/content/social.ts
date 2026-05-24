@@ -22,7 +22,7 @@ export const recentBakes: SocialPost[] = [
     alt: "Biscoff oatmeal cookie with label and packaging",
   },
   {
-    image: "/images/marshmallow-cloud-bar.png",
+    image: "/images/cloudbar_stretch.png",
     caption: "Marshmallow cloud bars, pulled warm from the pan.",
     alt: "Homemade marshmallow cereal bar with a gooey pull",
   },
@@ -32,7 +32,7 @@ export const recentBakes: SocialPost[] = [
     alt: "Cloud bars in clear packaging ready to go",
   },
   {
-    image: "/images/comfort-box.png",
+    image: "/images/weekly_comfort_box.png",
     caption: "This week\u2019s Comfort Box, ready to brighten someone\u2019s day.",
     alt: "A beautifully boxed assortment of fresh-baked treats",
   },

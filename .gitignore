@@ -24,6 +24,11 @@
 /*.png
 /*.svg
 
+# Playbook exports for client (pnpm playbook:export)
+/owner-playbook.pdf
+/playbook.pdf
+/playbook-page-*.jpg
+
 # debug
 npm-debug.log*
 yarn-debug.log*

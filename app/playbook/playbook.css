@@ -1,0 +1,134 @@
+/* Owner playbook — screen + print (import only from app/playbook/layout.tsx) */
+
+/* Standalone doc: no marketing header/footer */
+body:has(.playbook-doc) > header,
+body:has(.playbook-doc) > footer {
+  display: none;
+}
+
+body:has(.playbook-doc) > main {
+  flex: 1;
+}
+
+.playbook-doc {
+  @apply bg-cream text-espresso;
+}
+
+.playbook-doc article {
+  @apply px-6 sm:px-10 py-8 sm:py-10;
+}
+
+.playbook-page {
+  @apply pb-4;
+}
+
+/* Extra breathing room when exporting page JPEGs (scripts/export-playbook.ts) */
+body.playbook-export-jpegs .playbook-doc {
+  background: #ebe4d8 !important;
+}
+
+body.playbook-export-jpegs .playbook-doc article {
+  padding: 1.75rem 1.25rem 2.25rem !important;
+}
+
+body.playbook-export-jpegs .playbook-page {
+  padding: 2.75rem 2.25rem !important;
+  margin-bottom: 1.25rem !important;
+  max-width: 42rem;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  background: #fff !important;
+  border: 1px solid #d4ccc0;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+}
+
+@media print {
+  @page {
+    size: letter;
+    margin: 0.65in 0.7in;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .playbook-no-print {
+    display: none !important;
+  }
+
+  .playbook-doc {
+    background: #fff !important;
+    color: #2c2416 !important;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .playbook-doc h1 {
+    font-size: 22pt;
+  }
+
+  .playbook-doc h2 {
+    font-size: 14pt;
+    page-break-after: avoid;
+  }
+
+  .playbook-doc h3 {
+    font-size: 11pt;
+    page-break-after: avoid;
+  }
+
+  .playbook-page {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .playbook-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .playbook-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .playbook-doc a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .playbook-cover-band {
+    background: #2c2416 !important;
+    color: #faf6f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .playbook-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .playbook-table th,
+  .playbook-table td {
+    border: 1px solid #c9bfb0;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .playbook-table thead th {
+    background: #ebe4d8 !important;
+    font-weight: 600;
+  }
+
+  .playbook-muted-box {
+    border: 1px solid #d4ccc0;
+    background: #f7f3ec !important;
+    padding: 0.5rem 0.65rem;
+  }
+}

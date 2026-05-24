@@ -1,3 +1,4 @@
+import DeliveryFields from "@/components/contact/DeliveryFields"
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import { siteConfig } from "@/lib/content/site"
 import type { ContactFormState } from "@/lib/contact/types"
@@ -28,7 +29,7 @@ export default function GiftFormFields({
           className={inputClassName}
           value={form.phone}
           onChange={(e) => update("phone", e.target.value)}
-          placeholder="(555) 123-4567"
+          placeholder="(859) 555-1234"
         />
       </div>
 
@@ -108,8 +109,8 @@ export default function GiftFormFields({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div>
+      <div className="space-y-5">
+        <div className="max-w-md">
           <label
             htmlFor="fulfillment"
             className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
@@ -120,29 +121,25 @@ export default function GiftFormFields({
             id="fulfillment"
             className={inputClassName}
             value={form.fulfillment}
-            onChange={(e) => update("fulfillment", e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              if (value === "pickup") {
+                update("deliveryCity", "")
+                update("deliveryAddress", "")
+              }
+              update("fulfillment", value)
+            }}
           >
             <option value="pickup">{fulfillmentPolicy.pickupOptionLabel}</option>
             <option value="delivery">{fulfillmentPolicy.deliveryOptionLabel}</option>
           </select>
         </div>
         {form.fulfillment === "delivery" && (
-          <div>
-            <label
-              htmlFor="deliveryAddress"
-              className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
-            >
-              Delivery address
-            </label>
-            <input
-              id="deliveryAddress"
-              type="text"
-              className={inputClassName}
-              value={form.deliveryAddress}
-              onChange={(e) => update("deliveryAddress", e.target.value)}
-              placeholder={fulfillmentPolicy.deliveryAddressPlaceholder}
-            />
-          </div>
+          <DeliveryFields
+            form={form}
+            update={update}
+            inputClassName={inputClassName}
+          />
         )}
       </div>
 

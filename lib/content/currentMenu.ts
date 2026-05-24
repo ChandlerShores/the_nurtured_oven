@@ -36,7 +36,7 @@ export const currentMenu: CurrentMenu = {
     priceLabel: "$33",
     priceCents: 3300,
     allergenTags: ["wheat", "eggs", "dairy", "soy"],
-    image: "/images/comfort-box.png",
+    image: "/images/weekly_comfort_box.png",
     squareCheckoutUrl: "",
     orderButtonText: "Order a Comfort Box",
     soldOut: false,

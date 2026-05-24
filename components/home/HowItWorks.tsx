@@ -20,7 +20,7 @@ const steps = [
     icon: "🏡",
     title: "Friday: pickup or delivery",
     description:
-      "Free pickup, or Friday delivery in Georgetown & Lexington ($7, free on orders $40+). Deliveries use a set window — exact times aren\u2019t guaranteed.",
+      "Free pickup, or local delivery in Georgetown & Lexington ($7, free on orders $40+).",
   },
 ]
 
@@ -36,17 +36,19 @@ export default function HowItWorks() {
           <Divider icon="dot" className="mt-4 mb-0" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5 items-stretch">
           {steps.map((step, i) => (
             <div
               key={i}
-              className="text-center bg-warm-white rounded-2xl p-7 shadow-gentle border border-linen/30"
+              className="flex h-full flex-col items-center text-center bg-warm-white rounded-2xl p-6 sm:p-7 shadow-gentle border border-linen/30"
             >
-              <div className="text-3xl mb-4">{step.icon}</div>
-              <h3 className="font-heading text-lg text-espresso mb-2 tracking-wide">
+              <div className="flex h-10 shrink-0 items-center justify-center text-3xl leading-none mb-4">
+                {step.icon}
+              </div>
+              <h3 className="font-heading text-lg text-espresso tracking-wide min-h-[3.25rem] flex items-center justify-center mb-2 px-1">
                 {step.title}
               </h3>
-              <p className="text-brown-sugar/70 text-sm leading-relaxed font-body">
+              <p className="text-brown-sugar/70 text-sm leading-relaxed font-body w-full">
                 {step.description}
               </p>
             </div>

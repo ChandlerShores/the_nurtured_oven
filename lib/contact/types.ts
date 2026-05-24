@@ -4,6 +4,7 @@ export interface ContactFormState {
   phone: string
   items: string
   fulfillment: string
+  deliveryCity: string
   deliveryAddress: string
   giftRecipient: string
   giftMessage: string
@@ -18,6 +19,7 @@ export const emptyContactFormState: ContactFormState = {
   phone: "",
   items: "",
   fulfillment: "pickup",
+  deliveryCity: "",
   deliveryAddress: "",
   giftRecipient: "",
   giftMessage: "",

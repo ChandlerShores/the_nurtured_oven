@@ -5,7 +5,11 @@ import {
   getDeliveryFeeCents,
 } from "@/lib/order/delivery-fee"
 import { getCatalogItem } from "@/lib/order/catalog"
-import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import {
+  formatDeliveryLine,
+  fulfillmentPolicy,
+} from "@/lib/content/fulfillment"
+import { formatPhoneForSquare } from "@/lib/phone"
 import {
   getAppUrl,
   getSquareClient,
@@ -23,6 +27,7 @@ export interface WeeklyCheckoutInput {
   phone?: string
   lineItems: CheckoutLineItem[]
   fulfillment: "pickup" | "delivery"
+  deliveryCity?: string
   deliveryAddress?: string
   dietary?: string
   message?: string
@@ -33,7 +38,9 @@ function buildPaymentNote(input: WeeklyCheckoutInput): string {
     `Weekly order — ${input.fulfillment}`,
     `Customer: ${input.name}`,
     input.phone ? `Phone: ${input.phone}` : null,
-    input.deliveryAddress ? `Address: ${input.deliveryAddress}` : null,
+    formatDeliveryLine(input.deliveryCity, input.deliveryAddress)
+      ? `Delivery: ${formatDeliveryLine(input.deliveryCity, input.deliveryAddress)}`
+      : null,
     input.dietary ? `Dietary: ${input.dietary}` : null,
     input.message ? `Notes: ${input.message}` : null,
   ]
@@ -93,6 +100,8 @@ export async function createWeeklyCheckout(
     })
   }
 
+  const buyerPhoneNumber = formatPhoneForSquare(input.phone)
+
   const result = await client.checkout.paymentLinks.create({
     idempotencyKey: randomUUID(),
     description: `Weekly order for ${input.name} — ${fulfillmentPolicy.menuFulfillmentLine}`,
@@ -108,7 +117,7 @@ export async function createWeeklyCheckout(
     },
     prePopulatedData: {
       buyerEmail: input.email,
-      buyerPhoneNumber: input.phone || undefined,
+      ...(buyerPhoneNumber ? { buyerPhoneNumber } : {}),
     },
     paymentNote: buildPaymentNote(input),
   })
