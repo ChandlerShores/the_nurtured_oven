@@ -3,8 +3,8 @@ import Divider from "@/components/ui/Divider"
 const steps = [
   {
     icon: "📋",
-    title: "Saturday: menu drops",
-    description: "We post the weekly menu every Saturday — follow along or sign up for reminders.",
+    title: "Friday: menu drops",
+    description: "We post the weekly menu every Friday — follow along or sign up for reminders.",
   },
   {
     icon: "🛒",
@@ -14,12 +14,13 @@ const steps = [
   {
     icon: "💳",
     title: "Pay to confirm",
-    description: "We\u2019ll send a Square payment link. Your order is locked in once payment is received.",
+    description: "Pay securely with Square at checkout. Your order is locked in once payment is received.",
   },
   {
     icon: "🏡",
     title: "Friday: pickup or delivery",
-    description: "Grab your fresh-baked treats or have them delivered locally on Friday.",
+    description:
+      "Free pickup, or Friday delivery in Georgetown & Lexington ($7, free on orders $40+). Deliveries use a set window — exact times aren\u2019t guaranteed.",
   },
 ]
 

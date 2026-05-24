@@ -7,7 +7,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "How does weekly ordering work?",
     answer:
-      "Every Saturday we post a new weekly menu with 3\u20135 items plus the Weekly Comfort Box. Place your order by Wednesday at noon, and we\u2019ll send a Square payment link to confirm. Orders are fulfilled on Friday via pickup or limited local delivery.",
+      "Every Friday we post a new weekly menu with 3\u20135 items plus the Weekly Comfort Box. Place your order by Wednesday at noon and pay at checkout to confirm. Orders are fulfilled on Friday via free pickup or local delivery in Georgetown and Lexington.",
   },
   {
     question: "What is the Weekly Comfort Box?",
@@ -22,17 +22,17 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "How do I pay?",
     answer:
-      "After you submit your order, we\u2019ll send a Square payment link via email. Your order is confirmed once payment is received \u2014 no payment, no confirmation.",
+      "Weekly orders are paid at checkout through Square. Your order is confirmed once payment is received \u2014 no payment, no confirmation.",
   },
   {
     question: "Do you offer local pickup?",
     answer:
-      "Yes! Friday pickup is our primary fulfillment method. We\u2019ll confirm the pickup details when your order is confirmed.",
+      "Yes! Friday pickup is free. We\u2019ll confirm pickup details when your order is confirmed.",
   },
   {
     question: "Do you offer local delivery?",
     answer:
-      "We offer limited local delivery within about 15 miles on Fridays. A delivery fee or minimum may apply. Reach out with your address and we\u2019ll let you know if delivery is available for your area.",
+      "Pickup is free. Local Friday delivery is available in Georgetown and Lexington for $7, or free on orders of $40+. Deliveries are made during a set Friday delivery window, so exact delivery times are not guaranteed.",
   },
   {
     question: "What are the Comfort Box gift tiers?",

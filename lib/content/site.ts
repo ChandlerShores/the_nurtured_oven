@@ -6,8 +6,9 @@ export const siteConfig = {
   responseWindow: "within 24 hours" /* confirm with owner */,
   phone: "" /* confirm with owner */,
   serviceArea: {
-    label: "Central Kentucky" /* confirm with owner */,
-    deliveryNote: "Friday pickup and limited local delivery",
+    label: "Georgetown & Lexington",
+    deliveryNote:
+      "Free Friday pickup; local delivery $7 (free on orders $40+)",
   },
   social: {
     instagram: {

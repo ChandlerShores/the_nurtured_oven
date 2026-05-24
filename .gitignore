@@ -20,8 +20,9 @@
 .DS_Store
 *.pem
 
-# Dropped-in source images at repo root (canonical copies live in public/images)
+# Dropped-in assets at repo root (canonical copies live in public/)
 /*.png
+/*.svg
 
 # debug
 npm-debug.log*

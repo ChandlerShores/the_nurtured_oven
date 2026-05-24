@@ -25,7 +25,7 @@ const dancingScript = Dancing_Script({
 export const metadata: Metadata = {
   title: "The Nurtured Oven | Weekly Comfort Sweets from Kentucky",
   description:
-    "Small-batch comfort sweets, made weekly, boxed beautifully, and shared with care. Order by Wednesday for Friday pickup or local delivery in Central Kentucky.",
+    "Small-batch comfort sweets, made weekly, boxed beautifully, and shared with care. Order by Wednesday for free Friday pickup or local delivery in Georgetown & Lexington.",
 }
 
 export default function RootLayout({

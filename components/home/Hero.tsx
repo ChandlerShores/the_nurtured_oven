@@ -21,7 +21,7 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">
-          <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">new menu every saturday</p>
+          <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">new menu every friday</p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
             Small-batch comfort sweets, made weekly and shared with care.
           </h1>
@@ -35,7 +35,7 @@ export default function Hero() {
           </div>
 
           <p className="text-cream/80 text-base sm:text-lg leading-relaxed font-body">
-            Order by Wednesday at noon. Pick up or get local delivery on Friday. Cookies, bars, brownies, and our signature Weekly Comfort Box.
+            Order by Wednesday at noon. Free Friday pickup or local delivery in Georgetown & Lexington ($7, free on orders $40+). Cookies, bars, brownies, and our signature Weekly Comfort Box.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Button href="/menu" size="lg">

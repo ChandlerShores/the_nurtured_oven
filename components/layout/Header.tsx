@@ -5,18 +5,26 @@ import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
 import { availability } from "@/lib/content/availability"
+import {
+  isWeeklyOrderingWindowOpen,
+  WEEKLY_ORDERING_CLOSED_MESSAGE,
+} from "@/lib/menu/schedule"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import MobileNav from "./MobileNav"
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const orderingOpen = isWeeklyOrderingWindowOpen()
+  const bannerNote = orderingOpen
+    ? availability.openNote
+    : WEEKLY_ORDERING_CLOSED_MESSAGE
 
   return (
     <>
-      {(availability.orderingOpen ? availability.openNote : availability.closedNote) && (
+      {bannerNote && (
         <div className="bg-oatmeal/60 text-brown-sugar text-center text-xs sm:text-sm py-2 px-4 font-body tracking-wide">
-          ♡ {availability.orderingOpen ? availability.openNote : availability.closedNote}
+          ♡ {bannerNote}
         </div>
       )}
       <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-sm border-b border-linen/40">

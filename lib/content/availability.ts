@@ -1,14 +1,13 @@
 export const availability = {
-  orderingOpen: true,
+  /** Site banner when the weekly ordering window is open (Fri 9 AM – Wed noon ET). */
   cutoffDay: "Wednesday",
   cutoffTime: "noon",
   fulfillmentDay: "Friday",
-  menuDropDay: "Saturday",
+  menuDropDay: "Friday",
   localDeliveryAvailable: true,
-  deliveryRadius: "within 15 miles" /* confirm with owner */,
-  serviceAreaLabel: "Central Kentucky" /* confirm with owner */,
+  serviceAreaLabel: "Georgetown & Lexington",
   openNote:
-    "Order by Wednesday at noon for Friday pickup or limited local delivery.",
+    "Order by Wednesday at noon — free Friday pickup or local delivery in Georgetown & Lexington.",
   closedNote:
     "This week\u2019s ordering window has closed. Sign up for menu reminders, request a future gift box, or check out Little Extras on Friday.",
 }

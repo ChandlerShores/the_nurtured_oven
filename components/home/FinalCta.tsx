@@ -28,7 +28,7 @@ export default function FinalCta() {
         </div>
 
         <p className="text-cream/70 text-base sm:text-lg font-body leading-relaxed">
-          Order by Wednesday at noon for Friday pickup or local delivery.
+          Order by Wednesday at noon for free Friday pickup or local delivery in Georgetown & Lexington.
           Whether it&apos;s for you or someone who needs a warm reminder
           they&apos;re loved — we&apos;d love to bake for you.
         </p>

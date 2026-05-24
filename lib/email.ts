@@ -43,7 +43,7 @@ function formatEmailBody(data: InquiryData): string {
       data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
       data.message ? `\nAdditional notes: ${data.message}` : null,
       "",
-      ">> Send Square payment link to confirm this order.",
+      ">> Order submitted via website inquiry (not Square checkout).",
     )
   }
 
@@ -59,14 +59,14 @@ function formatEmailBody(data: InquiryData): string {
       data.dietary ? `Allergy/dietary notes: ${data.dietary}` : null,
       data.message ? `\nAdditional notes: ${data.message}` : null,
       "",
-      ">> Send Square payment link to confirm this gift order.",
+      ">> Follow up with customer to finalize gift order and payment.",
     )
   }
 
   if (data.intent === "reminder") {
     lines.push(
       "",
-      ">> Add to Saturday menu reminder list.",
+      ">> Add to Friday menu reminder list.",
     )
   }
 
@@ -120,5 +120,118 @@ export async function sendInquiryEmail(
   } catch (err) {
     console.error("[Email] Network error:", err)
     return { success: false, error: "Failed to send email" }
+  }
+}
+
+export interface PaidOrderEmailData {
+  orderId?: string
+  paymentNote?: string
+  buyerEmail?: string
+  receiptUrl?: string
+  amountCents?: number
+}
+
+function formatPaidOrderBody(
+  data: PaidOrderEmailData,
+  audience: "owner" | "customer"
+): string {
+  const divider = "=".repeat(40)
+  const amount =
+    data.amountCents != null
+      ? `$${(data.amountCents / 100).toFixed(2)}`
+      : "See Square receipt"
+
+  const lines: (string | null)[] =
+    audience === "owner"
+      ? [
+          "Paid weekly order (Square)",
+          divider,
+          "",
+          data.buyerEmail ? `Customer email: ${data.buyerEmail}` : null,
+          `Amount: ${amount}`,
+          data.orderId ? `Square order ID: ${data.orderId}` : null,
+          data.paymentNote ? `\nOrder details:\n${data.paymentNote}` : null,
+          data.receiptUrl ? `\nReceipt: ${data.receiptUrl}` : null,
+          "",
+          ">> Fulfill on Friday. Customer has been emailed a confirmation.",
+        ]
+      : [
+          "Your weekly order is confirmed!",
+          divider,
+          "",
+          "Thank you for ordering from The Nurtured Oven.",
+          `Amount paid: ${amount}`,
+          data.paymentNote
+            ? `\nYour order:\n${data.paymentNote.replace(/\s*\|\s*/g, "\n")}`
+            : null,
+          "",
+          "We'll follow up with Friday pickup or Georgetown/Lexington delivery details if needed.",
+          data.receiptUrl ? `\nView your receipt: ${data.receiptUrl}` : null,
+        ]
+
+  lines.push("", divider)
+  return lines.filter((l): l is string => l !== null).join("\n")
+}
+
+async function sendEmailMessage(options: {
+  to: string[]
+  subject: string
+  text: string
+  replyTo?: string
+}): Promise<{ success: boolean; error?: string }> {
+  const apiKey = process.env.RESEND_API_KEY
+
+  if (!apiKey) {
+    console.log(`[Email] ${options.subject}`)
+    console.log(options.text)
+    return { success: true }
+  }
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "The Nurtured Oven <orders@thenurturedoven.com>",
+        to: options.to,
+        reply_to: options.replyTo,
+        subject: options.subject,
+        text: options.text,
+      }),
+    })
+
+    if (!res.ok) {
+      const err = await res.text()
+      console.error("[Email] Resend error:", err)
+      return { success: false, error: "Failed to send email" }
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error("[Email] Network error:", err)
+    return { success: false, error: "Failed to send email" }
+  }
+}
+
+export async function sendPaidOrderEmails(
+  data: PaidOrderEmailData,
+  ownerEmail: string
+): Promise<void> {
+  await sendEmailMessage({
+    to: [ownerEmail],
+    subject: `Paid weekly order${data.buyerEmail ? ` — ${data.buyerEmail}` : ""}`,
+    text: formatPaidOrderBody(data, "owner"),
+    replyTo: data.buyerEmail,
+  })
+
+  if (data.buyerEmail) {
+    await sendEmailMessage({
+      to: [data.buyerEmail],
+      subject: "Your Nurtured Oven order is confirmed",
+      text: formatPaidOrderBody(data, "customer"),
+    })
   }
 }

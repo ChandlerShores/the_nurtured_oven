@@ -7,7 +7,7 @@ export const littleExtras = {
   howItWorks: [
     "We post Little Extras on Fridays when available — follow us on social media or sign up for menu reminders to be the first to know.",
     "Boxes are first-paid, first-claimed. Once they're gone, they're gone.",
-    "Pickup is the same Friday. No delivery for Little Extras unless bundled with a weekly order.",
+    "Pickup is the same Friday (free). Little Extras are pickup only — not available for standalone delivery.",
   ],
   availabilityNote:
     "Little Extras are not guaranteed every week. They depend on what's left after fulfilling weekly orders.",
