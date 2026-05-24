@@ -9,14 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#FBF6EE",
-        oatmeal: "#F0E6D6",
-        linen: "#E4D8CA",
-        blush: "#DEB5A7",
-        sage: "#A3B18A",
-        "brown-sugar": "#7D6548",
-        espresso: "#4A3728",
-        "warm-white": "#FDF9F3",
+        cream: "#F8F4EE",
+        oatmeal: "#E9E0D2",
+        sage: "#AEB5A0",
+        olive: "#7F8672",
+        blush: "#C89E9B",
+        "warm-honey": "#D0A55B",
+        espresso: "#4A352C",
+        linen: "#F3EDE3",
+        "brown-sugar": "#7F8672",
+        "warm-white": "#F3EDE3",
       },
       fontFamily: {
         heading: ["var(--font-heading)", "Georgia", "serif"],
@@ -28,8 +30,8 @@ const config: Config = {
         softer: "1.5rem",
       },
       boxShadow: {
-        gentle: "0 2px 12px rgba(74, 55, 40, 0.06)",
-        warm: "0 4px 24px rgba(74, 55, 40, 0.08)",
+        gentle: "0 2px 12px rgba(74, 53, 44, 0.06)",
+        warm: "0 4px 24px rgba(74, 53, 44, 0.08)",
       },
     },
   },

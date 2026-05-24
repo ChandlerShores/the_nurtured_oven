@@ -138,8 +138,8 @@ function OrderForm() {
             onClick={() => setIntent(key)}
             className={`text-sm px-4 py-2 rounded-full border font-body transition-colors ${
               intent === key
-                ? "bg-brown-sugar text-warm-white border-brown-sugar"
-                : "bg-cream/60 text-brown-sugar/70 border-linen/60 hover:border-brown-sugar/40"
+                ? "bg-olive text-cream border-olive"
+                : "bg-cream/60 text-olive/70 border-linen/60 hover:border-olive/40"
             }`}
           >
             {intentLabels[key].heading}
@@ -469,7 +469,7 @@ function OrderForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="w-full bg-brown-sugar text-warm-white py-4 rounded-full font-medium text-lg hover:bg-espresso shadow-gentle hover:shadow-warm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
+          className="w-full bg-olive text-cream py-4 rounded-full font-medium text-lg hover:bg-espresso shadow-gentle hover:shadow-warm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
         >
           {status === "sending"
             ? "Sending..."

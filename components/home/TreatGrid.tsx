@@ -65,7 +65,7 @@ export default function TreatGrid() {
               <div className="absolute inset-0 bg-gradient-to-t from-espresso/60 via-espresso/15 to-transparent" />
               <div className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/10 transition-colors duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
-                <h3 className="font-heading text-lg sm:text-xl text-warm-white tracking-wide">
+                <h3 className="font-heading text-lg sm:text-xl text-cream tracking-wide">
                   {cat.name}
                 </h3>
                 <p className="text-cream/70 text-sm font-body mt-1">

@@ -22,7 +22,7 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">
           <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">new menu every saturday</p>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-warm-white leading-snug tracking-wide">
+          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
             Small-batch comfort sweets, made weekly and shared with care.
           </h1>
 
@@ -41,7 +41,7 @@ export default function Hero() {
             <Button href="/menu" size="lg">
               View This Week&apos;s Menu
             </Button>
-            <Button href="/gifts" variant="outline" size="lg" className="border-cream/40 text-cream hover:bg-cream/10 hover:text-cream">
+            <Button href="/gifts" variant="inverse" size="lg">
               Send a Comfort Box
             </Button>
           </div>

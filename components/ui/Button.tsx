@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost"
+type ButtonVariant = "primary" | "secondary" | "outline" | "inverse" | "ghost"
 type ButtonSize = "sm" | "md" | "lg"
 
 interface ButtonProps {
@@ -16,13 +16,15 @@ interface ButtonProps {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-brown-sugar text-warm-white hover:bg-espresso shadow-gentle hover:shadow-warm transition-all duration-300",
+    "bg-olive text-cream hover:bg-espresso shadow-gentle hover:shadow-warm transition-all duration-300",
   secondary:
     "bg-oatmeal text-espresso hover:bg-linen shadow-gentle transition-all duration-300",
   outline:
-    "border border-brown-sugar/40 text-brown-sugar hover:bg-brown-sugar hover:text-warm-white transition-all duration-300",
+    "border-2 border-olive bg-cream text-espresso shadow-gentle hover:bg-olive hover:text-cream transition-all duration-300",
+  inverse:
+    "border-2 border-cream bg-cream/25 text-cream shadow-[0_2px_16px_rgba(0,0,0,0.2)] backdrop-blur-sm hover:bg-cream hover:text-espresso transition-all duration-300",
   ghost:
-    "text-brown-sugar hover:text-espresso hover:bg-oatmeal/40 transition-all duration-300",
+    "text-olive hover:text-espresso hover:bg-oatmeal/40 transition-all duration-300",
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -42,7 +44,7 @@ export default function Button({
   onClick,
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center font-body font-medium rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brown-sugar/60 tracking-wide"
+    "inline-flex items-center justify-center font-body font-semibold rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brown-sugar/60 tracking-wide"
   const styles = `${base} ${variantStyles[variant]} ${sizeStyles[size]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`
 
   if (href) {
