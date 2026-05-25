@@ -12,7 +12,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "What is the Weekly Comfort Box?",
     answer:
-      "It\u2019s our signature product \u2014 a curated mix of this week\u2019s best bakes (cookies, bars, and a seasonal surprise), beautifully boxed and ready to enjoy or share. It\u2019s the easiest way to get a taste of everything we\u2019re baking.",
+      "It\u2019s our signature product: a curated mix of this week\u2019s best bakes (cookies, bars, and a seasonal surprise), beautifully boxed and ready to enjoy or share. It\u2019s the easiest way to get a taste of everything we\u2019re baking.",
   },
   {
     question: "When is the ordering cutoff?",
@@ -22,7 +22,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "How do I pay?",
     answer:
-      "Weekly orders are paid at checkout through Square. Your order is confirmed once payment is received \u2014 no payment, no confirmation.",
+      "Weekly orders are paid at checkout through Square. Your order is confirmed once payment is received. No payment, no confirmation.",
   },
   {
     question: "Do you offer local pickup?",
@@ -32,7 +32,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Do you offer local delivery?",
     answer:
-      "Pickup is free. Local Friday delivery is available in Georgetown and Lexington for $7, or free on orders of $40+. Deliveries are made during a set Friday delivery window, so exact delivery times are not guaranteed.",
+      "Free Friday pickup. Georgetown & Lexington delivery is $7, or free on orders $40+. We deliver during a set Friday window; exact times aren't guaranteed.",
   },
   {
     question: "What are the Comfort Box gift tiers?",
@@ -42,7 +42,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "What are Little Extras?",
     answer:
-      "Sometimes there are leftover batches, test flavors, or beautifully imperfect pieces after a bake day. When available, we box them up at a friendly price ($8\u201315) and post them on Fridays. They\u2019re first-paid, first-claimed \u2014 once they\u2019re gone, they\u2019re gone.",
+      "Sometimes there are leftover batches, test flavors, or beautifully imperfect pieces after a bake day. When available, we box them up at a friendly price ($8\u201315) and post them on Fridays. They\u2019re first-paid, first-claimed. Once they\u2019re gone, they\u2019re gone.",
   },
   {
     question: "What if ordering is closed when I visit the site?",

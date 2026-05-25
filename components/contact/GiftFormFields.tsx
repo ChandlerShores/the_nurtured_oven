@@ -1,5 +1,6 @@
 import DeliveryFields from "@/components/contact/DeliveryFields"
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import FulfillmentPolicyNote from "@/components/ui/FulfillmentPolicyNote"
 import { siteConfig } from "@/lib/content/site"
 import type { ContactFormState } from "@/lib/contact/types"
 
@@ -19,9 +20,9 @@ export default function GiftFormFields({
       <div>
         <label
           htmlFor="phone"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
-          Phone <span className="text-brown-sugar/40 text-xs">(optional)</span>
+          Phone <span className="text-hint text-xs">(optional)</span>
         </label>
         <input
           id="phone"
@@ -36,7 +37,7 @@ export default function GiftFormFields({
       <div>
         <label
           htmlFor="items"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           Which Comfort Box? <span className="text-blush">*</span>
         </label>
@@ -58,7 +59,7 @@ export default function GiftFormFields({
         <div>
           <label
             htmlFor="giftRecipient"
-            className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+            className="block text-sm text-muted mb-1.5 tracking-wide"
           >
             Who is it for?
           </label>
@@ -74,7 +75,7 @@ export default function GiftFormFields({
         <div>
           <label
             htmlFor="giftOccasion"
-            className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+            className="block text-sm text-muted mb-1.5 tracking-wide"
           >
             Occasion
           </label>
@@ -92,11 +93,11 @@ export default function GiftFormFields({
       <div>
         <label
           htmlFor="giftMessage"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           Gift message{" "}
-          <span className="text-brown-sugar/40 text-xs">
-            (optional — we&apos;ll include it in the box)
+          <span className="text-hint text-xs">
+            (optional; we&apos;ll include it in the box)
           </span>
         </label>
         <textarea
@@ -113,7 +114,7 @@ export default function GiftFormFields({
         <div className="max-w-md">
           <label
             htmlFor="fulfillment"
-            className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+            className="block text-sm text-muted mb-1.5 tracking-wide"
           >
             Pickup or delivery?
           </label>
@@ -143,17 +144,17 @@ export default function GiftFormFields({
         )}
       </div>
 
-      <p className="text-xs text-brown-sugar/50 leading-relaxed font-body bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
-        {fulfillmentPolicy.customerFacing}
-      </p>
+      <div className="bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
+        <FulfillmentPolicyNote />
+      </div>
 
       <div>
         <label
           htmlFor="dietary"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           Allergy or dietary notes{" "}
-          <span className="text-brown-sugar/40 text-xs">(optional)</span>
+          <span className="text-hint text-xs">(optional)</span>
         </label>
         <input
           id="dietary"
@@ -163,7 +164,7 @@ export default function GiftFormFields({
           onChange={(e) => update("dietary", e.target.value)}
           placeholder="Any allergies or dietary needs?"
         />
-        <p className="mt-2 text-xs text-brown-sugar/50 leading-relaxed">
+        <p className="mt-2 text-xs text-caption leading-relaxed">
           {siteConfig.cottageBakeryDisclosure}
         </p>
       </div>
@@ -171,10 +172,10 @@ export default function GiftFormFields({
       <div>
         <label
           htmlFor="message"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           Anything else?{" "}
-          <span className="text-brown-sugar/40 text-xs">(optional)</span>
+          <span className="text-hint text-xs">(optional)</span>
         </label>
         <textarea
           id="message"

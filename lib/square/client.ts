@@ -1,4 +1,8 @@
 import { SquareClient, SquareEnvironment } from "square"
+import {
+  getPublicAppUrl,
+  validateSquareLocationId,
+} from "@/lib/env/deployment"
 
 export function isSquareConfigured(): boolean {
   return Boolean(
@@ -25,12 +29,10 @@ export function getSquareLocationId(): string {
   if (!locationId) {
     throw new Error("SQUARE_LOCATION_ID is not configured")
   }
+  validateSquareLocationId(locationId)
   return locationId
 }
 
 export function getAppUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    "http://localhost:3000"
-  )
+  return getPublicAppUrl()
 }

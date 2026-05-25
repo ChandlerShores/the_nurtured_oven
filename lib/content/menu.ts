@@ -13,5 +13,5 @@ export type {
 
 export { currentMenu } from "@/lib/content/currentMenu"
 
-/** @deprecated Use `currentMenu` — kept for existing imports */
+/** @deprecated Use `currentMenu` - kept for existing imports */
 export { currentMenu as weeklyMenu } from "@/lib/content/currentMenu"

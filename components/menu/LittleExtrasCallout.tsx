@@ -11,10 +11,10 @@ export default function LittleExtrasCallout({ callout }: LittleExtrasCalloutProp
   return (
     <div className="max-w-3xl mx-auto px-5 sm:px-8 pb-12 text-center">
       <div className="bg-warm-white rounded-2xl border border-linen/30 shadow-gentle px-6 py-8 sm:px-10">
-        <p className="font-accent text-brown-sugar/60 text-base mb-2">
+        <p className="font-accent text-eyebrow text-base mb-2">
           friday bonus
         </p>
-        <p className="text-brown-sugar/70 font-body text-sm leading-relaxed mb-5">
+        <p className="text-muted font-body text-sm leading-relaxed mb-5">
           {callout.text}
         </p>
         <Button href={callout.href} variant="outline" size="md">

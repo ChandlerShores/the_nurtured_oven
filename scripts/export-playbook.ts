@@ -108,7 +108,7 @@ async function main() {
     }
   }
 
-  console.log("\nDone — share owner-playbook.pdf or the playbook-page-*.jpg files via text.")
+  console.log("\nDone. Share owner-playbook.pdf or the playbook-page-*.jpg files via text.")
 }
 
 main().catch((err) => {

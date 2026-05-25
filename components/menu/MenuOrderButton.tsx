@@ -25,7 +25,7 @@ export default function MenuOrderButton({
 }: MenuOrderButtonProps) {
   if (soldOut) {
     return (
-      <p className="text-sm font-body text-brown-sugar/60 italic">
+      <p className="text-sm font-body text-muted-sm italic">
         Sold out this week
       </p>
     )
@@ -33,7 +33,7 @@ export default function MenuOrderButton({
 
   if (!orderingOpen || !href) {
     return (
-      <p className="text-sm font-body text-brown-sugar/60 leading-relaxed max-w-sm">
+      <p className="text-sm font-body text-muted-sm leading-relaxed max-w-sm">
         {disabledMessage}
       </p>
     )

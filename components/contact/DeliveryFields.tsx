@@ -20,7 +20,7 @@ export default function DeliveryFields({
       <div>
         <label
           htmlFor="deliveryCity"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           {fulfillmentPolicy.deliveryCityLabel}{" "}
           <span className="text-blush">*</span>
@@ -43,7 +43,7 @@ export default function DeliveryFields({
       <div>
         <label
           htmlFor="deliveryAddress"
-          className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+          className="block text-sm text-muted mb-1.5 tracking-wide"
         >
           Street address <span className="text-blush">*</span>
         </label>

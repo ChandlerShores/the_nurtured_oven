@@ -18,17 +18,17 @@ export default function MenuHero({ menu }: MenuHeroProps) {
       )}
 
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-16 sm:pt-20 pb-10 text-center">
-        <p className="font-accent text-brown-sugar/60 text-lg mb-2">
+        <p className="font-accent text-eyebrow text-lg mb-2">
           made fresh every week
         </p>
         <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso tracking-wide">
           {menu.weekLabel}
         </h1>
         <Divider icon="heart" className="mt-4 mb-2" />
-        <p className="text-brown-sugar/70 text-lg font-body max-w-xl mx-auto leading-relaxed">
+        <p className="text-muted text-lg font-body max-w-xl mx-auto leading-relaxed">
           {menu.cutoffText}
         </p>
-        <p className="mt-2 text-brown-sugar/50 text-sm font-body">
+        <p className="mt-2 text-caption text-sm font-body">
           {menu.fulfillmentText}
         </p>
       </div>

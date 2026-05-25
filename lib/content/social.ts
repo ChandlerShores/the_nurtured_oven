@@ -18,7 +18,7 @@ export const socialLinks = {
 export const recentBakes: SocialPost[] = [
   {
     image: "/images/biscoff_cookie.png",
-    caption: "Biscoff oatmeal cookies \u2014 fresh from this week\u2019s menu.",
+    caption: "Biscoff oatmeal cookies, fresh from this week\u2019s menu.",
     alt: "Biscoff oatmeal cookie with label and packaging",
   },
   {

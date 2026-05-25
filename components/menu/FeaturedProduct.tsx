@@ -38,10 +38,10 @@ export default function FeaturedProduct({
             <h2 className="font-heading text-2xl sm:text-3xl text-espresso tracking-wide mb-3">
               {product.name}
             </h2>
-            <p className="text-brown-sugar/70 text-lg leading-relaxed font-body mb-2">
+            <p className="text-muted text-lg leading-relaxed font-body mb-2">
               {product.description}
             </p>
-            <p className="text-brown-sugar/50 text-sm font-body mb-1">
+            <p className="text-caption text-sm font-body mb-1">
               {product.includes}
             </p>
             {product.allergenTags.length > 0 && (
@@ -49,7 +49,7 @@ export default function FeaturedProduct({
                 {product.allergenTags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs bg-oatmeal/60 text-brown-sugar/70 px-2.5 py-0.5 rounded-full border border-linen/30"
+                    className="text-xs bg-oatmeal/60 text-muted px-2.5 py-0.5 rounded-full border border-linen/30"
                   >
                     {tag}
                   </span>

@@ -28,7 +28,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="font-heading text-lg text-espresso tracking-wide mb-2">
           {product.name}
         </h3>
-        <p className="text-brown-sugar/60 text-sm leading-relaxed font-body flex-1">
+        <p className="text-muted-sm text-sm leading-relaxed font-body flex-1">
           {product.description}
         </p>
 
@@ -37,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.allergenTags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs bg-oatmeal/60 text-brown-sugar/70 px-2.5 py-0.5 rounded-full border border-linen/30"
+                className="text-xs bg-oatmeal/60 text-muted px-2.5 py-0.5 rounded-full border border-linen/30"
               >
                 {tag}
               </span>
@@ -52,7 +52,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
 
         {product.soldOut && (
-          <p className="mt-3 text-sm font-body text-brown-sugar/60 italic">
+          <p className="mt-3 text-sm font-body text-muted-sm italic">
             Sold out this week
           </p>
         )}

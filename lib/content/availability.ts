@@ -7,7 +7,7 @@ export const availability = {
   localDeliveryAvailable: true,
   serviceAreaLabel: "Georgetown & Lexington",
   openNote:
-    "Order by Wednesday at noon — free Friday pickup or local delivery in Georgetown & Lexington.",
+    "Order by Wednesday at noon for free Friday pickup or local delivery in Georgetown & Lexington.",
   closedNote:
     "This week\u2019s ordering window has closed. Sign up for menu reminders, request a future gift box, or check out Little Extras on Friday.",
 }

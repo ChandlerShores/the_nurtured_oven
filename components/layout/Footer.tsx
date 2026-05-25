@@ -15,15 +15,15 @@ export default function Footer() {
             <Link href="/" className="font-heading text-2xl text-cream tracking-wide">
               {siteConfig.brandName}
             </Link>
-            <p className="font-accent text-cream/50 text-sm mt-1">comfort sweets, made weekly</p>
-            <p className="mt-4 text-cream/60 text-sm leading-relaxed max-w-xs">
+            <p className="font-accent text-cream/75 text-sm mt-1">comfort sweets, made weekly</p>
+            <p className="mt-4 text-cream/80 text-sm leading-relaxed max-w-xs">
               {siteConfig.tagline}
             </p>
           </div>
 
           {/* Navigation */}
           <div>
-            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/40 mb-4">
+            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/65 mb-4">
               Explore
             </h3>
             <ul className="space-y-2.5">
@@ -31,7 +31,7 @@ export default function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-cream/70 hover:text-cream text-sm transition-colors"
+                    className="text-cream/85 hover:text-cream text-sm transition-colors"
                   >
                     {item.label}
                   </Link>
@@ -42,10 +42,10 @@ export default function Footer() {
 
           {/* Contact & Service Area */}
           <div>
-            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/40 mb-4">
+            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/65 mb-4">
               Get in Touch
             </h3>
-            <ul className="space-y-2.5 text-sm text-cream/70">
+            <ul className="space-y-2.5 text-sm text-cream/85">
               <li>
                 <Link href="/menu" className="hover:text-cream transition-colors">
                   {siteConfig.orderCta}
@@ -58,11 +58,11 @@ export default function Footer() {
 
           {/* Social */}
           <div>
-            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/40 mb-4">
+            <h3 className="font-heading text-xs uppercase tracking-[0.2em] text-cream/65 mb-4">
               Follow Along
             </h3>
-            <SocialIcons className="[&_a]:text-cream/60 [&_a:hover]:text-cream" iconSize={20} />
-            <p className="mt-3 text-cream/40 text-sm">
+            <SocialIcons className="[&_a]:text-cream/80 [&_a:hover]:text-cream" iconSize={20} />
+            <p className="mt-3 text-cream/70 text-sm">
               {siteConfig.social.instagram.handle}
             </p>
           </div>
@@ -71,13 +71,13 @@ export default function Footer() {
         {/* Bottom */}
         <Divider icon="heart" className="[&>svg]:text-cream/20 [&::before]:bg-cream/10 [&::after]:bg-cream/10 my-10" />
         <div>
-          <p className="text-cream/30 text-xs leading-relaxed max-w-2xl">
+          <p className="text-cream/55 text-xs leading-relaxed max-w-2xl">
             {siteConfig.cottageBakeryDisclosure}
           </p>
-          <p className="text-cream/25 text-xs mt-4">
+          <p className="text-cream/50 text-xs mt-4">
             &copy; {year} {siteConfig.brandName}. Made with ♡ in Kentucky.
           </p>
-          <p className="text-cream/20 text-[10px] mt-2 tracking-wide">
+          <p className="text-cream/45 text-[10px] mt-2 tracking-wide">
             Built by Chandler Shores Advisory
           </p>
         </div>

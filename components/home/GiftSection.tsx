@@ -27,13 +27,13 @@ export default function GiftSection() {
           </div>
 
           <div className="order-1 lg:order-2">
-            <p className="font-accent text-brown-sugar/60 text-lg mb-2">beautifully boxed</p>
+            <p className="font-accent text-eyebrow text-lg mb-2">beautifully boxed</p>
             <h2 className="font-heading text-3xl sm:text-4xl lg:text-[2.75rem] text-espresso leading-snug tracking-wide">
               Send something sweeter than flowers.
             </h2>
             <Divider icon="heart" className="my-5 justify-start [&::after]:hidden" />
-            <p className="text-brown-sugar/80 text-lg leading-relaxed font-body">
-              Choose a Mini, Classic, or Gathering Comfort Box — filled with
+            <p className="text-muted text-lg leading-relaxed font-body">
+              Choose a Mini, Classic, or Gathering Comfort Box, filled with
               this week&apos;s best bakes, wrapped with care, and ready to
               brighten someone&apos;s day.
             </p>
@@ -42,7 +42,7 @@ export default function GiftSection() {
               {moments.map((m) => (
                 <span
                   key={m}
-                  className="bg-oatmeal/70 text-brown-sugar/80 text-sm px-4 py-1.5 rounded-full font-body border border-linen/50"
+                  className="bg-oatmeal/70 text-muted text-sm px-4 py-1.5 rounded-full font-body border border-linen/50"
                 >
                   {m}
                 </span>

@@ -68,7 +68,7 @@ export default function WeeklyOrderCart({
   return (
     <div className="space-y-4">
       {!isContact && (
-        <p className="text-brown-sugar/60 text-sm font-body">
+        <p className="text-muted-sm text-sm font-body">
           Select quantities for this week&apos;s menu. You&apos;ll pay securely
           with Square at checkout.
         </p>
@@ -109,7 +109,7 @@ export default function WeeklyOrderCart({
                     </span>
                   )}
                 </p>
-                <p className="text-brown-sugar/60 text-sm font-body mt-0.5">
+                <p className="text-muted text-sm font-body mt-0.5">
                   {formatCents(item.priceCents)}
                   {item.unitLabel ? ` / ${item.unitLabel}` : ""}
                 </p>
@@ -147,7 +147,7 @@ export default function WeeklyOrderCart({
       </ul>
 
       {lineItems.length > 0 && (
-        <div className="text-right text-sm font-body text-brown-sugar/80 pt-1 space-y-1">
+        <div className="text-right text-sm font-body text-muted pt-1 space-y-1">
           <p>
             Subtotal:{" "}
             <span className="font-heading text-espresso text-base">
@@ -164,7 +164,7 @@ export default function WeeklyOrderCart({
               </span>
             </p>
           )}
-          <p className="text-brown-sugar/90">
+          <p className="text-espresso">
             Estimated total:{" "}
             <span className="font-heading text-espresso text-base">
               {formatCents(totalCents)}
@@ -174,7 +174,12 @@ export default function WeeklyOrderCart({
       )}
 
       {lineItems.length === 0 && (
-        <p className="text-center text-sm text-brown-sugar/50 font-body py-2">
+        <p
+          id="weekly-order-cart-status"
+          role="status"
+          aria-live="polite"
+          className="text-center text-sm text-muted font-body py-2"
+        >
           Add at least one item to continue.
         </p>
       )}

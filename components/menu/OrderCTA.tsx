@@ -17,7 +17,7 @@ export default function OrderCTA({ menu }: OrderCTAProps) {
           {menu.orderCta.heading}
         </h2>
         <Divider icon="heart" />
-        <p className="text-brown-sugar/70 font-body text-lg">
+        <p className="text-muted font-body text-lg">
           {menu.orderCta.openBody}
         </p>
         <div className="mt-6">

@@ -38,4 +38,4 @@ export const contactSuccessMessages: Record<ContactIntent, string> = {
 }
 
 export const contactInputClassName =
-  "w-full bg-cream/60 border border-linen/60 rounded-xl px-4 py-3 text-espresso font-body placeholder:text-brown-sugar/40 focus:outline-none focus:ring-2 focus:ring-blush/30 focus:border-blush/50 transition-all duration-200"
+  "w-full bg-cream/60 border border-linen/60 rounded-xl px-4 py-3 text-espresso font-body placeholder:text-espresso/45 focus:outline-none focus:ring-2 focus:ring-blush/30 focus:border-blush/50 transition-all duration-200"

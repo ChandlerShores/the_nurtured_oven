@@ -105,7 +105,7 @@ export default function ContactIntentSelector({
             <h3 className="font-heading text-lg text-espresso tracking-wide mb-1.5">
               {option.title}
             </h3>
-            <p className="text-brown-sugar/65 text-sm font-body leading-relaxed">
+            <p className="text-muted text-sm font-body leading-relaxed">
               {option.description}
             </p>
           </button>

@@ -49,7 +49,7 @@ export default function Button({
 
   if (href) {
     return (
-      <Link href={href} className={styles}>
+      <Link href={href} className={styles} onClick={onClick}>
         {children}
       </Link>
     )

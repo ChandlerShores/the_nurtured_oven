@@ -1,4 +1,4 @@
-/* Owner playbook — screen + print (import only from app/playbook/layout.tsx) */
+/* Owner playbook - screen + print (import only from app/playbook/layout.tsx) */
 
 /* Standalone doc: no marketing header/footer */
 body:has(.playbook-doc) > header,

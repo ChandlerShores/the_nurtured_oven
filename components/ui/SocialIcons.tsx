@@ -16,7 +16,7 @@ export default function SocialIcons({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Follow on Instagram"
-        className="text-brown-sugar/60 hover:text-espresso transition-colors duration-200"
+        className="text-muted-sm hover:text-espresso transition-colors duration-200"
       >
         <svg
           width={iconSize}
@@ -38,7 +38,7 @@ export default function SocialIcons({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Follow on Facebook"
-        className="text-brown-sugar/60 hover:text-espresso transition-colors duration-200"
+        className="text-muted-sm hover:text-espresso transition-colors duration-200"
       >
         <svg
           width={iconSize}

@@ -17,11 +17,11 @@ export default function OrderSuccessPage() {
           Thank you!
         </h1>
         <Divider icon="heart" />
-        <p className="text-brown-sugar/70 text-lg font-body leading-relaxed mt-6">
+        <p className="text-muted text-lg font-body leading-relaxed mt-6">
           Your payment was received and your weekly order is confirmed. We&apos;ll
           follow up with Friday pickup or Georgetown/Lexington delivery details if needed.
         </p>
-        <p className="text-brown-sugar/50 text-sm font-body mt-4">
+        <p className="text-caption text-sm font-body mt-4">
           A receipt was sent to the email you used at checkout.
         </p>
         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
@@ -32,7 +32,7 @@ export default function OrderSuccessPage() {
             Home
           </Button>
         </div>
-        <p className="mt-8 text-xs text-brown-sugar/40 font-body">
+        <p className="mt-8 text-xs text-hint font-body">
           Questions?{" "}
           <Link href="/contact?intent=general" className="underline hover:text-olive">
             Get in touch

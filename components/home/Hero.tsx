@@ -7,7 +7,7 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden">
         <Image
           src="/images/weekly_comfort_box.png"
-          alt="The Nurtured Oven Weekly Comfort Box — cookies, brownies, and cloud bars in an open gift box"
+          alt="The Nurtured Oven Weekly Comfort Box with cookies, brownies, and cloud bars in an open gift box"
           fill
           priority
           className="object-cover object-[58%_30%]"
@@ -21,7 +21,7 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">
-          <p className="font-accent text-cream/80 text-lg sm:text-xl mb-3">new menu every friday</p>
+          <p className="font-accent text-cream/95 text-lg sm:text-xl mb-3">new menu every friday</p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
             Small-batch comfort sweets, made weekly and shared with care.
           </h1>
@@ -34,7 +34,7 @@ export default function Hero() {
             <span className="h-px bg-cream/30 w-12" />
           </div>
 
-          <p className="text-cream/80 text-base sm:text-lg leading-relaxed font-body">
+          <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body">
             Order by Wednesday at noon. Free Friday pickup or local delivery in Georgetown & Lexington ($7, free on orders $40+). Cookies, bars, brownies, and our signature Weekly Comfort Box.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">

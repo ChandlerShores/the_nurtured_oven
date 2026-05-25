@@ -15,7 +15,7 @@ export default function ClosedMenuCTA({ menu }: ClosedMenuCTAProps) {
           {menu.orderCta.heading}
         </h2>
         <Divider icon="heart" />
-        <p className="text-brown-sugar/70 font-body text-lg leading-relaxed">
+        <p className="text-muted font-body text-lg leading-relaxed">
           {WEEKLY_ORDERING_CLOSED_MESSAGE}
         </p>
         <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">

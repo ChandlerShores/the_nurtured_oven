@@ -11,7 +11,7 @@ function SectionTitle({
   return (
     <header className="mb-5">
       {eyebrow && (
-        <p className="text-xs uppercase tracking-[0.12em] text-brown-sugar/55 font-body mb-1">
+        <p className="text-xs uppercase tracking-[0.12em] text-caption font-body mb-1">
           {eyebrow}
         </p>
       )}
@@ -34,7 +34,7 @@ export default function PlaybookDocument() {
       <PlaybookToolbar />
 
       <article className="max-w-3xl mx-auto">
-        {/* Page 1 — Cover */}
+        {/* Page 1 - Cover */}
         <section className="playbook-page playbook-avoid-break mb-12">
           <div className="playbook-cover-band rounded-xl px-6 py-10 sm:py-12 text-center mb-8">
             <p className="font-accent text-cream/70 text-lg mb-2">The Nurtured Oven</p>
@@ -49,14 +49,14 @@ export default function PlaybookDocument() {
           <h2 className="font-heading text-xl text-espresso mb-3 tracking-wide">
             {playbook.headline}
           </h2>
-          <p className="text-brown-sugar/80 font-body leading-relaxed mb-8">
+          <p className="text-muted font-body leading-relaxed mb-8">
             {playbook.oneLiner}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="playbook-muted-box rounded-lg playbook-avoid-break">
               <h3 className="font-heading text-base text-espresso mb-2">Not this</h3>
-              <ul className="space-y-1.5 text-sm font-body text-brown-sugar/80 list-disc pl-4">
+              <ul className="space-y-1.5 text-sm font-body text-muted list-disc pl-4">
                 {playbook.notThis.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -64,7 +64,7 @@ export default function PlaybookDocument() {
             </div>
             <div className="playbook-muted-box rounded-lg playbook-avoid-break border-olive/30">
               <h3 className="font-heading text-base text-espresso mb-2">This is your model</h3>
-              <ul className="space-y-1.5 text-sm font-body text-brown-sugar/80 list-disc pl-4">
+              <ul className="space-y-1.5 text-sm font-body text-muted list-disc pl-4">
                 {playbook.thisIs.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -72,12 +72,12 @@ export default function PlaybookDocument() {
             </div>
           </div>
 
-          <p className="playbook-no-print mt-8 text-xs text-brown-sugar/50 font-body text-center">
-            Prepared {printedDate} — print this page or the full document as PDF.
+          <p className="playbook-no-print mt-8 text-xs text-caption font-body text-center">
+            Prepared {printedDate}. Print this page or the full document as PDF.
           </p>
         </section>
 
-        {/* Page 2 — Products */}
+        {/* Page 2 - Products */}
         <section className="playbook-page mb-12">
           <SectionTitle eyebrow="What you sell" title="Five product lanes" />
           <div className="space-y-4">
@@ -90,14 +90,14 @@ export default function PlaybookDocument() {
                     : "border-linen/50 bg-warm-white/80"
                 }`}
               >
-                <p className="text-xs uppercase tracking-wide text-brown-sugar/50 font-body">
+                <p className="text-xs uppercase tracking-wide text-caption font-body">
                   {p.role}
                   {p.featured ? " · Hero product" : ""}
                 </p>
                 <h3 className="font-heading text-lg text-espresso tracking-wide mt-0.5">
                   {p.name}
                 </h3>
-                <p className="text-sm text-brown-sugar/75 font-body mt-1 leading-relaxed">
+                <p className="text-sm text-muted-sm font-body mt-1 leading-relaxed">
                   {p.detail}
                 </p>
               </div>
@@ -105,10 +105,10 @@ export default function PlaybookDocument() {
           </div>
         </section>
 
-        {/* Page 3 — Weekly rhythm */}
+        {/* Page 3 - Weekly rhythm */}
         <section className="playbook-page mb-12">
           <SectionTitle eyebrow="The heartbeat" title="Your week, at a glance" />
-          <p className="text-sm font-body text-brown-sugar/75 mb-4 -mt-2">
+          <p className="text-sm font-body text-muted-sm mb-4 -mt-2">
             {playbook.coreCta}
           </p>
 
@@ -135,7 +135,7 @@ export default function PlaybookDocument() {
             <h3 className="font-heading text-base text-espresso mb-2">
               When ordering is closed, the site still works
             </h3>
-            <ul className="text-sm font-body text-brown-sugar/80 list-disc pl-4 space-y-1">
+            <ul className="text-sm font-body text-muted list-disc pl-4 space-y-1">
               {playbook.whenClosed.map((item) => (
                 <li key={item}>{item}</li>
               ))}
@@ -143,10 +143,10 @@ export default function PlaybookDocument() {
           </div>
         </section>
 
-        {/* Page 4 — Operations */}
+        {/* Page 4 - Operations */}
         <section className="playbook-page mb-12">
           <SectionTitle title="How an order moves" />
-          <ol className="list-decimal pl-5 space-y-2 text-sm font-body text-brown-sugar/85 mb-8">
+          <ol className="list-decimal pl-5 space-y-2 text-sm font-body text-muted mb-8">
             {playbook.orderFlow.map((step) => (
               <li key={step} className="pl-1 leading-relaxed">
                 {step}
@@ -176,7 +176,7 @@ export default function PlaybookDocument() {
           </table>
         </section>
 
-        {/* Page 5 — Pricing */}
+        {/* Page 5 - Pricing */}
         <section className="playbook-page mb-12">
           <SectionTitle title="Pricing guide" />
           <table className="playbook-table w-full text-sm font-body mb-4">
@@ -192,18 +192,18 @@ export default function PlaybookDocument() {
                 <tr key={row.item}>
                   <td className="text-espresso">{row.item}</td>
                   <td className="font-medium">{row.range}</td>
-                  <td className="text-brown-sugar/75">{row.note}</td>
+                  <td className="text-muted-sm">{row.note}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="text-sm font-body text-brown-sugar/75 mb-4">{playbook.pricingRule}</p>
-          <p className="text-sm font-body text-brown-sugar/80 playbook-muted-box rounded-lg">
+          <p className="text-sm font-body text-muted-sm mb-4">{playbook.pricingRule}</p>
+          <p className="text-sm font-body text-muted playbook-muted-box rounded-lg">
             {playbook.launchCapacity}
           </p>
         </section>
 
-        {/* Page 6 — Marketing & launch */}
+        {/* Page 6 - Marketing & launch */}
         <section className="playbook-page mb-12">
           <div className="grid grid-cols-1 gap-8">
             <div>
@@ -234,10 +234,10 @@ export default function PlaybookDocument() {
                     key={p.phase}
                     className="playbook-avoid-break playbook-muted-box rounded-lg"
                   >
-                    <p className="text-xs uppercase tracking-wide text-brown-sugar/55 font-body">
-                      {p.phase} — {p.title}
+                    <p className="text-xs uppercase tracking-wide text-caption font-body">
+                      {p.phase}: {p.title}
                     </p>
-                    <p className="text-sm font-body text-brown-sugar/80 mt-1 leading-relaxed">
+                    <p className="text-sm font-body text-muted mt-1 leading-relaxed">
                       {p.items}
                     </p>
                   </div>
@@ -247,14 +247,14 @@ export default function PlaybookDocument() {
           </div>
         </section>
 
-        {/* Page 7 — Golden rules */}
+        {/* Page 7 - Golden rules */}
         <section className="playbook-page mb-8">
           <SectionTitle title="Golden rules" />
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-8">
             {playbook.goldenRules.map((rule) => (
               <li
                 key={rule}
-                className="playbook-avoid-break text-sm font-body text-brown-sugar/85 playbook-muted-box rounded-lg list-none"
+                className="playbook-avoid-break text-sm font-body text-muted playbook-muted-box rounded-lg list-none"
               >
                 {rule}
               </li>
@@ -275,10 +275,10 @@ export default function PlaybookDocument() {
           </div>
         </section>
 
-        <footer className="pt-6 border-t border-linen/40 text-center text-xs font-body text-brown-sugar/50">
+        <footer className="pt-6 border-t border-linen/40 text-center text-xs font-body text-caption">
           <p>The Nurtured Oven · Owner Playbook · {printedDate}</p>
           <p className="playbook-no-print mt-2">
-            thenurturedoven.com/playbook (private — not indexed)
+            thenurturedoven.com/playbook (private; not indexed)
           </p>
         </footer>
       </article>

@@ -29,7 +29,7 @@ export default function ContactPageContent() {
     <div className="bg-cream">
       <div className="max-w-5xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
         <div className="text-center mb-10 sm:mb-12">
-          <p className="font-accent text-brown-sugar/60 text-lg mb-2">
+          <p className="font-accent text-eyebrow text-lg mb-2">
             let&apos;s get you taken care of
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso tracking-wide">
@@ -49,7 +49,7 @@ export default function ContactPageContent() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-brown-sugar/60 text-sm font-body">
+          <p className="text-muted-sm text-sm font-body">
             Prefer to connect another way? Find us on social media.
           </p>
           <div className="mt-3 flex justify-center">

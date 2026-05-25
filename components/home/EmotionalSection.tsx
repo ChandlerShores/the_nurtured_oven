@@ -18,7 +18,7 @@ export default function EmotionalSection() {
         <p className="font-heading text-2xl sm:text-3xl lg:text-[2.5rem] text-espresso leading-relaxed tracking-wide">
           For the people who care for everyone else
         </p>
-        <p className="font-accent text-brown-sugar/70 text-xl sm:text-2xl mt-3">
+        <p className="font-accent text-eyebrow text-xl sm:text-2xl mt-3">
           a little comfort goes a long way.
         </p>
         <Divider icon="heart" className="mt-6" />

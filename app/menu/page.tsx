@@ -11,7 +11,7 @@ import LittleExtrasCallout from "@/components/menu/LittleExtrasCallout"
 export const metadata: Metadata = {
   title: `${currentMenu.weekLabel} | The Nurtured Oven`,
   description:
-    "Order this week's small-batch comfort sweets. Free Friday pickup or local delivery in Georgetown & Lexington — order by Wednesday at noon.",
+    "Order this week's small-batch comfort sweets. Free Friday pickup or local delivery in Georgetown & Lexington. Order by Wednesday at noon.",
 }
 
 export default function MenuPage() {

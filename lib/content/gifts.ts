@@ -17,7 +17,7 @@ export const giftBoxes: GiftBox[] = [
     tier: "mini",
     description: "A small but thoughtful box of fresh-baked comfort.",
     longDescription:
-      "The perfect little pick-me-up. A curated selection of this week's treats, beautifully packaged and ready to brighten someone's day — or your own.",
+      "The perfect little pick-me-up. A curated selection of this week's treats, beautifully packaged and ready to brighten someone's day, or your own.",
     image: "/images/cloud-bar-in-package.png",
     priceLabel: "$16–22",
     occasions: [
@@ -31,7 +31,7 @@ export const giftBoxes: GiftBox[] = [
     name: "Classic Comfort Box",
     slug: "classic-comfort-box",
     tier: "classic",
-    description: "Our most popular gift — a generous box of fresh-baked favorites.",
+    description: "Our most popular gift: a generous box of fresh-baked favorites.",
     longDescription:
       "The Classic Comfort Box is made for the moments that matter. Filled with a generous assortment of this week's cookies, bars, and seasonal treats, it's the kind of gift that says 'I see you, and you're doing an amazing job.'",
     image: "/images/weekly_comfort_box.png",
@@ -49,7 +49,7 @@ export const giftBoxes: GiftBox[] = [
     name: "Gathering Box",
     slug: "gathering-box",
     tier: "gathering",
-    description: "Comfort at scale — a generous spread for groups, gatherings, and celebrations.",
+    description: "Comfort at scale: a generous spread for groups, gatherings, and celebrations.",
     longDescription:
       "Hosting, celebrating, or feeding a crowd? The Gathering Box is a beautifully arranged assortment of our best bakes, designed to share around a table, at an office, or anywhere people come together.",
     image: "/images/cloudbar_stretch.png",

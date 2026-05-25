@@ -5,11 +5,15 @@ import {
   getDeliveryFeeCents,
 } from "@/lib/order/delivery-fee"
 import { getCatalogItem } from "@/lib/order/catalog"
-import {
-  formatDeliveryLine,
-  fulfillmentPolicy,
-} from "@/lib/content/fulfillment"
+import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import { formatPhoneForSquare } from "@/lib/phone"
+import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
+import { buildPaymentNote } from "@/lib/square/payment-note"
+import {
+  buildDeliveryFeeLineItemMetadata,
+  buildMenuLineItemMetadata,
+  buildOrderMetadata,
+} from "@/lib/square/order-metadata"
 import {
   getAppUrl,
   getSquareClient,
@@ -33,27 +37,16 @@ export interface WeeklyCheckoutInput {
   message?: string
 }
 
-function buildPaymentNote(input: WeeklyCheckoutInput): string {
-  const parts = [
-    `Weekly order — ${input.fulfillment}`,
-    `Customer: ${input.name}`,
-    input.phone ? `Phone: ${input.phone}` : null,
-    formatDeliveryLine(input.deliveryCity, input.deliveryAddress)
-      ? `Delivery: ${formatDeliveryLine(input.deliveryCity, input.deliveryAddress)}`
-      : null,
-    input.dietary ? `Dietary: ${input.dietary}` : null,
-    input.message ? `Notes: ${input.message}` : null,
-  ]
-  parts.push(fulfillmentPolicy.squareNote)
-  return parts.filter(Boolean).join(" | ")
-}
-
 export async function createWeeklyCheckout(
   input: WeeklyCheckoutInput
-): Promise<{ checkoutUrl: string; orderReferenceId: string }> {
+): Promise<{
+  checkoutUrl: string
+  orderReferenceId: string
+  internalRef: string
+}> {
   const client = getSquareClient()
   const locationId = getSquareLocationId()
-  const orderReferenceId = randomUUID()
+  const batch = getWeeklyFulfillmentContext()
   const appUrl = getAppUrl()
 
   const orderLineItems: Square.OrderLineItem[] = []
@@ -77,7 +70,7 @@ export async function createWeeklyCheckout(
         amount: BigInt(catalogItem.priceCents),
         currency: "USD",
       },
-      metadata: { slug },
+      metadata: buildMenuLineItemMetadata(slug, batch),
     })
   }
 
@@ -96,19 +89,30 @@ export async function createWeeklyCheckout(
         amount: BigInt(deliveryFeeCents),
         currency: "USD",
       },
-      metadata: { type: "delivery_fee" },
+      metadata: buildDeliveryFeeLineItemMetadata(batch),
     })
   }
 
   const buyerPhoneNumber = formatPhoneForSquare(input.phone)
+  const paymentNote = buildPaymentNote({
+    name: input.name,
+    phone: input.phone,
+    fulfillment: input.fulfillment,
+    deliveryCity: input.deliveryCity,
+    deliveryAddress: input.deliveryAddress,
+    dietary: input.dietary,
+    message: input.message,
+    batch,
+  })
 
   const result = await client.checkout.paymentLinks.create({
     idempotencyKey: randomUUID(),
-    description: `Weekly order for ${input.name} — ${fulfillmentPolicy.menuFulfillmentLine}`,
+    description: `Weekly order for ${input.name} (${batch.batchLabel})`,
     order: {
       locationId,
-      referenceId: orderReferenceId,
+      referenceId: batch.internalRef,
       lineItems: orderLineItems,
+      metadata: buildOrderMetadata(batch, input.fulfillment, input.deliveryCity),
     },
     checkoutOptions: {
       redirectUrl: `${appUrl}/order/success`,
@@ -119,7 +123,7 @@ export async function createWeeklyCheckout(
       buyerEmail: input.email,
       ...(buyerPhoneNumber ? { buyerPhoneNumber } : {}),
     },
-    paymentNote: buildPaymentNote(input),
+    paymentNote,
   })
 
   const checkoutUrl =
@@ -130,5 +134,9 @@ export async function createWeeklyCheckout(
     throw new Error(detail)
   }
 
-  return { checkoutUrl, orderReferenceId }
+  return {
+    checkoutUrl,
+    orderReferenceId: batch.internalRef,
+    internalRef: batch.internalRef,
+  }
 }

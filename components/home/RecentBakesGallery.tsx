@@ -71,7 +71,7 @@ export default function RecentBakesGallery({ posts }: RecentBakesGalleryProps) {
               />
               <span className="absolute inset-0 bg-espresso/0 group-hover:bg-espresso/10 transition-colors duration-300" />
             </button>
-            <p className="text-brown-sugar/70 text-sm leading-relaxed font-body px-1">
+            <p className="text-muted text-sm leading-relaxed font-body px-1">
               {post.caption}
             </p>
           </div>
@@ -94,13 +94,13 @@ export default function RecentBakesGallery({ posts }: RecentBakesGalleryProps) {
 
           <div className="relative z-10 w-full max-w-3xl bg-cream rounded-2xl shadow-warm border border-linen/50 overflow-hidden">
             <div className="flex items-center justify-between gap-4 px-4 sm:px-5 py-3 border-b border-linen/40 bg-oatmeal/40">
-              <p className="font-accent text-brown-sugar/70 text-sm sm:text-base">
+              <p className="font-accent text-eyebrow text-sm sm:text-base">
                 {activeIndex + 1} of {posts.length}
               </p>
               <button
                 type="button"
                 onClick={close}
-                className="p-2 rounded-lg text-brown-sugar/70 hover:text-espresso hover:bg-linen/50 transition-colors"
+                className="p-2 rounded-lg text-muted hover:text-espresso hover:bg-linen/50 transition-colors"
                 aria-label="Close"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
@@ -123,7 +123,7 @@ export default function RecentBakesGallery({ posts }: RecentBakesGalleryProps) {
               <button
                 type="button"
                 onClick={goPrev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-cream/90 text-brown-sugar border border-linen/60 shadow-gentle hover:bg-warm-white hover:text-espresso transition-colors"
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-cream/90 text-espresso border border-linen/60 shadow-gentle hover:bg-warm-white hover:text-espresso transition-colors"
                 aria-label="Previous photo"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -134,7 +134,7 @@ export default function RecentBakesGallery({ posts }: RecentBakesGalleryProps) {
               <button
                 type="button"
                 onClick={goNext}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-cream/90 text-brown-sugar border border-linen/60 shadow-gentle hover:bg-warm-white hover:text-espresso transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-cream/90 text-espresso border border-linen/60 shadow-gentle hover:bg-warm-white hover:text-espresso transition-colors"
                 aria-label="Next photo"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -144,7 +144,7 @@ export default function RecentBakesGallery({ posts }: RecentBakesGalleryProps) {
             </div>
 
             <div className="px-4 sm:px-6 py-4 sm:py-5 border-t border-linen/40">
-              <p className="text-brown-sugar/80 text-sm sm:text-base leading-relaxed font-body text-center">
+              <p className="text-muted text-sm sm:text-base leading-relaxed font-body text-center">
                 {current.caption}
               </p>
 

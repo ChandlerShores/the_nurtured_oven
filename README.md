@@ -44,4 +44,10 @@ Edit **`lib/content/currentMenu.ts`** only — the menu page and checkout catalo
 
 ## Environment
 
-Copy `.env.example` to `.env.local`. See `docs/SQUARE_SETUP_TODO.md` for Square and webhook setup.
+| Where | Template |
+|-------|----------|
+| Local | `.env.development.example` → `.env.local` |
+| Vercel **Production** | `.env.production.example` |
+| Vercel **Preview** | `.env.preview.example` |
+
+See **`docs/ENV.md`** for Production vs Preview setup. Run `pnpm env:check` to see which tier and vars are loaded. Square details: `docs/SQUARE_SETUP_TODO.md`.

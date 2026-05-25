@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
@@ -15,6 +15,7 @@ import MobileNav from "./MobileNav"
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const orderingOpen = isWeeklyOrderingWindowOpen()
   const bannerNote = orderingOpen
     ? availability.openNote
@@ -23,7 +24,7 @@ export default function Header() {
   return (
     <>
       {bannerNote && (
-        <div className="bg-oatmeal/60 text-brown-sugar text-center text-xs sm:text-sm py-2 px-4 font-body tracking-wide">
+        <div className="bg-oatmeal/60 text-espresso/90 text-center text-xs sm:text-sm py-2 px-4 font-body tracking-wide">
           ♡ {bannerNote}
         </div>
       )}
@@ -42,7 +43,7 @@ export default function Header() {
               <span className="font-heading text-xl sm:text-2xl text-espresso tracking-wide leading-tight">
                 {siteConfig.brandName}
               </span>
-              <span className="font-accent text-xs text-brown-sugar/60 -mt-0.5 hidden sm:block">
+              <span className="font-accent text-xs text-muted -mt-0.5 hidden sm:block">
                 comfort sweets, made weekly
               </span>
             </span>
@@ -53,7 +54,7 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-brown-sugar/80 hover:text-espresso transition-colors text-sm tracking-wide"
+                className="text-muted hover:text-espresso transition-colors text-sm tracking-wide"
               >
                 {item.label}
               </Link>
@@ -68,10 +69,13 @@ export default function Header() {
           </div>
 
           <button
+            ref={menuButtonRef}
             type="button"
-            className="md:hidden p-2 text-brown-sugar"
+            className="md:hidden p-2 text-espresso"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-dialog"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <line x1="3" y1="6" x2="21" y2="6" />
@@ -82,7 +86,11 @@ export default function Header() {
         </div>
       </header>
 
-      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileNav
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        returnFocusRef={menuButtonRef}
+      />
     </>
   )
 }

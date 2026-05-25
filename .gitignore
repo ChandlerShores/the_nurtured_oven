@@ -16,6 +16,9 @@
 # production
 /build
 
+# local email HTML previews (pnpm email:preview)
+/email-previews/
+
 # misc
 .DS_Store
 *.pem

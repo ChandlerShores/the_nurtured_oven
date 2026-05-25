@@ -4,7 +4,7 @@ import "./playbook.css"
 export const metadata: Metadata = {
   title: "Owner Playbook | The Nurtured Oven",
   description:
-    "Printable guide — weekly rhythm, products, pricing, and operations for The Nurtured Oven.",
+    "Printable guide to weekly rhythm, products, pricing, and operations for The Nurtured Oven.",
   robots: { index: false, follow: false },
 }
 

@@ -2,7 +2,7 @@ export const siteConfig = {
   brandName: "The Nurtured Oven",
   tagline: "Small-batch comfort sweets, made weekly, boxed beautifully, and shared with care.",
   founderName: "Owner" /* confirm with owner */,
-  ownerEmail: "hello@thenurturedoven.com" /* confirm with owner */,
+  ownerEmail: "thenurturedoven@gmail.com",
   responseWindow: "within 24 hours" /* confirm with owner */,
   phone: "" /* confirm with owner */,
   serviceArea: {

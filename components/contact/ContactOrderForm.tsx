@@ -7,6 +7,7 @@ import DeliveryFields from "@/components/contact/DeliveryFields"
 import GiftFormFields from "@/components/contact/GiftFormFields"
 import WeeklyOrderCart from "@/components/order/WeeklyOrderCart"
 import Divider from "@/components/ui/Divider"
+import FulfillmentPolicyNote from "@/components/ui/FulfillmentPolicyNote"
 import SocialIcons from "@/components/ui/SocialIcons"
 import {
   contactFormPanelCopy,
@@ -106,7 +107,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
           Thank you!
         </h2>
         <Divider icon="heart" />
-        <p className="text-brown-sugar/70 text-lg font-body max-w-md mx-auto leading-relaxed">
+        <p className="text-muted text-lg font-body max-w-md mx-auto leading-relaxed">
           {contactSuccessMessages[intent]}
         </p>
         <div className="mt-6 flex justify-center">
@@ -141,7 +142,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
           <h2 className="font-heading text-xl sm:text-2xl text-espresso tracking-wide mb-2">
             {panel.heading}
           </h2>
-          <p className="text-brown-sugar/60 text-sm sm:text-base font-body leading-relaxed max-w-2xl">
+          <p className="text-muted text-sm sm:text-base font-body leading-relaxed max-w-2xl">
             {panel.description}
           </p>
         </div>
@@ -154,7 +155,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                      className="block text-sm text-espresso mb-1.5 tracking-wide"
                     >
                       Name <span className="text-blush">*</span>
                     </label>
@@ -171,7 +172,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                      className="block text-sm text-espresso mb-1.5 tracking-wide"
                     >
                       Email <span className="text-blush">*</span>
                     </label>
@@ -190,10 +191,10 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                 <div>
                   <label
                     htmlFor="phone"
-                    className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                    className="block text-sm text-espresso mb-1.5 tracking-wide"
                   >
                     Phone{" "}
-                    <span className="text-brown-sugar/40 text-xs">(optional)</span>
+                    <span className="text-hint text-xs">(optional)</span>
                   </label>
                   <input
                     id="phone"
@@ -209,7 +210,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   <div className="max-w-md">
                     <label
                       htmlFor="fulfillment"
-                      className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                      className="block text-sm text-espresso mb-1.5 tracking-wide"
                     >
                       Pickup or delivery?
                     </label>
@@ -243,21 +244,21 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   )}
                 </div>
 
-                <p className="text-xs text-brown-sugar/55 leading-relaxed font-body bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
-                  {fulfillmentPolicy.customerFacing}
-                </p>
+                <div className="bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
+                  <FulfillmentPolicyNote />
+                </div>
 
-                <p className="text-xs text-brown-sugar/55 leading-relaxed font-body">
+                <p className="text-xs text-muted leading-relaxed font-body">
                   You&apos;ll confirm your order and pay securely with Square.
                 </p>
 
                 <div>
                   <label
                     htmlFor="dietary"
-                    className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                    className="block text-sm text-espresso mb-1.5 tracking-wide"
                   >
                     Allergy or dietary notes{" "}
-                    <span className="text-brown-sugar/40 text-xs">(optional)</span>
+                    <span className="text-hint text-xs">(optional)</span>
                   </label>
                   <input
                     id="dietary"
@@ -267,7 +268,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                     onChange={(e) => update("dietary", e.target.value)}
                     placeholder="Any allergies or dietary needs we should know about?"
                   />
-                  <p className="mt-2 text-xs text-brown-sugar/50 leading-relaxed">
+                  <p className="mt-2 text-xs text-muted-sm leading-relaxed">
                     {siteConfig.cottageBakeryDisclosure}
                   </p>
                 </div>
@@ -275,10 +276,10 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                    className="block text-sm text-espresso mb-1.5 tracking-wide"
                   >
                     Anything else?{" "}
-                    <span className="text-brown-sugar/40 text-xs">(optional)</span>
+                    <span className="text-hint text-xs">(optional)</span>
                   </label>
                   <textarea
                     id="message"
@@ -292,9 +293,13 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
               </div>
 
               <div className="lg:pl-2">
-                <p className="block text-sm text-brown-sugar/80 mb-3 tracking-wide font-body">
+                <p
+                  className="block text-sm text-espresso mb-3 tracking-wide font-body"
+                  id="weekly-order-label"
+                >
                   Your order <span className="text-blush">*</span>
                 </p>
+                <div aria-labelledby="weekly-order-label" aria-describedby="weekly-order-cart-status">
                 <WeeklyOrderCart
                   variant="contact"
                   prefillSlug={prefillSlug}
@@ -303,6 +308,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   }
                   onQuantitiesChange={setCartItems}
                 />
+                </div>
               </div>
             </div>
           ) : (
@@ -311,7 +317,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                    className="block text-sm text-espresso mb-1.5 tracking-wide"
                   >
                     Name <span className="text-blush">*</span>
                   </label>
@@ -328,7 +334,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                 <div>
                   <label
                     htmlFor="email"
-                    className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                    className="block text-sm text-espresso mb-1.5 tracking-wide"
                   >
                     Email <span className="text-blush">*</span>
                   </label>
@@ -345,7 +351,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
               </div>
 
               {intent === "reminder" && (
-                <p className="text-brown-sugar/50 text-sm text-center font-body bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
+                <p className="text-muted text-sm text-center font-body bg-oatmeal/30 rounded-xl px-4 py-3 border border-linen/30">
                   That&apos;s all we need! We&apos;ll add you to the Friday menu
                   reminder list.
                 </p>
@@ -364,10 +370,10 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   <div>
                     <label
                       htmlFor="phone"
-                      className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                      className="block text-sm text-espresso mb-1.5 tracking-wide"
                     >
                       Phone{" "}
-                      <span className="text-brown-sugar/40 text-xs">(optional)</span>
+                      <span className="text-hint text-xs">(optional)</span>
                     </label>
                     <input
                       id="phone"
@@ -381,7 +387,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm text-brown-sugar/80 mb-1.5 tracking-wide"
+                      className="block text-sm text-espresso mb-1.5 tracking-wide"
                     >
                       Message <span className="text-blush">*</span>
                     </label>
@@ -401,7 +407,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
           )}
 
           {intent === "gift" && (
-            <p className="text-brown-sugar/50 text-xs leading-relaxed text-center">
+            <p className="text-muted-sm text-xs leading-relaxed text-center">
               We&apos;ll follow up to finalize your gift box details and payment.
             </p>
           )}
@@ -415,7 +421,7 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
           </button>
 
           {status === "error" && (
-            <p className="text-center text-blush text-sm" role="alert">
+            <p className="text-center text-espresso text-sm font-medium" role="alert">
               {errorMessage ||
                 "Something went wrong. Please try again or reach out directly."}
             </p>

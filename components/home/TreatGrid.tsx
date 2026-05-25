@@ -24,7 +24,7 @@ const categories: {
   },
   {
     name: "Comfort Boxes",
-    description: "Mini, Classic, or Gathering \u2014 for any occasion",
+    description: "Mini, Classic, or Gathering for any occasion",
     image: "/images/weekly_comfort_box.png",
     href: "/gifts",
   },
@@ -41,7 +41,7 @@ export default function TreatGrid() {
     <section className="bg-oatmeal/50">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-28">
         <div className="text-center mb-14">
-          <p className="font-accent text-brown-sugar/60 text-lg mb-2">what we offer</p>
+          <p className="font-accent text-eyebrow text-lg mb-2">what we offer</p>
           <h2 className="font-heading text-3xl sm:text-4xl text-espresso tracking-wide">
             Fresh every week
           </h2>
@@ -68,7 +68,7 @@ export default function TreatGrid() {
                 <h3 className="font-heading text-lg sm:text-xl text-cream tracking-wide">
                   {cat.name}
                 </h3>
-                <p className="text-cream/70 text-sm font-body mt-1">
+                <p className="text-cream/90 text-sm font-body mt-1">
                   {cat.description}
                 </p>
               </div>

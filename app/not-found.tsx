@@ -10,7 +10,7 @@ export default function NotFound() {
           Page not found
         </h1>
         <Divider icon="heart" />
-        <p className="text-brown-sugar/70 font-body text-lg mb-8 max-w-md">
+        <p className="text-muted font-body text-lg mb-8 max-w-md">
           Looks like this page wandered off. Let&apos;s get you back to
           something warm.
         </p>

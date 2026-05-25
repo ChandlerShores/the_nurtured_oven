@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import { WebhooksHelper } from "square"
 import { sendPaidOrderEmails } from "@/lib/email"
 import { siteConfig } from "@/lib/content/site"
+import { resolvePaidOrderDetails } from "@/lib/square/resolve-paid-order"
+import {
+  hasProcessedSquarePayment,
+  markSquarePaymentProcessed,
+} from "@/lib/square/webhook-dedupe"
 
 export async function POST(req: NextRequest) {
   const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY
@@ -37,6 +42,7 @@ export async function POST(req: NextRequest) {
       type?: string
       object?: {
         payment?: {
+          id?: string
           status?: string
           order_id?: string
           note?: string
@@ -57,25 +63,23 @@ export async function POST(req: NextRequest) {
   const payment = event.data?.object?.payment
   const eventType = event.type
 
-  if (
-    eventType === "payment.updated" &&
-    payment?.status === "COMPLETED"
-  ) {
+  if (eventType === "payment.updated" && payment?.status === "COMPLETED") {
+    const paymentId = payment.id
+
+    if (paymentId && (await hasProcessedSquarePayment(paymentId))) {
+      return NextResponse.json({ received: true, duplicate: true })
+    }
+
     const ownerEmail =
       process.env.OWNER_EMAIL || siteConfig.ownerEmail
 
-    await sendPaidOrderEmails(
-      {
-        orderId: payment.order_id,
-        paymentNote: payment.note,
-        buyerEmail: payment.buyer_email_address,
-        receiptUrl: payment.receipt_url,
-        amountCents: payment.amount_money?.amount
-          ? Number(payment.amount_money.amount)
-          : undefined,
-      },
-      ownerEmail
-    )
+    const details = await resolvePaidOrderDetails(payment)
+
+    await sendPaidOrderEmails(details, ownerEmail)
+
+    if (paymentId) {
+      await markSquarePaymentProcessed(paymentId, payment.order_id)
+    }
   }
 
   return NextResponse.json({ received: true })

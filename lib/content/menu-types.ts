@@ -38,6 +38,11 @@ export interface LittleExtrasCalloutContent {
 
 export interface CurrentMenu {
   weekLabel: string
+  /**
+   * Optional baker-defined batch id for Square metadata and emails (e.g. "2026-05-24").
+   * Update each week when you rotate the menu.
+   */
+  menuCycleId?: string
   cutoffText: string
   fulfillmentText: string
   announcementBarText?: string

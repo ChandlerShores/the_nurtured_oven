@@ -1,5 +1,5 @@
 /**
- * WEEKLY MENU UPDATES — edit this file only
+ * WEEKLY MENU UPDATES - edit this file only
  * -----------------------------------------
  * Each week:
  * 1. Update Square products, inventory, and payment/checkout links.
@@ -18,8 +18,10 @@ import type { CurrentMenu } from "@/lib/content/menu-types"
 
 export const currentMenu: CurrentMenu = {
   weekLabel: "This Week's Menu",
+  /** Set each week for Square metadata / order emails (e.g. menu open date). */
+  menuCycleId: undefined,
   cutoffText:
-    "Order by Wednesday at noon — pay at checkout to confirm your order.",
+    "Order by Wednesday at noon. Pay at checkout to confirm your order.",
   fulfillmentText:
     "Friday pickup (free) or local delivery in Georgetown & Lexington ($7, free on orders $40+)",
 
@@ -31,7 +33,7 @@ export const currentMenu: CurrentMenu = {
     slug: "weekly-comfort-box",
     name: "Weekly Comfort Box",
     description:
-      "A curated mix of this week's best — cookies, bars, and a seasonal surprise, boxed and ready to enjoy or share.",
+      "A curated mix of this week's best: cookies, bars, and a seasonal surprise, boxed and ready to enjoy or share.",
     includes: "An assortment of this week's bakes, beautifully boxed.",
     priceLabel: "$33",
     priceCents: 3300,
@@ -97,7 +99,7 @@ export const currentMenu: CurrentMenu = {
 
   littleExtrasCallout: {
     enabled: true,
-    text: "Sometimes we have leftover batches on Fridays — first-paid, first-claimed.",
+    text: "Sometimes we have leftover batches on Fridays. First paid, first claimed.",
     buttonText: "See Little Extras",
     href: "/little-extras",
   },

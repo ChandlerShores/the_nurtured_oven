@@ -35,7 +35,7 @@ export default function FinalCta() {
         <p className="text-cream/95 text-base sm:text-lg font-body leading-relaxed drop-shadow-sm">
           Order by Wednesday at noon for free Friday pickup or local delivery in Georgetown & Lexington.
           Whether it&apos;s for you or someone who needs a warm reminder
-          they&apos;re loved — we&apos;d love to bake for you.
+          they&apos;re loved, and we&apos;d love to bake for you.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
           <Button href="/menu" size="lg">
