@@ -9,11 +9,10 @@ import Button from "@/components/ui/Button"
 import MobileNav from "./MobileNav"
 
 interface HeaderProps {
-  orderingOpen: boolean
   bannerNote: string
 }
 
-export default function Header({ orderingOpen, bannerNote }: HeaderProps) {
+export default function Header({ bannerNote }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
 

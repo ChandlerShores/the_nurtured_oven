@@ -42,10 +42,7 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link font-body">
           Skip to main content
         </a>
-        <Header
-          orderingOpen={ordering.isOpen}
-          bannerNote={ordering.bannerNote}
-        />
+        <Header bannerNote={ordering.bannerNote} />
         <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
