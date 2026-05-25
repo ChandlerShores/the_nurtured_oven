@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sendInquiryEmail } from "@/lib/email"
 import { siteConfig } from "@/lib/content/site"
+import { getOrderingClosedMessage, isWeeklyOrderingAccepted } from "@/lib/menu/ordering-gate"
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,6 +27,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Name and email are required." },
         { status: 400 }
+      )
+    }
+
+    if (intent === "weekly-order" && !isWeeklyOrderingAccepted()) {
+      return NextResponse.json(
+        { error: getOrderingClosedMessage() },
+        { status: 403 }
       )
     }
 

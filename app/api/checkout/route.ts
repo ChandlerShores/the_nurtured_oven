@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isDeliveryCity } from "@/lib/content/fulfillment"
 import { getCatalogItem } from "@/lib/order/catalog"
-import { isMenuOpen } from "@/lib/menu/ordering"
+import { getDisabledOrderMessage, isMenuOpen } from "@/lib/menu/ordering"
 import { createWeeklyCheckout } from "@/lib/square/checkout"
 import { isSquareConfigured } from "@/lib/square/client"
 
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   try {
     if (!isMenuOpen()) {
       return NextResponse.json(
-        { error: "Weekly ordering is currently closed." },
+        { error: getDisabledOrderMessage() },
         { status: 403 }
       )
     }

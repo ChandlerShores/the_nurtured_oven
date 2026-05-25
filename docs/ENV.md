@@ -40,6 +40,15 @@ Each subscription needs its own **signature key** and matching `SQUARE_WEBHOOK_N
 
 Event: **`payment.updated`** only.
 
+## Weekly ordering window
+
+| Variable | Default | Effect |
+|----------|---------|--------|
+| `WEEKLY_ORDERING_DISABLED` | off | Set to `true`, `1`, or `yes` to **always** close weekly ordering and checkout (any environment, including Production). |
+| `ORDERING_TEST_WEEKDAY` | — | **Local `pnpm dev` only** (`NODE_ENV=development`). Fakes the clock; ignored on Vercel. |
+
+When `WEEKLY_ORDERING_DISABLED` is not set, the site uses the real schedule in `lib/menu/schedule.ts` (America/New_York).
+
 ## Common mistakes
 
 - Putting Application ID (`sq0idp-...`) in `SQUARE_LOCATION_ID` → use Location ID (`LX5V0NV78YEX5` style).

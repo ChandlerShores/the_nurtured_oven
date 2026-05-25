@@ -1,11 +1,11 @@
 import type { CurrentMenu, MenuProduct } from "@/lib/content/menu-types"
 import {
-  isWeeklyOrderingWindowOpen,
-  WEEKLY_ORDERING_CLOSED_MESSAGE,
-} from "@/lib/menu/schedule"
+  getOrderingClosedMessage,
+  isWeeklyOrderingAccepted,
+} from "@/lib/menu/ordering-gate"
 
 export function isMenuOpen(now?: Date): boolean {
-  return isWeeklyOrderingWindowOpen(now)
+  return isWeeklyOrderingAccepted(now)
 }
 
 export function isProductOrderable(
@@ -37,7 +37,7 @@ export function resolveOrderCtaHref(menu: CurrentMenu): string | undefined {
 }
 
 export function getDisabledOrderMessage(): string {
-  return WEEKLY_ORDERING_CLOSED_MESSAGE
+  return getOrderingClosedMessage()
 }
 
 export function getProductGridClassName(itemCount: number): string {

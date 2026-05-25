@@ -1,9 +1,10 @@
-"use client"
-
 import { Suspense } from "react"
 import ContactPageContent from "@/components/contact/ContactPageContent"
+import { getOrderingPublicState } from "@/lib/menu/ordering-gate"
 
 export default function ContactPage() {
+  const ordering = getOrderingPublicState()
+
   return (
     <Suspense
       fallback={
@@ -12,7 +13,10 @@ export default function ContactPage() {
         </div>
       }
     >
-      <ContactPageContent />
+      <ContactPageContent
+        weeklyOrderingAvailable={ordering.weeklyOrderIntentAvailable}
+        orderingClosedMessage={ordering.closedMessage}
+      />
     </Suspense>
   )
 }

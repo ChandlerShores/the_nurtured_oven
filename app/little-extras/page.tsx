@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { littleExtras } from "@/lib/content/little-extras"
+import { isWeeklyOrderingAccepted } from "@/lib/menu/ordering-gate"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
 
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 }
 
 export default function LittleExtrasPage() {
+  const orderingOpen = isWeeklyOrderingAccepted()
+
   return (
     <div className="bg-cream">
       <div className="max-w-3xl mx-auto px-5 sm:px-8 lg:px-12 pt-16 sm:pt-20 pb-10 text-center">
@@ -56,9 +59,11 @@ export default function LittleExtrasPage() {
           <Button href="/contact?intent=reminder" variant="outline">
             Get Menu Reminders
           </Button>
-          <Button href="/contact?intent=weekly-order">
-            Order This Week&apos;s Menu
-          </Button>
+          {orderingOpen ? (
+            <Button href="/contact?intent=weekly-order">
+              Order This Week&apos;s Menu
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>

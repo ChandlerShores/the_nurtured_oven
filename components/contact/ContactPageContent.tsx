@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import ContactIntentSelector, {
   type ContactIntent,
@@ -10,20 +10,46 @@ import ContactOrderForm from "@/components/contact/ContactOrderForm"
 import Divider from "@/components/ui/Divider"
 import SocialIcons from "@/components/ui/SocialIcons"
 
-export default function ContactPageContent() {
+function resolveDefaultIntent(
+  weeklyOrderingAvailable: boolean,
+  intentParam: ContactIntent | null
+): ContactIntent {
+  const allowed = weeklyOrderingAvailable
+    ? contactIntentOptions
+    : contactIntentOptions.filter((o) => o.id !== "weekly-order")
+
+  if (intentParam && allowed.some((o) => o.id === intentParam)) {
+    return intentParam
+  }
+
+  return allowed[0]?.id ?? "gift"
+}
+
+interface ContactPageContentProps {
+  weeklyOrderingAvailable: boolean
+  orderingClosedMessage: string
+}
+
+export default function ContactPageContent({
+  weeklyOrderingAvailable,
+  orderingClosedMessage,
+}: ContactPageContentProps) {
   const searchParams = useSearchParams()
   const intentParam = searchParams.get("intent") as ContactIntent | null
-  const initialIntent: ContactIntent =
-    intentParam && contactIntentOptions.some((o) => o.id === intentParam)
-      ? intentParam
-      : "weekly-order"
-  const [intent, setIntent] = useState<ContactIntent>(initialIntent)
+  const visibleIntents = useMemo(
+    () =>
+      weeklyOrderingAvailable
+        ? contactIntentOptions
+        : contactIntentOptions.filter((o) => o.id !== "weekly-order"),
+    [weeklyOrderingAvailable]
+  )
+  const [intent, setIntent] = useState<ContactIntent>(() =>
+    resolveDefaultIntent(weeklyOrderingAvailable, intentParam)
+  )
 
   useEffect(() => {
-    if (intentParam && contactIntentOptions.some((o) => o.id === intentParam)) {
-      setIntent(intentParam)
-    }
-  }, [intentParam])
+    setIntent(resolveDefaultIntent(weeklyOrderingAvailable, intentParam))
+  }, [intentParam, weeklyOrderingAvailable])
 
   return (
     <div className="bg-cream">
@@ -42,7 +68,17 @@ export default function ContactPageContent() {
           What would you like to do?
         </h2>
 
-        <ContactIntentSelector selected={intent} onSelect={setIntent} />
+        {!weeklyOrderingAvailable && (
+          <p className="text-center text-muted text-sm font-body max-w-xl mx-auto mb-8 leading-relaxed">
+            {orderingClosedMessage}
+          </p>
+        )}
+
+        <ContactIntentSelector
+          options={visibleIntents}
+          selected={intent}
+          onSelect={setIntent}
+        />
 
         <div className="bg-warm-white rounded-2xl p-6 sm:p-10 shadow-gentle border border-linen/30">
           <ContactOrderForm intent={intent} />

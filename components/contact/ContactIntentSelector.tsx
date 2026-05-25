@@ -47,17 +47,19 @@ export const contactIntentOptions: ContactIntentOption[] = [
 ]
 
 interface ContactIntentSelectorProps {
+  options?: ContactIntentOption[]
   selected: ContactIntent
   onSelect: (intent: ContactIntent) => void
 }
 
 export default function ContactIntentSelector({
+  options = contactIntentOptions,
   selected,
   onSelect,
 }: ContactIntentSelectorProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLDivElement>) => {
-      const ids = contactIntentOptions.map((o) => o.id)
+      const ids = options.map((o) => o.id)
       const index = ids.indexOf(selected)
       if (index < 0) return
 
@@ -73,7 +75,7 @@ export default function ContactIntentSelector({
       e.preventDefault()
       onSelect(ids[next])
     },
-    [selected, onSelect]
+    [options, selected, onSelect]
   )
 
   return (
@@ -83,7 +85,7 @@ export default function ContactIntentSelector({
       className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10"
       onKeyDown={handleKeyDown}
     >
-      {contactIntentOptions.map((option) => {
+      {options.map((option) => {
         const isSelected = selected === option.id
         return (
           <button

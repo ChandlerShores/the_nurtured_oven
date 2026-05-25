@@ -4,22 +4,18 @@ import { useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
-import { availability } from "@/lib/content/availability"
-import {
-  isWeeklyOrderingWindowOpen,
-  WEEKLY_ORDERING_CLOSED_MESSAGE,
-} from "@/lib/menu/schedule"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import MobileNav from "./MobileNav"
 
-export default function Header() {
+interface HeaderProps {
+  orderingOpen: boolean
+  bannerNote: string
+}
+
+export default function Header({ orderingOpen, bannerNote }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const orderingOpen = isWeeklyOrderingWindowOpen()
-  const bannerNote = orderingOpen
-    ? availability.openNote
-    : WEEKLY_ORDERING_CLOSED_MESSAGE
 
   return (
     <>
