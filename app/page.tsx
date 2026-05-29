@@ -4,7 +4,6 @@ import ThisWeekMenuSpotlight from "@/components/home/ThisWeekMenuSpotlight"
 import EmotionalSection from "@/components/home/EmotionalSection"
 import GiftSection from "@/components/home/GiftSection"
 import FounderPreview from "@/components/home/FounderPreview"
-import WildFlowerFundSection from "@/components/home/WildFlowerFundSection"
 import HowItWorks from "@/components/home/HowItWorks"
 import FaqTeaser from "@/components/home/FaqTeaser"
 import FinalCta from "@/components/home/FinalCta"
@@ -18,7 +17,6 @@ export default function HomePage() {
       <EmotionalSection />
       <GiftSection />
       <FounderPreview />
-      <WildFlowerFundSection />
       <HowItWorks />
       <FaqTeaser />
       <FinalCta />
