@@ -15,6 +15,8 @@ export const wildFlowerFund = {
   intro:
     "Motherhood is beautiful, but some seasons are just hard. The Wild Flower Fund is our quiet way of showing up for other moms. We set aside 10% of every purchase to share food, encouragement, and practical care with families close to home who are going through one of those seasons.",
 
+  homepageSubline: "For the people who care for everyone else.",
+
   pageHeroEyebrow: "from The Nurtured Oven",
 
   openingLine:

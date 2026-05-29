@@ -23,7 +23,7 @@ export default function WildFlowerFundPage() {
             alt={wildFlowerFund.bannerImageAlt}
             fill
             priority
-            className="object-cover object-center"
+            className="object-cover object-bottom"
             sizes="100vw"
           />
           <div
