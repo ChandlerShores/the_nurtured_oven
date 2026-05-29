@@ -1,3 +1,5 @@
+import { getClosedNote } from "@/lib/content/launch"
+
 export const availability = {
   /** Site banner when the weekly ordering window is open (Fri 9 AM – Wed noon ET). */
   cutoffDay: "Wednesday",
@@ -8,6 +10,6 @@ export const availability = {
   serviceAreaLabel: "Georgetown & Lexington",
   openNote:
     "Order by Wednesday at noon for free Friday pickup or local delivery in Georgetown & Lexington.",
-  closedNote:
-    "This week\u2019s ordering window has closed. Sign up for menu reminders, request a future gift box, or check out Little Extras on Friday.",
+  /** Resolved from launch flags — see getClosedNote() in lib/content/launch.ts */
+  closedNote: getClosedNote(),
 }

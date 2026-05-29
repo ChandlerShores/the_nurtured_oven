@@ -1,6 +1,7 @@
 "use client"
 
 import { faqEntries } from "@/lib/content/faq"
+import { getPublicFaqEntries } from "@/lib/content/launch"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
 import Accordion from "@/components/ui/Accordion"
@@ -16,11 +17,11 @@ export default function FaqPage() {
           </h1>
           <Divider icon="heart" className="mt-4 mb-2" />
           <p className="text-muted text-lg font-body">
-            Everything you need to know about weekly ordering, Comfort Boxes, payment, and more.
+            Everything you need to know about weekly ordering, pickup and delivery, payment, and more.
           </p>
         </div>
 
-        <Accordion items={faqEntries} />
+        <Accordion items={getPublicFaqEntries(faqEntries)} />
 
         <div className="mt-16 text-center bg-warm-white rounded-2xl p-8 sm:p-12 border border-linen/30 shadow-gentle">
           <h2 className="font-heading text-2xl text-espresso mb-3 tracking-wide">

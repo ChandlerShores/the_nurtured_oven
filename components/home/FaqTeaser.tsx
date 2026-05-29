@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { homepageFaq } from "@/lib/content/faq"
+import { faqEntries } from "@/lib/content/faq"
+import { getHomepageFaqEntries } from "@/lib/content/launch"
 import Divider from "@/components/ui/Divider"
 import Accordion from "@/components/ui/Accordion"
 
@@ -18,7 +19,7 @@ export default function FaqTeaser() {
         </div>
 
         <Accordion
-          items={homepageFaq}
+          items={getHomepageFaqEntries(faqEntries)}
           itemClassName="border border-linen/60 rounded-xl overflow-hidden bg-cream/50 shadow-gentle"
         />
 

@@ -1,13 +1,14 @@
 import Image from "next/image"
 import Button from "@/components/ui/Button"
+import { currentMenu } from "@/lib/content/currentMenu"
 
 export default function Hero() {
   return (
     <section className="relative min-h-[85vh] sm:min-h-[80vh] flex items-center">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src="/images/weekly_comfort_box.png"
-          alt="The Nurtured Oven Weekly Comfort Box with cookies, brownies, and cloud bars in an open gift box"
+          src={currentMenu.featured.image}
+          alt={`This week's feature: ${currentMenu.featured.name} from The Nurtured Oven`}
           fill
           priority
           className="object-cover object-[58%_30%]"
@@ -21,9 +22,9 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-20">
         <div className="max-w-xl">
-          <p className="font-accent text-cream/95 text-lg sm:text-xl mb-3">new menu every friday</p>
+          <p className="font-accent text-cream/95 text-lg sm:text-xl mb-3">this week&apos;s menu is open</p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
-            Small-batch comfort sweets, made weekly and shared with care.
+            This Week&apos;s Menu
           </h1>
 
           <div className="flex items-center gap-3 my-6">
@@ -35,14 +36,14 @@ export default function Hero() {
           </div>
 
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body">
-            Order by Wednesday at noon. Free Friday pickup or local delivery in Georgetown & Lexington ($7, free on orders $40+). Cookies, bars, brownies, and our signature Weekly Comfort Box.
+            Preorder by Wednesday at noon for Friday pickup or delivery. This week: soft cinnamon rolls, our signature oatmeal cookie, and marshmallow cloud bars.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3">
             <Button href="/menu" size="lg">
               View This Week&apos;s Menu
             </Button>
-            <Button href="/gifts" variant="inverse" size="lg">
-              Send a Comfort Box
+            <Button href="/menu#order-cta" variant="inverse" size="lg">
+              Order Now
             </Button>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useRef, type RefObject } from "react"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
+import { getPublicNav } from "@/lib/content/launch"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import { useFocusTrap } from "@/hooks/useFocusTrap"
@@ -93,7 +94,7 @@ export default function MobileNav({
         </div>
 
         <nav aria-label="Mobile" className="flex flex-col p-6 gap-1">
-          {siteConfig.nav.map((item) => (
+          {getPublicNav().map((item) => (
             <Link
               key={item.href}
               href={item.href}

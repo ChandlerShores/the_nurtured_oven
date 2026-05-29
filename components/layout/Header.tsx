@@ -4,6 +4,7 @@ import { useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
+import { getPublicNav } from "@/lib/content/launch"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import MobileNav from "./MobileNav"
@@ -45,7 +46,7 @@ export default function Header({ bannerNote }: HeaderProps) {
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">
-            {siteConfig.nav.map((item) => (
+            {getPublicNav().map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

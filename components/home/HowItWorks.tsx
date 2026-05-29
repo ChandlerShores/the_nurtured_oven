@@ -9,7 +9,7 @@ const steps = [
   {
     icon: "🛒",
     title: "Order by Wednesday noon",
-    description: "Pick your items or grab a Weekly Comfort Box. Submit your order before the cutoff.",
+    description: "Choose from this week's menu items. Submit your order before the cutoff.",
   },
   {
     icon: "💳",

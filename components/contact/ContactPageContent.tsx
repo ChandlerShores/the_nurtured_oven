@@ -4,26 +4,15 @@ import { useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import ContactIntentSelector, {
   type ContactIntent,
-  contactIntentOptions,
 } from "@/components/contact/ContactIntentSelector"
 import ContactOrderForm from "@/components/contact/ContactOrderForm"
 import Divider from "@/components/ui/Divider"
 import SocialIcons from "@/components/ui/SocialIcons"
-
-function resolveDefaultIntent(
-  weeklyOrderingAvailable: boolean,
-  intentParam: ContactIntent | null
-): ContactIntent {
-  const allowed = weeklyOrderingAvailable
-    ? contactIntentOptions
-    : contactIntentOptions.filter((o) => o.id !== "weekly-order")
-
-  if (intentParam && allowed.some((o) => o.id === intentParam)) {
-    return intentParam
-  }
-
-  return allowed[0]?.id ?? "gift"
-}
+import { contactIntentOptions } from "@/components/contact/ContactIntentSelector"
+import {
+  getVisibleContactIntentIds,
+  resolveContactDefaultIntent,
+} from "@/lib/content/launch"
 
 interface ContactPageContentProps {
   weeklyOrderingAvailable: boolean
@@ -36,19 +25,16 @@ export default function ContactPageContent({
 }: ContactPageContentProps) {
   const searchParams = useSearchParams()
   const intentParam = searchParams.get("intent") as ContactIntent | null
-  const visibleIntents = useMemo(
-    () =>
-      weeklyOrderingAvailable
-        ? contactIntentOptions
-        : contactIntentOptions.filter((o) => o.id !== "weekly-order"),
-    [weeklyOrderingAvailable]
-  )
+  const visibleIntents = useMemo(() => {
+    const ids = getVisibleContactIntentIds(weeklyOrderingAvailable)
+    return contactIntentOptions.filter((o) => ids.includes(o.id))
+  }, [weeklyOrderingAvailable])
   const [intent, setIntent] = useState<ContactIntent>(() =>
-    resolveDefaultIntent(weeklyOrderingAvailable, intentParam)
+    resolveContactDefaultIntent(weeklyOrderingAvailable, intentParam)
   )
 
   useEffect(() => {
-    setIntent(resolveDefaultIntent(weeklyOrderingAvailable, intentParam))
+    setIntent(resolveContactDefaultIntent(weeklyOrderingAvailable, intentParam))
   }, [intentParam, weeklyOrderingAvailable])
 
   return (

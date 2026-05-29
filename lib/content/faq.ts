@@ -7,7 +7,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "How does weekly ordering work?",
     answer:
-      "Every Friday we post a new weekly menu with 3\u20135 items plus the Weekly Comfort Box. Place your order by Wednesday at noon and pay at checkout to confirm. Orders are fulfilled on Friday via free pickup or local delivery in Georgetown and Lexington.",
+      "Every Friday we post a new weekly menu of a few small-batch treats. Preorder by Wednesday at noon and pay at checkout to confirm. Orders are fulfilled on Friday via free pickup or local delivery in Georgetown and Lexington.",
   },
   {
     question: "What is the Weekly Comfort Box?",
@@ -71,8 +71,3 @@ export const faqEntries: FaqEntry[] = [
   },
 ]
 
-export const homepageFaq: FaqEntry[] = [
-  faqEntries[0],
-  faqEntries[1],
-  faqEntries[6],
-]

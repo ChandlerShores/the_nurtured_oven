@@ -1,6 +1,7 @@
 import Divider from "@/components/ui/Divider"
 import Button from "@/components/ui/Button"
 import type { CurrentMenu } from "@/lib/content/menu-types"
+import { launchConfig } from "@/lib/content/launch"
 import { WEEKLY_ORDERING_CLOSED_MESSAGE } from "@/lib/menu/schedule"
 
 interface ClosedMenuCTAProps {
@@ -22,9 +23,11 @@ export default function ClosedMenuCTA({ menu }: ClosedMenuCTAProps) {
           <Button href="/contact?intent=reminder" variant="outline" size="lg">
             Get next menu reminder
           </Button>
-          <Button href="/gifts" variant="secondary" size="lg">
-            Request a future gift box
-          </Button>
+          {launchConfig.giftComfortBoxesEnabled && (
+            <Button href="/gifts" variant="secondary" size="lg">
+              Request a future gift box
+            </Button>
+          )}
         </div>
       </div>
     </div>
