@@ -2,6 +2,7 @@
 
 import { faqEntries } from "@/lib/content/faq"
 import { getPublicFaqEntries } from "@/lib/content/launch"
+import { wildFlowerFund } from "@/lib/content/wildFlowerFund"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
 import Accordion from "@/components/ui/Accordion"
@@ -31,7 +32,12 @@ export default function FaqPage() {
           <p className="text-muted font-body mb-6">
             Reach out and we&apos;ll be happy to help.
           </p>
-          <Button href="/contact?intent=general">Get in Touch</Button>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button href="/contact?intent=general">Get in Touch</Button>
+            <Button href={wildFlowerFund.path} variant="outline">
+              {wildFlowerFund.name}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

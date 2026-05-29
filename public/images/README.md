@@ -2,6 +2,12 @@
 
 Owner photography and exports live in this folder. The site references these filenames; replace a file to update the site without code changes.
 
+## Wild Flower Fund
+
+| File | Use | Status |
+|------|-----|--------|
+| `wildflower-meadow.png` | Homepage fund banner (full-width meadow photo) | **Upload** — wide landscape, soft wildflowers, warm light |
+
 ## This week's menu (Week 1)
 
 | File | Use | Status |

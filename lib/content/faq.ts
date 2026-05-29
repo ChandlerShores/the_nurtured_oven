@@ -69,5 +69,10 @@ export const faqEntries: FaqEntry[] = [
     answer:
       "As a Kentucky cottage bakery, The Nurtured Oven operates under state cottage food laws. Products are made in a home kitchen that is not inspected by the health department. This is noted on all packaging and is part of what makes cottage baking personal and community-centered.",
   },
+  {
+    question: "What is The Wild Flower Fund?",
+    answer:
+      "The Wild Flower Fund is a giving effort from The Nurtured Oven. Moms caring for moms. 10% of every purchase is set aside to help support moms and families in our community navigating difficult seasons through food, encouragement, and practical care. You can read more on the Wild Flower Fund page.",
+  },
 ]
 
