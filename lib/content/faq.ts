@@ -7,7 +7,7 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "How does weekly ordering work?",
     answer:
-      "Every Friday we post a new weekly menu with 3\u20135 items plus the Weekly Comfort Box. Place your order by Wednesday at noon and pay at checkout to confirm. Orders are fulfilled on Friday via free pickup or local delivery in Georgetown and Lexington.",
+      "Every Friday we post a new weekly menu of a few small-batch treats. Preorder by Wednesday at noon and pay at checkout to confirm. Orders are fulfilled on Friday via free pickup or local delivery in Georgetown and Lexington.",
   },
   {
     question: "What is the Weekly Comfort Box?",
@@ -69,10 +69,10 @@ export const faqEntries: FaqEntry[] = [
     answer:
       "As a Kentucky cottage bakery, The Nurtured Oven operates under state cottage food laws. Products are made in a home kitchen that is not inspected by the health department. This is noted on all packaging and is part of what makes cottage baking personal and community-centered.",
   },
+  {
+    question: "What is The Wild Flower Fund?",
+    answer:
+      "The Wild Flower Fund is a giving effort from The Nurtured Oven. Moms caring for moms. 10% of every purchase is set aside to help support moms and families in our community navigating difficult seasons through food, encouragement, and practical care. You can read more on the Wild Flower Fund page.",
+  },
 ]
 
-export const homepageFaq: FaqEntry[] = [
-  faqEntries[0],
-  faqEntries[1],
-  faqEntries[6],
-]

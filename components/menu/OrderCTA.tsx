@@ -11,7 +11,7 @@ export default function OrderCTA({ menu }: OrderCTAProps) {
   const orderHref = resolveOrderCtaHref(menu)
 
   return (
-    <div className="bg-oatmeal/40">
+    <div id="order-cta" className="bg-oatmeal/40 scroll-mt-24">
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
         <h2 className="font-heading text-2xl sm:text-3xl text-espresso tracking-wide">
           {menu.orderCta.heading}

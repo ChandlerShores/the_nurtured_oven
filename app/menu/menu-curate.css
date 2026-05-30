@@ -1,0 +1,36 @@
+/* Scoped polish for the weekly menu page only.
+   Soft vintage-cottage feel using existing brand tokens — no global overrides. */
+
+.menu-hero {
+  background-color: #f8f4ee;
+}
+
+.menu-hero__botanical {
+  position: absolute;
+  top: 0;
+  height: auto;
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+}
+
+.menu-hero__botanical--left {
+  left: -2.5rem;
+  transform: rotate(-8deg);
+}
+
+.menu-hero__botanical--right {
+  right: -2.5rem;
+  transform: scaleX(-1) rotate(-8deg);
+}
+
+@media (max-width: 640px) {
+  .menu-hero__botanical {
+    width: 130px;
+    opacity: 0.05;
+  }
+}
+
+.menu-feature-card {
+  position: relative;
+}

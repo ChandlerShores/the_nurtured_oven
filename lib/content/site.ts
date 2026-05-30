@@ -24,6 +24,7 @@ export const siteConfig = {
     { label: "This Week", href: "/menu" },
     { label: "Comfort Boxes", href: "/gifts" },
     { label: "Little Extras", href: "/little-extras" },
+    { label: "Wild Flower Fund", href: "/wild-flower-fund" },
     { label: "About", href: "/about" },
     { label: "FAQ", href: "/faq" },
   ],

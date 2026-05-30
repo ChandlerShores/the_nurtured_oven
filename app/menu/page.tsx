@@ -1,9 +1,11 @@
 import type { Metadata } from "next"
+import "./menu-curate.css"
 import { currentMenu } from "@/lib/content/currentMenu"
 import { isMenuOpen } from "@/lib/menu/ordering"
 import MenuHero from "@/components/menu/MenuHero"
 import FeaturedProduct from "@/components/menu/FeaturedProduct"
-import ProductGrid from "@/components/menu/ProductGrid"
+import OrderingStrip from "@/components/menu/OrderingStrip"
+import SupportingMenuItems from "@/components/menu/SupportingMenuItems"
 import OrderCTA from "@/components/menu/OrderCTA"
 import ClosedMenuCTA from "@/components/menu/ClosedMenuCTA"
 import LittleExtrasCallout from "@/components/menu/LittleExtrasCallout"
@@ -24,7 +26,8 @@ export default function MenuPage() {
         product={currentMenu.featured}
         orderingOpen={orderingOpen}
       />
-      <ProductGrid menu={currentMenu} />
+      {orderingOpen && <OrderingStrip menu={currentMenu} />}
+      <SupportingMenuItems menu={currentMenu} orderingOpen={orderingOpen} />
       {currentMenu.littleExtrasCallout && (
         <LittleExtrasCallout callout={currentMenu.littleExtrasCallout} />
       )}

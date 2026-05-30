@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
+import { getPublicNav } from "@/lib/content/launch"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Divider from "@/components/ui/Divider"
 
@@ -27,7 +28,7 @@ export default function Footer() {
               Explore
             </h3>
             <ul className="space-y-2.5">
-              {siteConfig.nav.map((item) => (
+              {getPublicNav().map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}

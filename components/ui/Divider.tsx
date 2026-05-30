@@ -1,5 +1,5 @@
 interface DividerProps {
-  icon?: "heart" | "flourish" | "dot"
+  icon?: "heart" | "flourish" | "dot" | "wildflower"
   className?: string
 }
 
@@ -17,6 +17,15 @@ export default function Divider({ icon = "heart", className = "" }: DividerProps
     ),
     dot: (
       <span className="w-1.5 h-1.5 rounded-full bg-blush" />
+    ),
+    wildflower: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-sage">
+        <path d="M12 22V12" />
+        <path d="M12 12c-1.5-2-4-4-5-7a3 3 0 0 1 5 2v5z" />
+        <path d="M12 12c1.5-2 4-4 5-7a3 3 0 0 0-5 2v5z" />
+        <path d="M12 12c-2.5-1-5.5-1-7.5 0a3 3 0 0 1 3-4l4.5 4z" />
+        <path d="M12 12c2.5-1 5.5-1 7.5 0a3 3 0 0 0-3-4l-4.5 4z" />
+      </svg>
     ),
   }
 

@@ -2,22 +2,18 @@ import Divider from "@/components/ui/Divider"
 
 const steps = [
   {
-    icon: "📋",
     title: "Friday: menu drops",
-    description: "We post the weekly menu every Friday. Follow along or sign up for reminders.",
+    description: "We post the weekly menu every Friday.",
   },
   {
-    icon: "🛒",
     title: "Order by Wednesday noon",
-    description: "Pick your items or grab a Weekly Comfort Box. Submit your order before the cutoff.",
+    description: "Choose from this week's bakes and submit before the cutoff.",
   },
   {
-    icon: "💳",
     title: "Pay to confirm",
-    description: "Pay securely with Square at checkout. Your order is locked in once payment is received.",
+    description: "Pay securely with Square. Your order locks in once payment is received.",
   },
   {
-    icon: "🏡",
     title: "Friday: pickup or delivery",
     description:
       "Free pickup, or local delivery in Georgetown & Lexington ($7, free on orders $40+).",
@@ -26,29 +22,29 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-cream">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-28">
-        <div className="text-center mb-14">
+    <section className="bg-oatmeal/55 border-y border-linen/35">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
+        <div className="text-center mb-8 sm:mb-10">
           <p className="font-accent text-eyebrow text-lg mb-2">simple &amp; weekly</p>
-          <h2 className="font-heading text-3xl sm:text-4xl text-espresso tracking-wide">
+          <h2 className="font-heading text-2xl sm:text-3xl text-espresso tracking-wide">
             How it works
           </h2>
-          <Divider icon="dot" className="mt-4 mb-0" />
+          <Divider icon="flourish" className="mt-4 mb-0" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {steps.map((step, i) => (
             <div
               key={i}
-              className="flex h-full flex-col items-center text-center bg-warm-white rounded-2xl p-6 sm:p-7 shadow-gentle border border-linen/30"
+              className="bg-cream rounded-xl border border-brown-sugar/20 p-5 sm:p-6 text-center shadow-gentle"
             >
-              <div className="flex h-10 shrink-0 items-center justify-center text-3xl leading-none mb-4">
-                {step.icon}
-              </div>
-              <h3 className="font-heading text-lg text-espresso tracking-wide min-h-[3.25rem] flex items-center justify-center mb-2 px-1">
+              <p className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-olive text-sm font-semibold font-body text-cream">
+                {i + 1}
+              </p>
+              <h3 className="font-heading text-base sm:text-lg text-espresso tracking-wide mb-2 min-h-[2.75rem] flex items-center justify-center">
                 {step.title}
               </h3>
-              <p className="text-muted text-sm leading-relaxed font-body w-full">
+              <p className="text-muted text-sm leading-relaxed font-body">
                 {step.description}
               </p>
             </div>

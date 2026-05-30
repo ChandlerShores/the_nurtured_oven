@@ -8,7 +8,9 @@ import {
   OrderThisWeekIcon,
 } from "@/components/contact/NurturedOvenIcons"
 
-export type ContactIntent = "weekly-order" | "gift" | "reminder" | "general"
+import type { ContactIntent } from "@/lib/contact/intents"
+
+export type { ContactIntent }
 
 export interface ContactIntentOption {
   id: ContactIntent

@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import Divider from "@/components/ui/Divider"
+import { shouldShowTreatCategory } from "@/lib/content/launch"
 
 const categories: {
   name: string
@@ -49,7 +50,7 @@ export default function TreatGrid() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-7">
-          {categories.map((cat) => (
+          {categories.filter((cat) => shouldShowTreatCategory(cat.href)).map((cat) => (
             <Link
               key={cat.name}
               href={cat.href}

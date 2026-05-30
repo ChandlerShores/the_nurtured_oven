@@ -8,16 +8,16 @@ import {
 
 describe("delivery fee", () => {
   it("charges $7 delivery under $40 subtotal", () => {
-    const items = [{ slug: "salted-caramel-brownies", quantity: 2 }]
+    const items = [{ slug: "marshmallow-cloud-bar", quantity: 2 }]
     const subtotal = calculateSubtotalCents(items)
     assert.equal(subtotal, 3200)
     assert.equal(getDeliveryFeeCents(subtotal, "delivery"), 700)
   })
 
   it("waives delivery at $40+ subtotal", () => {
-    const items = [{ slug: "weekly-comfort-box", quantity: 2 }]
+    const items = [{ slug: "cinnamon-rolls", quantity: 2 }]
     const subtotal = calculateSubtotalCents(items)
-    assert.equal(subtotal, 6600)
+    assert.equal(subtotal, 4200)
     assert.equal(getDeliveryFeeCents(subtotal, "delivery"), 0)
   })
 
@@ -26,7 +26,7 @@ describe("delivery fee", () => {
   })
 
   it("totals include delivery fee when applicable", () => {
-    const items = [{ slug: "biscoff-cloud-bars", quantity: 1 }]
+    const items = [{ slug: "marshmallow-cloud-bar", quantity: 1 }]
     const totals = calculateOrderTotalCents(items, "delivery")
     assert.equal(totals.subtotalCents, 1600)
     assert.equal(totals.deliveryFeeCents, 700)

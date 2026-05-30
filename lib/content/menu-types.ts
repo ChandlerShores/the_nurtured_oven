@@ -2,6 +2,8 @@ export interface MenuProduct {
   slug: string
   name: string
   description: string
+  /** Short curated label shown above the name (e.g. "Signature Staple", "Special Treat"). */
+  roleLabel?: string
   priceLabel: string
   /** Used by on-site Square checkout (`/contact` cart). Keep in sync with Square. */
   priceCents: number
@@ -17,7 +19,9 @@ export interface MenuProduct {
 }
 
 export interface FeaturedMenuProduct extends MenuProduct {
-  includes: string
+  /** Eyebrow above the featured item (defaults to "This Week's Feature"). */
+  featuredEyebrow?: string
+  includes?: string
   image: string
 }
 

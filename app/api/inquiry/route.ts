@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { sendInquiryEmail } from "@/lib/email"
 import { siteConfig } from "@/lib/content/site"
+import { isGiftContactIntentEnabled } from "@/lib/content/launch"
 import { getOrderingClosedMessage, isWeeklyOrderingAccepted } from "@/lib/menu/ordering-gate"
 
 export async function POST(req: NextRequest) {
@@ -26,6 +27,13 @@ export async function POST(req: NextRequest) {
     if (!name || !email) {
       return NextResponse.json(
         { error: "Name and email are required." },
+        { status: 400 }
+      )
+    }
+
+    if (intent === "gift" && !isGiftContactIntentEnabled()) {
+      return NextResponse.json(
+        { error: "Gift box requests are not available right now." },
         { status: 400 }
       )
     }

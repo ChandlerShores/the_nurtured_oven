@@ -2,6 +2,20 @@
 
 Owner photography and exports live in this folder. The site references these filenames; replace a file to update the site without code changes.
 
+## Wild Flower Fund
+
+| File | Use | Status |
+|------|-----|--------|
+| `wildflower-meadow.png` | Homepage fund banner (full-width meadow photo) | **Upload** — wide landscape, soft wildflowers, warm light |
+
+## This week's menu (Week 1)
+
+| File | Use | Status |
+|------|-----|--------|
+| `cinnamon_roll_hero.png` | Weekly feature + homepage hero | In repo |
+| `oatmeal_cookie_spring.png` | Signature staple (Oatmeal Cookie) | In repo |
+| `marshmallow-cloud-bar.png` | Special treat (Marshmallow Cloud Bar) | **Upload before deploy** |
+
 ## Current assets (owner / brand)
 
 | File | Typical use |

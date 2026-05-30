@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
+import { launchConfig } from "@/lib/content/launch"
 
 const moments = [
   "New moms",
@@ -12,6 +13,10 @@ const moments = [
 ]
 
 export default function GiftSection() {
+  if (!launchConfig.giftComfortBoxesEnabled) {
+    return null
+  }
+
   return (
     <section className="bg-cream">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 sm:py-20 lg:py-28">
