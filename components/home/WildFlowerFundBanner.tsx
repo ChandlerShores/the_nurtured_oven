@@ -13,23 +13,23 @@ export default function WildFlowerFundBanner() {
         src={wildFlowerFund.bannerImage}
         alt={wildFlowerFund.bannerImageAlt}
         fill
-        className="object-cover object-center saturate-[0.72] opacity-58"
+        className="object-cover object-center saturate-[0.65] opacity-[0.45]"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-cream/45" aria-hidden="true" />
+      <div className="absolute inset-0 bg-cream/55" aria-hidden="true" />
 
-      <div className="relative z-10 max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-14 text-center">
-        <div className="rounded-2xl bg-cream border border-linen/40 shadow-gentle px-6 py-8 sm:px-10 sm:py-10">
+      <div className="relative z-10 max-w-2xl mx-auto px-5 sm:px-8 py-10 sm:py-12 text-center">
+        <div className="rounded-2xl bg-cream border border-linen/50 shadow-gentle px-6 py-7 sm:px-10 sm:py-8">
           <WildflowerSprig size="sm" className="mx-auto mb-4 opacity-80" />
           <p className="font-accent text-eyebrow text-lg mb-2">
             {wildFlowerFund.name}
           </p>
-          <p className="font-body text-espresso text-base sm:text-lg leading-relaxed">
+          <p className="font-body text-espresso text-base sm:text-lg font-medium leading-relaxed">
             {wildFlowerFund.percentLabel} of every purchase supports moms and
             families navigating the hardest seasons through food, encouragement,
             and practical care.
           </p>
-          <p className="font-heading text-lg sm:text-xl text-espresso/85 italic mt-5 leading-relaxed">
+          <p className="font-heading text-lg sm:text-xl text-espresso/85 italic mt-4 leading-relaxed">
             {wildFlowerFund.homepageSubline}
           </p>
           <p className="mt-6">

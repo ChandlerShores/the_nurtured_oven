@@ -1,11 +1,9 @@
 import Image from "next/image"
-import Button from "@/components/ui/Button"
 import { currentMenu } from "@/lib/content/currentMenu"
-import { siteConfig } from "@/lib/content/site"
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[68vh] sm:min-h-[62vh] flex items-center">
+    <section className="relative min-h-[70vh] sm:min-h-[64vh] flex items-center">
       <div className="absolute inset-0 overflow-hidden">
         <Image
           src={currentMenu.featured.image}
@@ -17,7 +15,7 @@ export default function Hero() {
         />
       </div>
       <div
-        className="absolute inset-0 pointer-events-none bg-gradient-to-r from-espresso from-0% via-espresso/80 via-[48%] to-transparent to-[85%]"
+        className="absolute inset-0 pointer-events-none bg-gradient-to-r from-espresso/95 from-0% via-espresso/72 via-[48%] to-transparent to-[82%]"
         aria-hidden="true"
       />
       <div
@@ -28,29 +26,17 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-16 sm:py-20">
         <div className="max-w-xl">
           <p className="font-accent text-cream/95 text-lg sm:text-xl mb-3">
-            this week&apos;s menu is open
+            fresh from the oven
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
-            This Week&apos;s Menu
+            Soft cinnamon rolls are open for preorder.
           </h1>
 
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body mt-5">
-            Preorder by Wednesday at noon for Friday pickup or delivery. This week:
-            soft cinnamon rolls, our signature oatmeal cookie, and marshmallow cloud
-            bars.
+            Order by Wednesday at noon for Friday pickup or delivery. This
+            week&apos;s small-batch drop includes cinnamon rolls, oatmeal
+            cookies, and marshmallow cloud bars.
           </p>
-          <div className="mt-7 flex flex-col sm:flex-row gap-3">
-            <Button href="/contact?intent=weekly-order" size="lg">
-              {siteConfig.orderCta}
-            </Button>
-            <Button
-              href="/menu"
-              variant="inverse"
-              size="lg"
-            >
-              View menu
-            </Button>
-          </div>
         </div>
       </div>
     </section>

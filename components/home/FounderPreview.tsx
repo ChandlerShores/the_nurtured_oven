@@ -6,9 +6,9 @@ import { founder } from "@/lib/content/founder"
 export default function FounderPreview() {
   return (
     <section className="bg-cream border-b border-linen/30">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-14">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div className="order-2 lg:order-1">
+          <div>
             <p className="font-accent text-eyebrow text-lg mb-2">our story</p>
             <h2 className="font-heading text-2xl sm:text-3xl text-espresso leading-snug tracking-wide">
               {founder.headline}
@@ -27,12 +27,12 @@ export default function FounderPreview() {
             </div>
           </div>
 
-          <div className="order-1 lg:order-2 relative aspect-[5/4] sm:aspect-[4/3] lg:aspect-[5/4] max-h-[280px] sm:max-h-[320px] lg:max-h-[360px] w-full mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-linen/40 shadow-gentle">
+          <div className="relative aspect-[5/4] sm:aspect-[4/3] lg:aspect-[5/4] max-h-[250px] sm:max-h-[300px] lg:max-h-[340px] w-full mx-auto lg:mx-0 rounded-2xl overflow-hidden border border-linen/40 shadow-gentle">
             <Image
               src={founder.photo}
               alt={founder.photoAlt}
               fill
-              className="object-cover object-top scale-[1.2]"
+              className="object-cover object-top scale-[1.2] saturate-[0.9] brightness-[0.98]"
               sizes="(max-width: 1024px) 100vw, 45vw"
             />
           </div>

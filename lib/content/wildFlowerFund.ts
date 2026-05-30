@@ -12,6 +12,9 @@ export const wildFlowerFund = {
   bannerLine:
     "10% of every purchase supports The Wild Flower Fund, helping moms and families in our community navigate the hardest seasons.",
 
+  heroSummary:
+    "The Wild Flower Fund sets aside 10% of every order to support local moms and families with food, encouragement, and practical care.",
+
   intro:
     "Motherhood is beautiful, but some seasons are just hard. The Wild Flower Fund is our quiet way of showing up for other moms. We set aside 10% of every purchase to share food, encouragement, and practical care with families close to home who are going through one of those seasons.",
 
@@ -28,36 +31,43 @@ export const wildFlowerFund = {
   atAGlance: [
     {
       label: "What it is",
-      text: "A giving effort born from one mom's calling to love her neighbors well.",
+      text: "A local care fund from The Nurtured Oven.",
     },
     {
       label: "How it is funded",
-      text: "10% of every purchase is quietly set aside. It's built into every box we bake.",
+      text: "10% of every purchase is set aside for the fund.",
     },
     {
       label: "Who it helps",
-      text: "Moms and families close to home navigating difficult seasons.",
+      text: "Local moms and families navigating difficult seasons.",
     },
     {
       label: "What it provides",
-      text: "Food, encouragement, and practical care, delivered with warmth.",
+      text: "Food, encouragement, and practical care.",
     },
   ] as const,
 
-  bodyParagraphs: [
-    "A difficult pregnancy. Postpartum that won't lift. A job lost. A diagnosis. A mom just trying to get through the week while holding everything together for everyone else. These aren't distant stories. They're our neighbors, our friends, moms right here in our community.",
-    "The Wild Flower Fund started because this was placed on my heart. I know what it feels like when the weight of a season is more than you can carry on your own. And I know how much it means when someone shows up. Not with advice, just with something warm and the quiet reminder that you are seen and you are not alone.",
-    "Every time you order from The Nurtured Oven, a portion of your purchase is set aside for The Wild Flower Fund. That money goes toward food, support, and practical care for moms and families navigating difficult seasons.",
-    "It's just part of how we bake. A way to extend a little comfort beyond the box, from one mom to another.",
-    "We aren't a big organization. We don't have a staff or a board. We're a cottage bakery run by a mom who believes we were made to take care of each other, and that showing up for the people around us is what this is all about.",
-    "When you order this week's menu or share a box with someone who needs a little comfort, part of your purchase helps a mom close to home. That's what The Wild Flower Fund is. Moms caring for moms.",
+  founderNote: [
+    "The Wild Flower Fund started because I know what it feels like when a season is more than you can carry on your own.",
+    "Sometimes care looks like a warm meal, a thoughtful box, or a small practical help at the right time. This is our way of setting aside part of every bake to reach moms and families close to home.",
   ] as const,
 
-  gentleNote:
-    "The Wild Flower Fund is a giving effort connected to The Nurtured Oven, not a separate organization.",
+  supportExamples: [
+    "A meal after a hard appointment.",
+    "A box of sweets in a difficult postpartum season.",
+    "Practical help when a family is stretched thin.",
+    "A note that says, \"you are seen.\"",
+  ] as const,
+
+  goodToKnow: [
+    "The Wild Flower Fund is connected to The Nurtured Oven. It is not a separate nonprofit.",
+    "Recipient details are handled privately and with care.",
+    "Support stays local to moms and families close to home.",
+    "The focus is practical care: food, encouragement, and simple help in hard seasons.",
+  ] as const,
 
   cta: {
-    heading: "Order this week's menu",
-    body: "Every purchase quietly helps a mom close to home and brings a little comfort to your table, too.",
+    heading: "Order this week",
+    body: "Every order helps set aside care for a mom or family close to home.",
   },
 } as const

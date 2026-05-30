@@ -54,8 +54,15 @@ export async function sendEmail(
 
     if (!res.ok) {
       const err = await res.text()
+      let message = "Failed to send email"
+      try {
+        const parsed = JSON.parse(err) as { message?: string }
+        if (parsed.message) message = parsed.message
+      } catch {
+        /* use default message */
+      }
       console.error("[Email] Resend error:", err)
-      return { success: false, error: "Failed to send email" }
+      return { success: false, error: message }
     }
 
     return { success: true }

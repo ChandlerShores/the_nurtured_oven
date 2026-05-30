@@ -22,8 +22,8 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-oatmeal/35 border-b border-linen/25">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-14">
+    <section className="bg-oatmeal/55 border-y border-linen/35">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
         <div className="text-center mb-8 sm:mb-10">
           <p className="font-accent text-eyebrow text-lg mb-2">simple &amp; weekly</p>
           <h2 className="font-heading text-2xl sm:text-3xl text-espresso tracking-wide">
@@ -36,10 +36,10 @@ export default function HowItWorks() {
           {steps.map((step, i) => (
             <div
               key={i}
-              className="bg-warm-white rounded-xl border border-linen/35 p-5 sm:p-6 text-center"
+              className="bg-cream rounded-xl border border-brown-sugar/20 p-5 sm:p-6 text-center shadow-gentle"
             >
-              <p className="font-body text-xs font-semibold text-olive tracking-wide uppercase mb-2">
-                Step {i + 1}
+              <p className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-olive text-sm font-semibold font-body text-cream">
+                {i + 1}
               </p>
               <h3 className="font-heading text-base sm:text-lg text-espresso tracking-wide mb-2 min-h-[2.75rem] flex items-center justify-center">
                 {step.title}
