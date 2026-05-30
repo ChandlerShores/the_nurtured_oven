@@ -12,7 +12,7 @@ interface SquareWebhookPayment {
   note?: string
   receipt_url?: string
   buyer_email_address?: string
-  amount_money?: { amount?: bigint | number; currency?: string }
+  amount_money?: { amount?: bigint | number | null; currency?: string }
 }
 
 function parseQuantity(value: string | number | undefined): number {

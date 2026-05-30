@@ -23,8 +23,8 @@ export interface SquareWebhookPaymentLike {
   receiptUrl?: string
   buyer_email_address?: string
   buyerEmailAddress?: string
-  amount_money?: { amount?: bigint | number; currency?: string }
-  amountMoney?: { amount?: bigint | number; currency?: string }
+  amount_money?: { amount?: bigint | number | null; currency?: string }
+  amountMoney?: { amount?: bigint | number | null; currency?: string }
   source_type?: string
   sourceType?: string
 }

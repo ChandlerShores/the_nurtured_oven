@@ -29,11 +29,11 @@ function getWebhookConfig(): {
   return { signatureKey, notificationUrl }
 }
 
-function verifySquareSignature(
+async function verifySquareSignature(
   body: string,
   signatureHeader: string | null,
   config: { signatureKey: string; notificationUrl: string }
-): boolean {
+): Promise<boolean> {
   if (!signatureHeader) return false
 
   return WebhooksHelper.verifySignature({
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text()
   const signature = req.headers.get("x-square-hmacsha256-signature")
 
-  if (!verifySquareSignature(body, signature, config)) {
+  if (!(await verifySquareSignature(body, signature, config))) {
     return webhookJson({ error: "Invalid signature" }, { status: 401 })
   }
 
