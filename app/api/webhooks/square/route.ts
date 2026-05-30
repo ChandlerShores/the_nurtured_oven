@@ -4,8 +4,8 @@ import { sendPaidOrderEmails } from "@/lib/email"
 import { siteConfig } from "@/lib/content/site"
 import { resolvePaidOrderDetails } from "@/lib/square/resolve-paid-order"
 import {
-  hasProcessedSquarePayment,
-  markSquarePaymentProcessed,
+  claimSquarePayment,
+  releaseSquarePaymentClaim,
 } from "@/lib/square/webhook-dedupe"
 
 export async function POST(req: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing signature" }, { status: 401 })
     }
 
-    const isValid = WebhooksHelper.verifySignature({
+    const isValid = await WebhooksHelper.verifySignature({
       requestBody: body,
       signatureHeader: signature,
       signatureKey,
@@ -66,19 +66,19 @@ export async function POST(req: NextRequest) {
   if (eventType === "payment.updated" && payment?.status === "COMPLETED") {
     const paymentId = payment.id
 
-    if (paymentId && (await hasProcessedSquarePayment(paymentId))) {
+    if (paymentId && !(await claimSquarePayment(paymentId, payment.order_id))) {
       return NextResponse.json({ received: true, duplicate: true })
     }
 
     const ownerEmail =
       process.env.OWNER_EMAIL || siteConfig.ownerEmail
 
-    const details = await resolvePaidOrderDetails(payment)
-
-    await sendPaidOrderEmails(details, ownerEmail)
-
-    if (paymentId) {
-      await markSquarePaymentProcessed(paymentId, payment.order_id)
+    try {
+      const details = await resolvePaidOrderDetails(payment)
+      await sendPaidOrderEmails(details, ownerEmail)
+    } catch (err) {
+      if (paymentId) await releaseSquarePaymentClaim(paymentId)
+      throw err
     }
   }
 

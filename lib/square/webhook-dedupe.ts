@@ -1,24 +1,38 @@
-/**
- * Webhook idempotency boundary for Square payment.updated events.
- *
- * Serverless instances do not share memory, so in-process Sets are unsafe in production.
- * Implement durable storage (Vercel KV, Postgres, etc.) before relying on dedupe in prod.
- */
+import { isRedisConfigured } from "@/lib/square/redis-client"
+import {
+  claimSquarePaymentRedis,
+  hasProcessedSquarePaymentRedis,
+  markSquarePaymentProcessedRedis,
+  releaseSquarePaymentClaimRedis,
+} from "@/lib/square/webhook-idempotency"
 
 export async function hasProcessedSquarePayment(
   paymentId: string
 ): Promise<boolean> {
-  // TODO: Query durable store by paymentId (e.g. `square_webhook_payments` table / KV key).
-  // Return true when confirmation emails were already sent for this payment.
-  void paymentId
-  return false
+  if (!isRedisConfigured()) return false
+  return hasProcessedSquarePaymentRedis(paymentId)
+}
+
+/** Atomically claim a payment before sending emails. Returns false if already processed. */
+export async function claimSquarePayment(
+  paymentId: string,
+  orderId?: string
+): Promise<boolean> {
+  if (!isRedisConfigured()) return true
+  return claimSquarePaymentRedis(paymentId, orderId)
+}
+
+export async function releaseSquarePaymentClaim(
+  paymentId: string
+): Promise<void> {
+  if (!isRedisConfigured()) return
+  await releaseSquarePaymentClaimRedis(paymentId)
 }
 
 export async function markSquarePaymentProcessed(
   paymentId: string,
   orderId?: string
 ): Promise<void> {
-  // TODO: Upsert paymentId (+ optional orderId + processedAt) after successful email send.
-  void paymentId
-  void orderId
+  if (!isRedisConfigured()) return
+  await markSquarePaymentProcessedRedis(paymentId, orderId)
 }
