@@ -40,6 +40,9 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# local dev website order store
+/.data/
+
 # vercel
 .vercel
 

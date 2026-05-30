@@ -83,12 +83,13 @@ function fulfillmentDateToBatchLabel(fulfillmentDate?: string): string | undefin
 }
 
 export async function resolvePaidOrderDetails(
-  payment: SquareWebhookPayment
+  payment: SquareWebhookPayment,
+  orderFromMatch?: Square.Order | null
 ): Promise<PaidOrderDetails> {
   const parsedNote = parsePaymentNote(payment.note)
-  let order: Square.Order | undefined
+  let order = orderFromMatch
 
-  if (payment.order_id) {
+  if (!order && payment.order_id) {
     try {
       const client = getSquareClient()
       const result = await client.orders.get({ orderId: payment.order_id })

@@ -14,6 +14,7 @@ import {
   buildMenuLineItemMetadata,
   buildOrderMetadata,
 } from "@/lib/square/order-metadata"
+import { registerWebsiteOrder } from "@/lib/square/website-order-store"
 import {
   getAppUrl,
   getSquareClient,
@@ -132,6 +133,19 @@ export async function createWeeklyCheckout(
   if (!checkoutUrl) {
     const detail = result.errors?.[0]?.detail || "No checkout URL returned"
     throw new Error(detail)
+  }
+
+  const squareOrderId = result.paymentLink?.orderId
+  if (squareOrderId) {
+    await registerWebsiteOrder({
+      squareOrderId,
+      internalRef: batch.internalRef,
+      referenceId: batch.internalRef,
+    })
+  } else {
+    console.warn(
+      "[Checkout] Square payment link did not return orderId; webhook matching will rely on order metadata only"
+    )
   }
 
   return {

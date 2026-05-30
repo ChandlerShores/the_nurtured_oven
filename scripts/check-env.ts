@@ -10,6 +10,7 @@ import {
   isSquareProductionMode,
 } from "../lib/env/deployment"
 import { isSquareConfigured } from "../lib/square/client"
+import { isRedisConfigured } from "../lib/square/redis-client"
 import {
   isOrderingKillSwitchActive,
   isWeeklyOrderingAccepted,
@@ -42,6 +43,10 @@ console.log("  Location ID:", mask(process.env.SQUARE_LOCATION_ID))
 console.log("  Access token:", mask(process.env.SQUARE_ACCESS_TOKEN))
 console.log("  Webhook URL:", process.env.SQUARE_WEBHOOK_NOTIFICATION_URL ?? "(not set)")
 console.log("  Webhook key:", mask(process.env.SQUARE_WEBHOOK_SIGNATURE_KEY))
+console.log("")
+console.log("Redis")
+console.log("  Configured:", isRedisConfigured())
+console.log("  URL:", mask(process.env.REDIS_URL))
 console.log("")
 console.log("Ordering")
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())

@@ -1,86 +1,96 @@
 import { NextRequest, NextResponse } from "next/server"
 import { WebhooksHelper } from "square"
-import { sendPaidOrderEmails } from "@/lib/email"
-import { siteConfig } from "@/lib/content/site"
-import { resolvePaidOrderDetails } from "@/lib/square/resolve-paid-order"
-import {
-  hasProcessedSquarePayment,
-  markSquarePaymentProcessed,
-} from "@/lib/square/webhook-dedupe"
+import { processPaymentWebhookEvent } from "@/lib/square/process-payment-webhook"
+
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
+
+function webhookJson(
+  body: Record<string, unknown>,
+  init?: ResponseInit
+): NextResponse {
+  return NextResponse.json(body, {
+    ...init,
+    headers: {
+      "Cache-Control": "no-store",
+      ...(init?.headers ?? {}),
+    },
+  })
+}
+
+function getWebhookConfig(): {
+  signatureKey: string
+  notificationUrl: string
+} | null {
+  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY?.trim()
+  const notificationUrl = process.env.SQUARE_WEBHOOK_NOTIFICATION_URL?.trim()
+
+  if (!signatureKey || !notificationUrl) return null
+  return { signatureKey, notificationUrl }
+}
+
+function verifySquareSignature(
+  body: string,
+  signatureHeader: string | null,
+  config: { signatureKey: string; notificationUrl: string }
+): boolean {
+  if (!signatureHeader) return false
+
+  return WebhooksHelper.verifySignature({
+    requestBody: body,
+    signatureHeader,
+    signatureKey: config.signatureKey,
+    notificationUrl: config.notificationUrl,
+  })
+}
 
 export async function POST(req: NextRequest) {
-  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY
-  const notificationUrl = process.env.SQUARE_WEBHOOK_NOTIFICATION_URL
-
-  const body = await req.text()
-
-  if (signatureKey && notificationUrl) {
-    const signature = req.headers.get("x-square-hmacsha256-signature")
-    if (!signature) {
-      return NextResponse.json({ error: "Missing signature" }, { status: 401 })
-    }
-
-    const isValid = WebhooksHelper.verifySignature({
-      requestBody: body,
-      signatureHeader: signature,
-      signatureKey,
-      notificationUrl,
-    })
-
-    if (!isValid) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
-    }
-  } else if (process.env.NODE_ENV === "production") {
-    console.warn(
-      "[Square webhook] SQUARE_WEBHOOK_SIGNATURE_KEY or SQUARE_WEBHOOK_NOTIFICATION_URL not set"
+  const config = getWebhookConfig()
+  if (!config) {
+    console.error(
+      "[Square webhook] SQUARE_WEBHOOK_SIGNATURE_KEY and SQUARE_WEBHOOK_NOTIFICATION_URL must be set"
+    )
+    return webhookJson(
+      { error: "Webhook verification is not configured" },
+      { status: 500 }
     )
   }
 
-  let event: {
-    type?: string
-    data?: {
-      type?: string
-      object?: {
-        payment?: {
-          id?: string
-          status?: string
-          order_id?: string
-          note?: string
-          receipt_url?: string
-          buyer_email_address?: string
-          amount_money?: { amount?: bigint | number; currency?: string }
-        }
-      }
-    }
+  const body = await req.text()
+  const signature = req.headers.get("x-square-hmacsha256-signature")
+
+  if (!verifySquareSignature(body, signature, config)) {
+    return webhookJson({ error: "Invalid signature" }, { status: 401 })
   }
+
+  let event: Parameters<typeof processPaymentWebhookEvent>[0]
 
   try {
     event = JSON.parse(body)
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
+    return webhookJson({ error: "Invalid JSON" }, { status: 400 })
   }
 
-  const payment = event.data?.object?.payment
-  const eventType = event.type
-
-  if (eventType === "payment.updated" && payment?.status === "COMPLETED") {
-    const paymentId = payment.id
-
-    if (paymentId && (await hasProcessedSquarePayment(paymentId))) {
-      return NextResponse.json({ received: true, duplicate: true })
-    }
-
-    const ownerEmail =
-      process.env.OWNER_EMAIL || siteConfig.ownerEmail
-
-    const details = await resolvePaidOrderDetails(payment)
-
-    await sendPaidOrderEmails(details, ownerEmail)
-
-    if (paymentId) {
-      await markSquarePaymentProcessed(paymentId, payment.order_id)
-    }
+  try {
+    const result = await processPaymentWebhookEvent(event)
+    return webhookJson({
+      received: true,
+      ...result,
+    })
+  } catch (err) {
+    console.error("[Square webhook] Handler error:", err)
+    return webhookJson(
+      {
+        received: true,
+        action: "error",
+        error: "Internal handler error",
+      },
+      { status: 500 }
+    )
   }
+}
 
-  return NextResponse.json({ received: true })
+/** Square may POST to a trailing-slash URL; respond directly without redirect. */
+export async function GET() {
+  return webhookJson({ ok: true, endpoint: "square-webhook" })
 }
