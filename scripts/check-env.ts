@@ -48,6 +48,27 @@ console.log("Redis")
 console.log("  Configured:", isRedisConfigured())
 console.log("  URL:", mask(process.env.REDIS_URL))
 console.log("")
+console.log("Google Sheets")
+console.log(
+  "  Spreadsheet ID:",
+  mask(process.env.GOOGLE_SHEET_ID)
+)
+console.log(
+  "  Orders range:",
+  process.env.GOOGLE_SHEETS_ORDERS_RANGE ??
+    process.env.GOOGLE_SHEETS_RANGE ??
+    "Orders!A:R (default)"
+)
+console.log(
+  "  Line items range:",
+  process.env.GOOGLE_SHEETS_LINE_ITEMS_RANGE ?? "Order Line Items!A:M (default)"
+)
+console.log(
+  "  Service account email:",
+  process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "(not set)"
+)
+console.log("  Private key:", mask(process.env.GOOGLE_PRIVATE_KEY))
+console.log("")
 console.log("Ordering")
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())
 console.log("  Weekly ordering accepted now:", isWeeklyOrderingAccepted())

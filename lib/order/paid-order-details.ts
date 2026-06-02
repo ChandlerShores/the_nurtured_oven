@@ -3,6 +3,8 @@ export interface PaidOrderLineItem {
   quantity: number
   slug?: string
   type?: "menu_item" | "delivery_fee"
+  unitPriceCents?: number
+  lineTotalCents?: number
 }
 
 export interface PaidOrderDetails {
@@ -25,4 +27,6 @@ export interface PaidOrderDetails {
   amountCents?: number
   squareOrderId?: string
   receiptUrl?: string
+  /** Sheet export only; defaults to "New" when unset. */
+  orderStatus?: string
 }

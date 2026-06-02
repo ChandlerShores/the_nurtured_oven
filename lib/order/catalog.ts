@@ -6,6 +6,8 @@ export interface CatalogItem {
   priceCents: number
   unitLabel?: string
   image?: string
+  /** Baker-facing category (from menu roleLabel or featured eyebrow). */
+  category?: string
 }
 
 export function getWeeklyCatalog(): CatalogItem[] {
@@ -15,6 +17,7 @@ export function getWeeklyCatalog(): CatalogItem[] {
     priceCents: item.priceCents,
     unitLabel: item.unitLabel,
     image: item.image,
+    category: item.roleLabel,
   }))
 
   items.push({
@@ -23,6 +26,8 @@ export function getWeeklyCatalog(): CatalogItem[] {
     priceCents: currentMenu.featured.priceCents,
     unitLabel: currentMenu.featured.unitLabel,
     image: currentMenu.featured.image,
+    category:
+      currentMenu.featured.featuredEyebrow ?? currentMenu.featured.roleLabel,
   })
 
   return items

@@ -10,9 +10,11 @@
     "test:unit": "tsx --test lib/**/*.test.ts lib/email/**/*.test.ts",
     "email:preview": "tsx scripts/preview-emails.ts",
     "env:check": "tsx scripts/check-env.ts",
+    "sheets:seed-month": "tsx scripts/seed-sheets-month.ts",
     "playbook:export": "tsx scripts/export-playbook.ts"
   },
   "dependencies": {
+    "googleapis": "^173.0.0",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",

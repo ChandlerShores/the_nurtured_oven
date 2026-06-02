@@ -50,6 +50,8 @@ function mapLineItems(order?: Square.Order | null): {
       quantity: qty,
       slug: meta.slug,
       type,
+      unitPriceCents: cents,
+      lineTotalCents: lineTotal,
     })
 
     if (type === "delivery_fee") {

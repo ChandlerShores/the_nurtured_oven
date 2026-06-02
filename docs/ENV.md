@@ -40,6 +40,26 @@ Each subscription needs its own **signature key** and matching `SQUARE_WEBHOOK_N
 
 Event: **`payment.updated`** only.
 
+## Google Sheets export (paid orders)
+
+Set these variables in any environment where you want automatic row inserts after paid Square webhooks:
+
+- `GOOGLE_SHEET_ID` (required)
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL` (required)
+- `GOOGLE_PRIVATE_KEY` (required)
+- `GOOGLE_SHEETS_ORDERS_RANGE` (optional, default `Orders!A:R`)
+- `GOOGLE_SHEETS_LINE_ITEMS_RANGE` (optional, default `Order Line Items!A:M`)
+- `GOOGLE_SHEETS_RANGE` (legacy alias for orders range only)
+
+Service account requirements:
+
+1. Enable Google Sheets API in your Google Cloud project.
+2. Create a service account key JSON.
+3. Share the target sheet with the service account email as **Editor**.
+4. Copy values from the JSON into env vars:
+   - `client_email` → `GOOGLE_SERVICE_ACCOUNT_EMAIL`
+   - `private_key` → `GOOGLE_PRIVATE_KEY`
+
 ## Weekly ordering window
 
 | Variable | Default | Effect |

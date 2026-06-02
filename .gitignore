@@ -26,6 +26,8 @@
 # Dropped-in assets at repo root (canonical copies live in public/)
 /*.png
 /*.svg
+/*service-account*.json
+/*the-nurtured-oven-*.json
 
 # Playbook exports for client (pnpm playbook:export)
 /owner-playbook.pdf

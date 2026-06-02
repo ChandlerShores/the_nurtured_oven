@@ -6,6 +6,7 @@ import {
   type SquareWebhookPaymentLike,
 } from "@/lib/square/match-website-payment"
 import { resolvePaidOrderDetails } from "@/lib/square/resolve-paid-order"
+import { appendPaidOrderToSheet } from "@/lib/google-sheets/append-paid-order"
 import { getSquareClient } from "@/lib/square/client"
 import {
   claimSquarePayment,
@@ -159,6 +160,7 @@ export async function processPaymentWebhookEvent(
   try {
     const details = await resolvePaidOrderDetails(payment, match.order)
     await sendPaidOrderEmails(details, ownerEmail)
+    await appendPaidOrderToSheet(details)
     await markWebsiteOrderPaid(match.squareOrderId, paymentId)
   } catch (err) {
     await releaseSquarePaymentClaim(paymentId)
