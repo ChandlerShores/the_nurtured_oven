@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import { Lora, Inter, Dancing_Script } from "next/font/google"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
@@ -35,18 +36,26 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   const ordering = getOrderingPublicState()
+  const pathname = headers().get("x-pathname") ?? ""
+  const isAdmin = pathname.startsWith("/admin")
 
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable} ${dancingScript.variable}`}>
       <body className="min-h-screen antialiased flex flex-col">
-        <a href="#main-content" className="skip-link font-body">
-          Skip to main content
-        </a>
-        <Header bannerNote={ordering.bannerNote} />
-        <main id="main-content" className="flex-1" tabIndex={-1}>
+        {!isAdmin ? (
+          <a href="#main-content" className="skip-link font-body">
+            Skip to main content
+          </a>
+        ) : null}
+        {!isAdmin ? <Header bannerNote={ordering.bannerNote} /> : null}
+        <main
+          id={isAdmin ? undefined : "main-content"}
+          className="flex-1"
+          tabIndex={isAdmin ? undefined : -1}
+        >
           {children}
         </main>
-        <Footer />
+        {!isAdmin ? <Footer /> : null}
       </body>
     </html>
   )

@@ -14,14 +14,22 @@ import {
   resolveContactDefaultIntent,
 } from "@/lib/content/launch"
 
+import type { CatalogItem } from "@/lib/order/catalog-types"
+
 interface ContactPageContentProps {
   weeklyOrderingAvailable: boolean
   orderingClosedMessage: string
+  catalog: CatalogItem[]
+  featuredSlug: string
+  prefillSlug?: string
 }
 
 export default function ContactPageContent({
   weeklyOrderingAvailable,
   orderingClosedMessage,
+  catalog,
+  featuredSlug,
+  prefillSlug,
 }: ContactPageContentProps) {
   const searchParams = useSearchParams()
   const intentParam = searchParams.get("intent") as ContactIntent | null
@@ -67,7 +75,12 @@ export default function ContactPageContent({
         />
 
         <div className="bg-warm-white rounded-2xl p-6 sm:p-10 shadow-gentle border border-linen/30">
-          <ContactOrderForm intent={intent} />
+          <ContactOrderForm
+            intent={intent}
+            catalog={catalog}
+            featuredSlug={featuredSlug}
+            prefillSlug={prefillSlug}
+          />
         </div>
 
         <div className="mt-12 text-center">

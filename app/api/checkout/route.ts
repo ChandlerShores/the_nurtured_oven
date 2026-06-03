@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { isDeliveryCity } from "@/lib/content/fulfillment"
-import { getCatalogItem } from "@/lib/order/catalog"
+import { getWeeklyCatalog } from "@/lib/order/catalog"
 import { getDisabledOrderMessage, isMenuOpen } from "@/lib/menu/ordering"
 import { createWeeklyCheckout } from "@/lib/square/checkout"
 import { isSquareConfigured } from "@/lib/square/client"
@@ -51,12 +51,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const catalog = await getWeeklyCatalog()
+    const catalogSlugs = new Set(catalog.map((item) => item.slug))
+
     const validItems = lineItems.filter(
       (item: { slug?: string; quantity?: number }) =>
         item.slug &&
         typeof item.quantity === "number" &&
         item.quantity > 0 &&
-        getCatalogItem(item.slug)
+        catalogSlugs.has(item.slug)
     )
 
     if (validItems.length === 0) {

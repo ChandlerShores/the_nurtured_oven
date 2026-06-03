@@ -22,12 +22,17 @@ const batch: WeeklyFulfillmentContext = {
   timezone: "America/New_York",
 }
 
+/** Square SDK types require locationId on Order; tests only need match-related fields. */
+const TEST_LOCATION_ID = "LX5V0NV78YEX5"
+
 function websiteOrder(overrides: Partial<Square.Order> = {}): Square.Order {
+  const { locationId = TEST_LOCATION_ID, ...rest } = overrides
   return {
     id: "order_website_1",
+    locationId,
     referenceId: batch.internalRef,
     metadata: buildOrderMetadata(batch, "pickup"),
-    ...overrides,
+    ...rest,
   }
 }
 
@@ -94,6 +99,7 @@ describe("matchWebsitePayment", () => {
       },
       {
         id: "order_invoice_1",
+        locationId: TEST_LOCATION_ID,
         referenceId: "INV-1001",
         metadata: { source: "invoice" },
       }
@@ -111,6 +117,7 @@ describe("matchWebsitePayment", () => {
       },
       {
         id: "order_pos_1",
+        locationId: TEST_LOCATION_ID,
         referenceId: "POS-001",
         metadata: {},
       }

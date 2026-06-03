@@ -1,28 +1,12 @@
-import { google } from "googleapis"
-import { getCatalogItem } from "@/lib/order/catalog"
+import type { CatalogItem } from "@/lib/order/catalog-types"
+import { getWeeklyCatalogFallback } from "@/lib/order/catalog-build"
 import type {
   PaidOrderDetails,
   PaidOrderLineItem,
 } from "@/lib/order/paid-order-details"
 import { WEEKLY_FULFILLMENT_TIMEZONE } from "@/lib/order/weekly-fulfillment"
-
-const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets"
-const DEFAULT_ORDERS_RANGE = "Orders!A:R"
-const DEFAULT_LINE_ITEMS_RANGE = "Order Line Items!A:M"
-
-function parseEnv(name: string): string | undefined {
-  const value = process.env[name]?.trim()
-  return value ? value : undefined
-}
-
-function normalizeSpreadsheetId(value: string): string {
-  const match = value.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)
-  return match?.[1] ?? value
-}
-
-function normalizePrivateKey(value: string): string {
-  return value.replace(/\\n/g, "\n")
-}
+import { getSheetsClient } from "@/lib/google-sheets/client"
+import type { sheets_v4 } from "googleapis"
 
 function normalizeLineItemsSummary(items: PaidOrderLineItem[]): string {
   const menuItems = items.filter((item) => item.type !== "delivery_fee")
@@ -59,11 +43,14 @@ function formatOrderTimestamp(date: Date = new Date()): string {
   return orderTimestampFormatter.format(date)
 }
 
-function resolveLineItemPricing(item: PaidOrderLineItem): {
+function resolveLineItemPricing(
+  item: PaidOrderLineItem,
+  catalogBySlug: Map<string, CatalogItem>
+): {
   unitPriceCents: number | undefined
   lineTotalCents: number | undefined
 } {
-  const catalog = item.slug ? getCatalogItem(item.slug) : undefined
+  const catalog = item.slug ? catalogBySlug.get(item.slug) : undefined
   const unitPriceCents =
     item.unitPriceCents ?? catalog?.priceCents ?? undefined
   const lineTotalCents =
@@ -73,9 +60,12 @@ function resolveLineItemPricing(item: PaidOrderLineItem): {
   return { unitPriceCents, lineTotalCents }
 }
 
-function resolveItemCategory(slug?: string): string {
+function resolveItemCategory(
+  slug: string | undefined,
+  catalogBySlug: Map<string, CatalogItem>
+): string {
   if (!slug) return ""
-  return getCatalogItem(slug)?.category ?? ""
+  return catalogBySlug.get(slug)?.category ?? ""
 }
 
 /** One row for the Orders tab (column G = total quantity; header is "Total quantity" in sheet). */
@@ -108,7 +98,8 @@ function buildOrdersRow(
 /** One row per menu line item for the Order Line Items tab. */
 function buildLineItemRows(
   details: PaidOrderDetails,
-  orderTimestamp: string
+  orderTimestamp: string,
+  catalogBySlug: Map<string, CatalogItem>
 ): (string | number)[][] {
   const fulfillmentDate = details.fulfillmentDate ?? details.batchLabel ?? ""
   const internalRef = details.internalRef ?? ""
@@ -118,7 +109,10 @@ function buildLineItemRows(
   const orderStatus = details.orderStatus ?? "New"
 
   return menuLineItems(details.lineItems).map((item) => {
-    const { unitPriceCents, lineTotalCents } = resolveLineItemPricing(item)
+    const { unitPriceCents, lineTotalCents } = resolveLineItemPricing(
+      item,
+      catalogBySlug
+    )
 
     return [
       orderTimestamp,
@@ -128,7 +122,7 @@ function buildLineItemRows(
       customerName,
       item.slug ?? "",
       item.name,
-      resolveItemCategory(item.slug),
+      resolveItemCategory(item.slug, catalogBySlug),
       item.quantity,
       formatMoney(unitPriceCents),
       formatMoney(lineTotalCents),
@@ -139,7 +133,7 @@ function buildLineItemRows(
 }
 
 async function appendValues(
-  sheets: ReturnType<typeof google.sheets>,
+  sheets: sheets_v4.Sheets,
   spreadsheetId: string,
   range: string,
   values: (string | number)[][]
@@ -161,43 +155,12 @@ export interface SheetOrderEntry {
   orderedAt?: Date
 }
 
-function getSheetsClient(): {
-  sheets: ReturnType<typeof google.sheets>
-  spreadsheetId: string
-  ordersRange: string
-  lineItemsRange: string
-} | null {
-  const rawSpreadsheetId = parseEnv("GOOGLE_SHEET_ID")
-  if (!rawSpreadsheetId) return null
-  const spreadsheetId = normalizeSpreadsheetId(rawSpreadsheetId)
-
-  const clientEmail = parseEnv("GOOGLE_SERVICE_ACCOUNT_EMAIL")
-  const privateKey = parseEnv("GOOGLE_PRIVATE_KEY")
-  if (!clientEmail || !privateKey) {
-    console.warn(
-      "[Google Sheets] Skipping export: set GOOGLE_SERVICE_ACCOUNT_EMAIL and GOOGLE_PRIVATE_KEY."
-    )
-    return null
-  }
-
-  const ordersRange =
-    parseEnv("GOOGLE_SHEETS_ORDERS_RANGE") ??
-    parseEnv("GOOGLE_SHEETS_RANGE") ??
-    DEFAULT_ORDERS_RANGE
-  const lineItemsRange =
-    parseEnv("GOOGLE_SHEETS_LINE_ITEMS_RANGE") ?? DEFAULT_LINE_ITEMS_RANGE
-
-  const auth = new google.auth.JWT({
-    email: clientEmail,
-    key: normalizePrivateKey(privateKey),
-    scopes: [SHEETS_SCOPE],
-  })
-
-  return {
-    sheets: google.sheets({ version: "v4", auth }),
-    spreadsheetId,
-    ordersRange,
-    lineItemsRange,
+async function loadCatalogForExport(): Promise<CatalogItem[]> {
+  try {
+    const { getWeeklyCatalog } = await import("@/lib/order/catalog")
+    return await getWeeklyCatalog()
+  } catch {
+    return getWeeklyCatalogFallback()
   }
 }
 
@@ -207,15 +170,24 @@ export async function appendPaidOrdersToSheet(
   if (entries.length === 0) return
 
   const client = getSheetsClient()
-  if (!client) return
+  if (!client) {
+    console.warn(
+      "[Google Sheets] Skipping export: set GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL, and GOOGLE_PRIVATE_KEY."
+    )
+    return
+  }
 
   const ordersRows: (string | number)[][] = []
   const lineItemRows: (string | number)[][] = []
+  const catalog = await loadCatalogForExport()
+  const catalogBySlug = new Map(catalog.map((item) => [item.slug, item]))
 
   for (const { details, orderedAt } of entries) {
     const orderTimestamp = formatOrderTimestamp(orderedAt ?? new Date())
     ordersRows.push(buildOrdersRow(details, orderTimestamp))
-    lineItemRows.push(...buildLineItemRows(details, orderTimestamp))
+    lineItemRows.push(
+      ...buildLineItemRows(details, orderTimestamp, catalogBySlug)
+    )
   }
 
   await appendValues(

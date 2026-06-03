@@ -5,7 +5,7 @@
 import { readFileSync } from "fs"
 import { fulfillmentPolicy } from "../lib/content/fulfillment"
 import { appendPaidOrdersToSheet } from "../lib/google-sheets/append-paid-order"
-import { getWeeklyCatalog } from "../lib/order/catalog"
+import { getWeeklyCatalogFallback } from "../lib/order/catalog-build"
 import { calculateOrderTotalCents } from "../lib/order/delivery-fee"
 import type {
   PaidOrderDetails,
@@ -187,7 +187,7 @@ function buildSyntheticOrder(
   weekCount: number,
   rng: () => number
 ): { details: PaidOrderDetails; orderedAt: Date } {
-  const catalog = getWeeklyCatalog()
+  const catalog = getWeeklyCatalogFallback()
   const first = pick(rng, FIRST_NAMES)
   const last = pick(rng, LAST_NAMES)
   const name = `${first} ${last}`

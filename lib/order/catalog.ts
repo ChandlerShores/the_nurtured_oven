@@ -1,38 +1,22 @@
-import { currentMenu } from "@/lib/content/currentMenu"
+import "server-only"
 
-export interface CatalogItem {
+import { getCurrentMenu } from "@/lib/content/load-menu"
+import type { CatalogItem } from "@/lib/order/catalog-types"
+import {
+  buildWeeklyCatalog,
+} from "@/lib/order/catalog-build"
+
+export type { CatalogItem } from "@/lib/order/catalog-types"
+export { buildWeeklyCatalog, getWeeklyCatalogFallback } from "@/lib/order/catalog-build"
+
+export async function getWeeklyCatalog(): Promise<CatalogItem[]> {
+  const menu = await getCurrentMenu()
+  return buildWeeklyCatalog(menu)
+}
+
+export async function getCatalogItem(
   slug: string
-  name: string
-  priceCents: number
-  unitLabel?: string
-  image?: string
-  /** Baker-facing category (from menu roleLabel or featured eyebrow). */
-  category?: string
-}
-
-export function getWeeklyCatalog(): CatalogItem[] {
-  const items: CatalogItem[] = currentMenu.items.map((item) => ({
-    slug: item.slug,
-    name: item.name,
-    priceCents: item.priceCents,
-    unitLabel: item.unitLabel,
-    image: item.image,
-    category: item.roleLabel,
-  }))
-
-  items.push({
-    slug: currentMenu.featured.slug,
-    name: currentMenu.featured.name,
-    priceCents: currentMenu.featured.priceCents,
-    unitLabel: currentMenu.featured.unitLabel,
-    image: currentMenu.featured.image,
-    category:
-      currentMenu.featured.featuredEyebrow ?? currentMenu.featured.roleLabel,
-  })
-
-  return items
-}
-
-export function getCatalogItem(slug: string): CatalogItem | undefined {
-  return getWeeklyCatalog().find((item) => item.slug === slug)
+): Promise<CatalogItem | undefined> {
+  const catalog = await getWeeklyCatalog()
+  return catalog.find((item) => item.slug === slug)
 }

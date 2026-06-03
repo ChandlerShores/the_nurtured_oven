@@ -2,15 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
-import { currentMenu } from "@/lib/content/currentMenu"
-import { calculateOrderTotalCents } from "@/lib/order/delivery-fee"
-import { getWeeklyCatalog } from "@/lib/order/catalog"
+import { calculateOrderTotalCentsFromCatalog } from "@/lib/order/cart-totals"
+import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import type { CatalogItem } from "@/lib/order/catalog-types"
 
 function formatCents(cents: number): string {
   return `$${(cents / 100).toFixed(cents % 100 === 0 ? 0 : 2)}`
 }
 
 interface WeeklyOrderCartProps {
+  catalog: CatalogItem[]
+  featuredSlug: string
   prefillSlug?: string
   onQuantitiesChange?: (items: { slug: string; quantity: number }[]) => void
   fulfillment?: "pickup" | "delivery"
@@ -19,12 +21,13 @@ interface WeeklyOrderCartProps {
 }
 
 export default function WeeklyOrderCart({
+  catalog,
+  featuredSlug,
   prefillSlug,
   onQuantitiesChange,
   fulfillment = "pickup",
   variant = "default",
 }: WeeklyOrderCartProps) {
-  const catalog = useMemo(() => getWeeklyCatalog(), [])
   const isContact = variant === "contact"
 
   const initialQuantities = useMemo(() => {
@@ -57,9 +60,12 @@ export default function WeeklyOrderCart({
     .map(([slug, quantity]) => ({ slug, quantity }))
 
   const { subtotalCents, deliveryFeeCents, totalCents } =
-    calculateOrderTotalCents(lineItems, fulfillment)
+    calculateOrderTotalCentsFromCatalog(lineItems, fulfillment, catalog, {
+      freeDeliveryMinimumCents: fulfillmentPolicy.freeDeliveryMinimumCents,
+      deliveryFeeCents: fulfillmentPolicy.deliveryFeeCents,
+    })
 
-  const comfortSlug = currentMenu.featured.slug
+  const comfortSlug = featuredSlug
 
   const qtyButtonClass = isContact
     ? "w-10 h-10 rounded-full border text-espresso font-body text-lg leading-none transition-colors disabled:opacity-40"

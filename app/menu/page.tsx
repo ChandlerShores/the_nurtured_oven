@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import "./menu-curate.css"
-import { currentMenu } from "@/lib/content/currentMenu"
+import { getCurrentMenu } from "@/lib/content/load-menu"
 import { isMenuOpen } from "@/lib/menu/ordering"
 import MenuHero from "@/components/menu/MenuHero"
 import FeaturedProduct from "@/components/menu/FeaturedProduct"
@@ -10,31 +10,35 @@ import OrderCTA from "@/components/menu/OrderCTA"
 import ClosedMenuCTA from "@/components/menu/ClosedMenuCTA"
 import LittleExtrasCallout from "@/components/menu/LittleExtrasCallout"
 
-export const metadata: Metadata = {
-  title: `${currentMenu.weekLabel} | The Nurtured Oven`,
-  description:
-    "Order this week's small-batch comfort sweets. Free Friday pickup or local delivery in Georgetown & Lexington. Order by Wednesday at noon.",
+export async function generateMetadata(): Promise<Metadata> {
+  const menu = await getCurrentMenu()
+  return {
+    title: `${menu.weekLabel} | The Nurtured Oven`,
+    description:
+      "Order this week's small-batch comfort sweets. Free Friday pickup or local delivery in Georgetown & Lexington. Order by Wednesday at noon.",
+  }
 }
 
-export default function MenuPage() {
+export default async function MenuPage() {
+  const menu = await getCurrentMenu()
   const orderingOpen = isMenuOpen()
 
   return (
     <div className="bg-cream">
-      <MenuHero menu={currentMenu} />
+      <MenuHero menu={menu} />
       <FeaturedProduct
-        product={currentMenu.featured}
+        product={menu.featured}
         orderingOpen={orderingOpen}
       />
-      {orderingOpen && <OrderingStrip menu={currentMenu} />}
-      <SupportingMenuItems menu={currentMenu} orderingOpen={orderingOpen} />
-      {currentMenu.littleExtrasCallout && (
-        <LittleExtrasCallout callout={currentMenu.littleExtrasCallout} />
+      {orderingOpen && <OrderingStrip menu={menu} />}
+      <SupportingMenuItems menu={menu} orderingOpen={orderingOpen} />
+      {menu.littleExtrasCallout && (
+        <LittleExtrasCallout callout={menu.littleExtrasCallout} />
       )}
       {orderingOpen ? (
-        <OrderCTA menu={currentMenu} />
+        <OrderCTA menu={menu} />
       ) : (
-        <ClosedMenuCTA menu={currentMenu} />
+        <ClosedMenuCTA menu={menu} />
       )}
     </div>
   )

@@ -11,14 +11,17 @@
     "email:preview": "tsx scripts/preview-emails.ts",
     "env:check": "tsx scripts/check-env.ts",
     "sheets:seed-month": "tsx scripts/seed-sheets-month.ts",
+    "sheets:append-menu": "tsx scripts/append-menu-row.ts",
     "playbook:export": "tsx scripts/export-playbook.ts"
   },
   "dependencies": {
+    "@vercel/blob": "^2.4.0",
     "googleapis": "^173.0.0",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
     "redis": "^6.0.0",
+    "server-only": "^0.0.1",
     "square": "^44.1.0"
   },
   "devDependencies": {

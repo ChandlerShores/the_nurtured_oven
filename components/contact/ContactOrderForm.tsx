@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
 import type { ContactIntent } from "@/components/contact/ContactIntentSelector"
 import DeliveryFields from "@/components/contact/DeliveryFields"
 import GiftFormFields from "@/components/contact/GiftFormFields"
@@ -9,12 +8,12 @@ import WeeklyOrderCart from "@/components/order/WeeklyOrderCart"
 import Divider from "@/components/ui/Divider"
 import FulfillmentPolicyNote from "@/components/ui/FulfillmentPolicyNote"
 import SocialIcons from "@/components/ui/SocialIcons"
+import type { CatalogItem } from "@/lib/order/catalog-types"
 import {
   contactFormPanelCopy,
   contactInputClassName,
   contactSuccessMessages,
 } from "@/lib/contact/form-copy"
-import { resolvePrefillSlug } from "@/lib/contact/prefill"
 import {
   emptyContactFormState,
   type ContactFormState,
@@ -22,10 +21,17 @@ import {
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import { siteConfig } from "@/lib/content/site"
 
-export default function ContactOrderForm({ intent }: { intent: ContactIntent }) {
-  const searchParams = useSearchParams()
-  const prefillSlug = resolvePrefillSlug(searchParams.get("item") || "")
-
+export default function ContactOrderForm({
+  intent,
+  catalog,
+  featuredSlug,
+  prefillSlug,
+}: {
+  intent: ContactIntent
+  catalog: CatalogItem[]
+  featuredSlug: string
+  prefillSlug?: string
+}) {
   const [cartItems, setCartItems] = useState<{ slug: string; quantity: number }[]>(
     prefillSlug ? [{ slug: prefillSlug, quantity: 1 }] : []
   )
@@ -302,6 +308,8 @@ export default function ContactOrderForm({ intent }: { intent: ContactIntent }) 
                 <div aria-labelledby="weekly-order-label" aria-describedby="weekly-order-cart-status">
                 <WeeklyOrderCart
                   variant="contact"
+                  catalog={catalog}
+                  featuredSlug={featuredSlug}
                   prefillSlug={prefillSlug}
                   fulfillment={
                     form.fulfillment === "delivery" ? "delivery" : "pickup"

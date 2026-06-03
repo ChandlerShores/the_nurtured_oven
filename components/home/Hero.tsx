@@ -1,13 +1,17 @@
 import Image from "next/image"
-import { currentMenu } from "@/lib/content/currentMenu"
+import type { FeaturedMenuProduct } from "@/lib/content/menu-types"
 
-export default function Hero() {
+interface HeroProps {
+  featured: FeaturedMenuProduct
+}
+
+export default function Hero({ featured }: HeroProps) {
   return (
     <section className="relative min-h-[70vh] sm:min-h-[64vh] flex items-center">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src={currentMenu.featured.image}
-          alt={`This week's feature: ${currentMenu.featured.name} from The Nurtured Oven`}
+          src={featured.image}
+          alt={`This week's feature: ${featured.name} from The Nurtured Oven`}
           fill
           priority
           className="object-cover object-[58%_30%]"
@@ -29,13 +33,12 @@ export default function Hero() {
             fresh from the oven
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
-            Soft cinnamon rolls are open for preorder.
+            {featured.name} is open for preorder.
           </h1>
 
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body mt-5">
-            Order by Wednesday at noon for Friday pickup or delivery. This
-            week&apos;s small-batch drop includes cinnamon rolls, oatmeal
-            cookies, and marshmallow cloud bars.
+            Order by Wednesday at noon for Friday pickup or delivery.{" "}
+            {featured.description}
           </p>
         </div>
       </div>

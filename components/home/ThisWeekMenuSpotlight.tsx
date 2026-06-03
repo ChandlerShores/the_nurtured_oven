@@ -1,22 +1,17 @@
-import Image from "next/image"
-import Link from "next/link"
 import Divider from "@/components/ui/Divider"
 import Button from "@/components/ui/Button"
-import { currentMenu } from "@/lib/content/currentMenu"
+import WeeklyDropCards from "@/components/home/WeeklyDropCards"
+import { getHomepageDropItems } from "@/lib/content/homepage-menu"
+import type { CurrentMenu } from "@/lib/content/menu-types"
 import { siteConfig } from "@/lib/content/site"
 
-const homepageProductCopy: Record<string, string> = {
-  "cinnamon-rolls":
-    "Soft rolls, warm cinnamon, and homemade frosting. Built for slow Friday mornings.",
-  "oatmeal-cookie":
-    "A familiar, buttery oatmeal cookie with the kind of comfort that tastes homemade because it is.",
-  "marshmallow-cloud-bar":
-    "A soft, nostalgic bar with marshmallow sweetness and a playful cloud-like bite.",
+interface ThisWeekMenuSpotlightProps {
+  menu: CurrentMenu
 }
 
-export default function ThisWeekMenuSpotlight() {
-  const { featured, items, cutoffText } = currentMenu
-  const homepageItems = [featured, ...items].slice(0, 3)
+export default function ThisWeekMenuSpotlight({ menu }: ThisWeekMenuSpotlightProps) {
+  const { cutoffText } = menu
+  const homepageItems = getHomepageDropItems(menu)
 
   return (
     <section className="relative z-10 -mt-5 bg-cream border-b border-linen/30">
@@ -32,48 +27,7 @@ export default function ThisWeekMenuSpotlight() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-          {homepageItems.map((item, idx) => (
-            <Link
-              key={item.slug}
-              href="/menu"
-              className="group flex h-full flex-col bg-warm-white rounded-2xl border border-linen/50 shadow-gentle overflow-hidden"
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-oatmeal/30">
-                {item.image && (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                )}
-              </div>
-              <div className="flex flex-1 flex-col p-5 sm:p-6">
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <span className="inline-block bg-oatmeal/75 text-espresso/80 text-xs font-medium px-3 py-1 rounded-full tracking-wide uppercase">
-                    {idx === 0 ? "featured" : item.roleLabel ?? "this week"}
-                  </span>
-                  {item.priceLabel && (
-                    <span className="shrink-0 rounded-full bg-espresso px-3 py-1 text-xs font-semibold font-body text-cream">
-                      {item.priceLabel}
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-heading text-xl sm:text-2xl text-espresso tracking-wide mb-2">
-                  {item.name}
-                </h3>
-                <p className="text-muted text-sm font-body leading-relaxed mb-5">
-                  {homepageProductCopy[item.slug] ?? item.description}
-                </p>
-                <span className="mt-auto font-body text-sm font-semibold text-olive group-hover:text-espresso transition-colors">
-                  Order this bake
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <WeeklyDropCards items={homepageItems} />
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Button href="/contact?intent=weekly-order" size="lg">

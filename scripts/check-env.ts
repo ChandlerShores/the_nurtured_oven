@@ -60,6 +60,10 @@ console.log(
     "Orders!A:R (default)"
 )
 console.log(
+  "  Menu range:",
+  process.env.GOOGLE_SHEETS_MENU_RANGE ?? "Menu!A:L (default)"
+)
+console.log(
   "  Line items range:",
   process.env.GOOGLE_SHEETS_LINE_ITEMS_RANGE ?? "Order Line Items!A:M (default)"
 )
@@ -68,6 +72,9 @@ console.log(
   process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? "(not set)"
 )
 console.log("  Private key:", mask(process.env.GOOGLE_PRIVATE_KEY))
+console.log("")
+console.log("Admin")
+console.log("  ADMIN_PASSWORD:", mask(process.env.ADMIN_PASSWORD))
 console.log("")
 console.log("Ordering")
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())

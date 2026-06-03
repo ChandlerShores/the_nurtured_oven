@@ -1,10 +1,10 @@
 import { randomUUID } from "crypto"
 import type { Square } from "square"
 import {
-  calculateSubtotalCents,
+  calculateSubtotalCentsFromCatalog,
   getDeliveryFeeCents,
-} from "@/lib/order/delivery-fee"
-import { getCatalogItem } from "@/lib/order/catalog"
+} from "@/lib/order/cart-totals"
+import { getWeeklyCatalog } from "@/lib/order/catalog"
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import { formatPhoneForSquare } from "@/lib/phone"
 import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
@@ -49,13 +49,15 @@ export async function createWeeklyCheckout(
   const locationId = getSquareLocationId()
   const batch = getWeeklyFulfillmentContext()
   const appUrl = getAppUrl()
+  const catalog = await getWeeklyCatalog()
+  const catalogBySlug = new Map(catalog.map((item) => [item.slug, item]))
 
   const orderLineItems: Square.OrderLineItem[] = []
 
   for (const { slug, quantity } of input.lineItems) {
     if (!quantity || quantity < 1) continue
 
-    const catalogItem = getCatalogItem(slug)
+    const catalogItem = catalogBySlug.get(slug)
     if (!catalogItem) {
       throw new Error(`Unknown menu item: ${slug}`)
     }
@@ -79,8 +81,16 @@ export async function createWeeklyCheckout(
     throw new Error("Cart is empty")
   }
 
-  const subtotalCents = calculateSubtotalCents(input.lineItems)
-  const deliveryFeeCents = getDeliveryFeeCents(subtotalCents, input.fulfillment)
+  const subtotalCents = calculateSubtotalCentsFromCatalog(
+    input.lineItems,
+    catalog
+  )
+  const deliveryFeeCents = getDeliveryFeeCents(
+    subtotalCents,
+    input.fulfillment,
+    fulfillmentPolicy.freeDeliveryMinimumCents,
+    fulfillmentPolicy.deliveryFeeCents
+  )
 
   if (deliveryFeeCents > 0) {
     orderLineItems.push({

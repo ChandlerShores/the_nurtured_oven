@@ -40,16 +40,38 @@ Each subscription needs its own **signature key** and matching `SQUARE_WEBHOOK_N
 
 Event: **`payment.updated`** only.
 
-## Google Sheets export (paid orders)
+## Admin dashboard (`/admin`)
 
-Set these variables in any environment where you want automatic row inserts after paid Square webhooks:
+Set in Production (and Preview if you test admin on branch deploys):
 
-- `GOOGLE_SHEET_ID` (required)
+- `ADMIN_PASSWORD` — single shared password for `/admin/login`. Stored only on the server (Vercel env). Never use `NEXT_PUBLIC_` for this value.
+
+The admin session uses an **httpOnly** cookie (`tno_admin_session`). Google Sheets credentials (`GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`) are used only in server routes and API handlers — never sent to the browser.
+
+## Google Sheets export (paid orders + weekly menu)
+
+Set these variables in any environment where you want automatic row inserts after paid Square webhooks, or live menu data from the **Menu** tab:
+
+- `GOOGLE_SHEET_ID` (required) — e.g. `1gBJMFJk0KGRdbnFrdBrQP1iZE0yjdlHwIrLOh5sFgLg`
 - `GOOGLE_SERVICE_ACCOUNT_EMAIL` (required)
 - `GOOGLE_PRIVATE_KEY` (required)
 - `GOOGLE_SHEETS_ORDERS_RANGE` (optional, default `Orders!A:R`)
 - `GOOGLE_SHEETS_LINE_ITEMS_RANGE` (optional, default `Order Line Items!A:M`)
+- `GOOGLE_SHEETS_MENU_RANGE` (optional, default `Menu!A:L`)
 - `GOOGLE_SHEETS_RANGE` (legacy alias for orders range only)
+
+### Menu tab (read-only)
+
+The site loads weekly products from the **Menu** tab. Header row (columns A–L):
+
+`slug`, `name`, `description`, `price`, `active`, `featured`, `category`, `sort_order`, `image_slug`, `image_url`, `allergens`, `notes`
+
+Only rows with `active` = TRUE are shown. Rows are sorted by `sort_order`. If the sheet is unavailable, the hardcoded fallback in `lib/content/currentMenu.ts` is used.
+
+Admin menu photo uploads:
+
+- **Local dev:** files save to `public/images/menu/{slug}.jpg` (or `.png` / `.webp`).
+- **Vercel:** set `BLOB_READ_WRITE_TOKEN` (Vercel Dashboard → Storage → Blob) so uploads use public Blob URLs. Without it, use the image URL field or commit files under `public/images/menu/`.
 
 Service account requirements:
 

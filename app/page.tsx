@@ -4,12 +4,15 @@ import HowItWorks from "@/components/home/HowItWorks"
 import WildFlowerFundBanner from "@/components/home/WildFlowerFundBanner"
 import FounderPreview from "@/components/home/FounderPreview"
 import FinalCta from "@/components/home/FinalCta"
+import { getCurrentMenu } from "@/lib/content/load-menu"
 
-export default function HomePage() {
+export default async function HomePage() {
+  const menu = await getCurrentMenu()
+
   return (
     <>
-      <Hero />
-      <ThisWeekMenuSpotlight />
+      <Hero featured={menu.featured} />
+      <ThisWeekMenuSpotlight menu={menu} />
       <HowItWorks />
       <FounderPreview />
       <WildFlowerFundBanner />

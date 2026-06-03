@@ -1,38 +1,47 @@
+import "server-only"
+
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
-import { getCatalogItem } from "@/lib/order/catalog"
+import type { CartLineItem } from "@/lib/order/cart-totals"
+import {
+  calculateOrderTotalCentsFromCatalog,
+  calculateSubtotalCentsFromCatalog,
+  getDeliveryFeeCents,
+} from "@/lib/order/cart-totals"
+import { getWeeklyCatalog } from "@/lib/order/catalog"
 
-export interface CartLineItem {
-  slug: string
-  quantity: number
+export type { CartLineItem } from "@/lib/order/cart-totals"
+export {
+  calculateSubtotalCentsFromCatalog,
+  calculateOrderTotalCentsFromCatalog,
+  getDeliveryFeeCents,
+} from "@/lib/order/cart-totals"
+
+export async function calculateSubtotalCents(
+  lineItems: CartLineItem[]
+): Promise<number> {
+  const catalog = await getWeeklyCatalog()
+  return calculateSubtotalCentsFromCatalog(lineItems, catalog)
 }
 
-export function calculateSubtotalCents(lineItems: CartLineItem[]): number {
-  return lineItems.reduce((sum, { slug, quantity }) => {
-    const item = getCatalogItem(slug)
-    if (!item || quantity < 1) return sum
-    return sum + item.priceCents * quantity
-  }, 0)
+export async function calculateOrderTotalCents(
+  lineItems: CartLineItem[],
+  fulfillment: "pickup" | "delivery"
+): Promise<{ subtotalCents: number; deliveryFeeCents: number; totalCents: number }> {
+  const catalog = await getWeeklyCatalog()
+  return calculateOrderTotalCentsFromCatalog(lineItems, fulfillment, catalog, {
+    freeDeliveryMinimumCents: fulfillmentPolicy.freeDeliveryMinimumCents,
+    deliveryFeeCents: fulfillmentPolicy.deliveryFeeCents,
+  })
 }
 
-/** Delivery fee in cents; $0 for pickup or orders at/above free-delivery minimum. */
-export function getDeliveryFeeCents(
+export function getDeliveryFeeCentsForPolicy(
   subtotalCents: number,
   fulfillment: "pickup" | "delivery"
 ): number {
-  if (fulfillment !== "delivery") return 0
-  if (subtotalCents >= fulfillmentPolicy.freeDeliveryMinimumCents) return 0
-  return fulfillmentPolicy.deliveryFeeCents
-}
-
-export function calculateOrderTotalCents(
-  lineItems: CartLineItem[],
-  fulfillment: "pickup" | "delivery"
-): { subtotalCents: number; deliveryFeeCents: number; totalCents: number } {
-  const subtotalCents = calculateSubtotalCents(lineItems)
-  const deliveryFeeCents = getDeliveryFeeCents(subtotalCents, fulfillment)
-  return {
+  return getDeliveryFeeCents(
     subtotalCents,
-    deliveryFeeCents,
-    totalCents: subtotalCents + deliveryFeeCents,
-  }
+    fulfillment,
+    fulfillmentPolicy.freeDeliveryMinimumCents,
+    fulfillmentPolicy.deliveryFeeCents
+  )
 }

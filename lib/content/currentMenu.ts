@@ -1,13 +1,8 @@
 /**
- * WEEKLY MENU UPDATES - edit this file only
- * -----------------------------------------
- * Each week:
- * 1. Update Square products, inventory, and payment/checkout links.
- * 2. Paste the new menu details below (items, prices, links, sold-out flags).
- * 3. Preview the site (`pnpm dev` → /menu).
- * 4. Deploy.
- *
- * Do not edit `app/menu/page.tsx` or menu layout components for routine updates.
+ * WEEKLY MENU FALLBACK - used when Google Sheets Menu tab is unavailable
+ * -----------------------------------------------------------------------
+ * Live menu data is loaded from the Google Sheets **Menu** tab via `getCurrentMenu()`.
+ * Edit the sheet for routine updates. Keep this file as a safe fallback only.
  *
  * Ordering open/closed is automatic (America/New_York):
  * - Open: Friday 9:00 AM → Wednesday 12:00 PM (noon)
@@ -16,7 +11,8 @@
 
 import type { CurrentMenu } from "@/lib/content/menu-types"
 
-export const currentMenu: CurrentMenu = {
+/** Hardcoded menu used when Google Sheets is unavailable or empty. */
+export const fallbackCurrentMenu: CurrentMenu = {
   weekLabel: "This Week's Menu",
   /** Set each week for Square metadata / order emails (e.g. menu open date). */
   menuCycleId: "2026-05-30",
@@ -96,3 +92,6 @@ export const currentMenu: CurrentMenu = {
     href: "/little-extras",
   },
 }
+
+/** @deprecated Use `getCurrentMenu()` for the live menu. Kept for scripts and sync fallbacks. */
+export const currentMenu = fallbackCurrentMenu
