@@ -1,9 +1,36 @@
 export const ADMIN_SESSION_COOKIE = "tno_admin_session"
-const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 7
+const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 3
+const MIN_ADMIN_PASSWORD_LENGTH = 12
+const MIN_SESSION_SECRET_LENGTH = 32
+const MAX_SESSION_TOKEN_LENGTH = 512
+const CLOCK_SKEW_MS = 60_000
 
 export function getAdminPassword(): string | undefined {
   const value = process.env.ADMIN_PASSWORD?.trim()
-  return value ? value : undefined
+  if (!value || value.length < MIN_ADMIN_PASSWORD_LENGTH) return undefined
+  return value
+}
+
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")
+}
+
+/** Signing key for session cookies — never send to the client (Edge-safe). */
+export async function getAdminSessionSecret(): Promise<string | undefined> {
+  const dedicated = process.env.ADMIN_SESSION_SECRET?.trim()
+  if (dedicated && dedicated.length >= MIN_SESSION_SECRET_LENGTH) {
+    return dedicated
+  }
+
+  const password = process.env.ADMIN_PASSWORD?.trim()
+  if (!password || password.length < MIN_ADMIN_PASSWORD_LENGTH) return undefined
+
+  const enc = new TextEncoder()
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    enc.encode(`tno-admin-session-v1:${password}`)
+  )
+  return bytesToHex(new Uint8Array(digest))
 }
 
 function bytesToBase64Url(bytes: Uint8Array): string {
@@ -40,7 +67,7 @@ function constantTimeEqual(a: string, b: string): boolean {
 }
 
 export async function createAdminSessionTokenAsync(): Promise<string | null> {
-  const secret = getAdminPassword()
+  const secret = await getAdminSessionSecret()
   if (!secret) return null
 
   const issuedAt = Date.now()
@@ -55,17 +82,23 @@ export async function createAdminSessionTokenAsync(): Promise<string | null> {
 export async function verifyAdminSessionToken(
   token: string | undefined
 ): Promise<boolean> {
-  if (!token) return false
-  const secret = getAdminPassword()
+  if (!token || token.length > MAX_SESSION_TOKEN_LENGTH) return false
+  const secret = await getAdminSessionSecret()
   if (!secret) return false
 
   const parts = token.split(".")
   if (parts.length !== 3) return false
 
   const [issuedAtStr, nonce, signature] = parts
+  if (!issuedAtStr || !nonce || !signature) return false
+  if (!/^\d+$/.test(issuedAtStr)) return false
+  if (!/^[\w-]+$/.test(nonce) || !/^[\w-]+$/.test(signature)) return false
+
   const issuedAt = Number(issuedAtStr)
   if (!Number.isFinite(issuedAt)) return false
-  if (Date.now() - issuedAt > SESSION_MAX_AGE_SEC * 1000) return false
+  const now = Date.now()
+  if (issuedAt > now + CLOCK_SKEW_MS) return false
+  if (now - issuedAt > SESSION_MAX_AGE_SEC * 1000) return false
 
   const payload = `${issuedAtStr}.${nonce}`
   const expected = await hmacSha256Base64Url(payload, secret)

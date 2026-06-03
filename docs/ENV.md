@@ -40,13 +40,16 @@ Each subscription needs its own **signature key** and matching `SQUARE_WEBHOOK_N
 
 Event: **`payment.updated`** only.
 
+See also [SECURITY.md](./SECURITY.md) for threat model and production checklist.
+
 ## Admin dashboard (`/admin`)
 
 Set in Production (and Preview if you test admin on branch deploys):
 
-- `ADMIN_PASSWORD` — single shared password for `/admin/login`. Stored only on the server (Vercel env). Never use `NEXT_PUBLIC_` for this value.
+- `ADMIN_PASSWORD` — shared password for `/admin/login`. **At least 12 characters.** Server-only (never `NEXT_PUBLIC_`). Use a long random string (password manager), not a dictionary word.
+- `ADMIN_SESSION_SECRET` (recommended) — separate random secret (32+ characters) used to sign the session cookie. If omitted, a key is derived from `ADMIN_PASSWORD` (works, but a dedicated secret is stronger).
 
-The admin session uses an **httpOnly** cookie (`tno_admin_session`). Google Sheets credentials (`GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY`) are used only in server routes and API handlers — never sent to the browser.
+The admin session uses an **httpOnly**, **SameSite=Strict** cookie (`tno_admin_session`, 3-day max age). Login is rate-limited and checked in **middleware** for every `/admin` page and `/api/admin` route. Google Sheets credentials are server-only — never sent to the browser.
 
 ## Google Sheets export (paid orders + weekly menu)
 
@@ -58,7 +61,30 @@ Set these variables in any environment where you want automatic row inserts afte
 - `GOOGLE_SHEETS_ORDERS_RANGE` (optional, default `Orders!A:R`)
 - `GOOGLE_SHEETS_LINE_ITEMS_RANGE` (optional, default `Order Line Items!A:M`)
 - `GOOGLE_SHEETS_MENU_RANGE` (optional, default `Menu!A:L`)
+- `GOOGLE_SHEETS_CUSTOMER_EMAILS_RANGE` (optional, default `Customer Emails!A:J`)
 - `GOOGLE_SHEETS_RANGE` (legacy alias for orders range only)
+
+### Customer Emails tab (admin order updates)
+
+When the baker sends a transactional update from `/admin/orders/[ref]`, one row is appended to **Customer Emails** with columns:
+
+`Timestamp`, `Internal reference`, `Square order ID`, `Customer name`, `Customer email`, `Email type`, `Subject`, `Message`, `Sent status`, `Resend message ID`
+
+Requires the same service account **Editor** access on the spreadsheet. Create the tab with that header row if it does not exist yet.
+
+### Product Costs tab (admin financials)
+
+Header row (columns A–G): `Item slug`, `Item name`, `Ingredient cost per unit`, `Packaging cost per unit`, `Labor minutes per unit`, `Active`, `Notes`
+
+Used to estimate cost of goods on `/admin/financials`. Optional env: `FINANCIAL_LABOR_RATE_PER_HOUR` (default 22), `FINANCIAL_SQUARE_FEE_BPS` (default 290 = 2.9%), `FINANCIAL_SQUARE_FEE_FIXED_CENTS` (default 30).
+
+### Weekly Expenses tab (admin financials)
+
+Header row (columns A–J): `Expense timestamp`, `Expense date`, `Fulfillment date`, `Category`, `Vendor`, `Description`, `Amount`, `Payment method`, `Notes`
+
+Optional: `GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE` (default `Weekly Expenses!A:J`), `GOOGLE_SHEETS_PRODUCT_COSTS_RANGE` (default `Product Costs!A:G`).
+
+Seed headers and starter rows (from Menu + last 5 bake weeks): `pnpm sheets:seed-financials`
 
 ### Menu tab (read-only)
 

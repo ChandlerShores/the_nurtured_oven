@@ -4,6 +4,13 @@ import {
   getAdminPassword,
   verifyAdminPassword,
 } from "@/lib/admin/auth"
+import {
+  checkLoginRateLimit,
+  clearLoginAttempts,
+  delayFailedLoginResponse,
+  getLoginClientKey,
+  recordFailedLoginAttempt,
+} from "@/lib/admin/login-rate-limit"
 import { createAdminSessionTokenAsync } from "@/lib/admin/session-token"
 
 export async function POST(request: Request) {
@@ -14,6 +21,18 @@ export async function POST(request: Request) {
     )
   }
 
+  const clientKey = getLoginClientKey(request)
+  const limit = checkLoginRateLimit(clientKey)
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: "Too many login attempts. Try again later." },
+      {
+        status: 429,
+        headers: { "Retry-After": String(limit.retryAfterSec) },
+      }
+    )
+  }
+
   let body: { password?: string }
   try {
     body = (await request.json()) as { password?: string }
@@ -21,10 +40,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 })
   }
 
-  const password = body.password?.trim() ?? ""
+  const password = body.password ?? ""
   if (!password || !verifyAdminPassword(password)) {
+    recordFailedLoginAttempt(clientKey)
+    await delayFailedLoginResponse()
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 })
   }
+
+  clearLoginAttempts(clientKey)
 
   const token = await createAdminSessionTokenAsync()
   if (!token) {

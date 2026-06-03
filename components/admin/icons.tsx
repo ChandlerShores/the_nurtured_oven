@@ -63,6 +63,14 @@ export function IconMenu(props: IconProps) {
   )
 }
 
+export function IconFinancials(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 20V10M10 20V4M16 20v-6M20 20V8" />
+    </svg>
+  )
+}
+
 export function IconSettings(props: IconProps) {
   return (
     <svg {...base} {...props}>

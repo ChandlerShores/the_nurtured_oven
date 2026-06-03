@@ -1,5 +1,6 @@
 import { siteConfig } from "@/lib/content/site"
 import { emailTheme } from "@/lib/email/html/theme"
+import { isAllowedHttpsExternalUrl } from "@/lib/security/safe-external-url"
 
 export function escapeHtml(value: string): string {
   return value
@@ -107,6 +108,7 @@ export function htmlNote(text: string): string {
 }
 
 export function htmlButton(href: string, label: string): string {
+  if (!isAllowedHttpsExternalUrl(href)) return ""
   const t = emailTheme
   const url = escapeHtml(href)
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0 8px;">

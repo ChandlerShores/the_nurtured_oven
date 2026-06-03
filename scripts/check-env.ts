@@ -74,7 +74,27 @@ console.log(
 console.log("  Private key:", mask(process.env.GOOGLE_PRIVATE_KEY))
 console.log("")
 console.log("Admin")
+const adminPw = process.env.ADMIN_PASSWORD?.trim() ?? ""
 console.log("  ADMIN_PASSWORD:", mask(process.env.ADMIN_PASSWORD))
+if (adminPw && adminPw.length < 12) {
+  console.warn(
+    "  Warning: ADMIN_PASSWORD should be at least 12 characters for admin login.\n"
+  )
+}
+console.log(
+  "  ADMIN_SESSION_SECRET:",
+  mask(process.env.ADMIN_SESSION_SECRET)
+)
+const secretLen = process.env.ADMIN_SESSION_SECRET?.trim().length ?? 0
+if (
+  (tier === "production" || tier === "preview") &&
+  adminPw.length >= 12 &&
+  secretLen < 32
+) {
+  console.warn(
+    "  Warning: Set ADMIN_SESSION_SECRET (32+ chars) for stronger session signing.\n"
+  )
+}
 console.log("")
 console.log("Ordering")
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())

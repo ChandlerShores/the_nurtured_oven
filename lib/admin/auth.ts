@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "crypto"
+import { createHash, timingSafeEqual } from "crypto"
 import { cookies } from "next/headers"
 import {
   ADMIN_SESSION_COOKIE,
@@ -20,7 +20,7 @@ export function adminSessionCookieOptions(token: string) {
     value: token,
     httpOnly: true,
     secure,
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     path: "/",
     maxAge: adminSessionMaxAgeSec,
   }
@@ -37,7 +37,7 @@ export function clearAdminSessionCookieOptions() {
     value: "",
     httpOnly: true,
     secure,
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     path: "/",
     maxAge: 0,
   }
@@ -52,9 +52,8 @@ export function verifyAdminPassword(password: string): boolean {
   const expected = getAdminPassword()
   if (!expected) return false
 
-  const a = Buffer.from(password)
-  const b = Buffer.from(expected)
-  if (a.length !== b.length) return false
+  const a = createHash("sha256").update(password, "utf8").digest()
+  const b = createHash("sha256").update(expected, "utf8").digest()
   try {
     return timingSafeEqual(a, b)
   } catch {

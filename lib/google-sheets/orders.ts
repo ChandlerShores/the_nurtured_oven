@@ -2,6 +2,7 @@ import {
   getSheetsClient,
   sheetTabFromRange,
 } from "@/lib/google-sheets/client"
+import { parseMoneyToCents } from "@/lib/admin/money"
 import {
   formatBatchLabel,
   getWeeklyFulfillmentContext,
@@ -67,7 +68,7 @@ function parseOrdersDataRows(values: string[][]): AdminOrderRow[] {
   return rows
 }
 
-function matchesCurrentWeek(
+export function matchesFulfillmentWeek(
   fulfillmentLabel: string,
   fulfillmentDate: string,
   batchLabel: string
@@ -116,6 +117,8 @@ export interface AdminOrderLineRow {
   name: string
   category: string
   quantity: number
+  unitPriceCents: number
+  lineTotalCents: number
   fulfillmentMethod: string
   orderStatus: string
 }
@@ -146,6 +149,8 @@ function parseOrderLineItemRows(values: string[][]): AdminOrderLineRow[] {
       name,
       category: row[7] ?? "",
       quantity: Number.isFinite(qty) && qty > 0 ? qty : 1,
+      unitPriceCents: parseMoneyToCents(row[9] ?? ""),
+      lineTotalCents: parseMoneyToCents(row[10] ?? ""),
       fulfillmentMethod: row[11] ?? "",
       orderStatus: (row[12] ?? "New").trim() || "New",
     })
@@ -181,7 +186,7 @@ export async function fetchCurrentWeekOrders(): Promise<{
   const ctx = getWeeklyFulfillmentContext()
   const all = await fetchAllOrdersFromSheet()
   const orders = all.filter((order) =>
-    matchesCurrentWeek(order.fulfillmentLabel, ctx.fulfillmentDate, ctx.batchLabel)
+    matchesFulfillmentWeek(order.fulfillmentLabel, ctx.fulfillmentDate, ctx.batchLabel)
   )
 
   return {
@@ -199,7 +204,7 @@ export async function fetchCurrentWeekOrderLineItems(): Promise<{
   const ctx = getWeeklyFulfillmentContext()
   const all = await fetchAllOrderLineItemsFromSheet()
   const lineItems = all.filter((line) =>
-    matchesCurrentWeek(line.fulfillmentLabel, ctx.fulfillmentDate, ctx.batchLabel)
+    matchesFulfillmentWeek(line.fulfillmentLabel, ctx.fulfillmentDate, ctx.batchLabel)
   )
 
   return {
@@ -222,7 +227,7 @@ export async function fetchCurrentWeekAdminData(): Promise<{
   ])
 
   const matches = (fulfillmentLabel: string) =>
-    matchesCurrentWeek(
+    matchesFulfillmentWeek(
       fulfillmentLabel,
       ctx.fulfillmentDate,
       ctx.batchLabel

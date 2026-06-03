@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import {
   IconDashboard,
   IconDelivery,
+  IconFinancials,
   IconMenu,
   IconOrders,
   IconProduction,
@@ -23,6 +24,7 @@ const NAV: {
   { href: "/admin/production", label: "Production", icon: IconProduction },
   { href: "/admin/deliveries", label: "Deliveries", icon: IconDelivery },
   { href: "/admin/menu", label: "Menu", icon: IconMenu },
+  { href: "/admin/financials", label: "Financials", icon: IconFinancials },
   { href: "/admin/settings", label: "Settings", icon: IconSettings },
 ]
 

@@ -13,6 +13,8 @@ export interface SendEmailResult {
   success: boolean
   skipped?: boolean
   error?: string
+  /** Resend email id when sent successfully. */
+  messageId?: string
 }
 
 function logSkippedEmail(input: SendEmailInput): void {
@@ -65,7 +67,15 @@ export async function sendEmail(
       return { success: false, error: message }
     }
 
-    return { success: true }
+    let messageId: string | undefined
+    try {
+      const data = (await res.json()) as { id?: string }
+      messageId = data.id?.trim() || undefined
+    } catch {
+      /* body may be empty on some responses */
+    }
+
+    return { success: true, messageId }
   } catch (err) {
     console.error("[Email] Network error:", err)
     return { success: false, error: "Failed to send email" }

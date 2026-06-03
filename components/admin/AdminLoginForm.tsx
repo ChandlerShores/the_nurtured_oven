@@ -2,11 +2,12 @@
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
+import { safeAdminNextPath } from "@/lib/admin/safe-admin-path"
 
 export default function AdminLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const nextPath = searchParams.get("next") ?? "/admin"
+  const nextPath = safeAdminNextPath(searchParams.get("next"))
 
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +31,7 @@ export default function AdminLoginForm() {
         return
       }
 
-      router.push(nextPath.startsWith("/admin") ? nextPath : "/admin")
+      router.push(nextPath)
       router.refresh()
     } catch {
       setError("Something went wrong. Check your connection and try again.")

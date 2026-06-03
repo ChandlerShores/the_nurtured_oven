@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import AdminOrderSlicers, { toggleFilterSet } from "@/components/admin/AdminOrderSlicers"
@@ -16,6 +17,7 @@ import {
   type OrderStatus,
 } from "@/lib/admin/order-status"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
+import { adminBtnSecondary } from "@/components/admin/ui/admin-button"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
 
 interface AdminOrdersTableProps {
@@ -178,6 +180,7 @@ export default function AdminOrdersTable({
                   <th className="px-3 py-3 font-medium">Items</th>
                   <th className="px-3 py-3 font-medium">Fulfillment</th>
                   <th className="px-3 py-3 font-medium">Status</th>
+                  <th className="px-3 py-3 font-medium w-24" />
                 </tr>
               </thead>
               <tbody>
@@ -226,6 +229,14 @@ export default function AdminOrdersTable({
                         }
                       />
                     </td>
+                    <td className="px-3 py-3">
+                      <Link
+                        href={`/admin/orders/${encodeURIComponent(order.internalRef)}`}
+                        className={`${adminBtnSecondary} inline-block text-xs px-3 py-1.5`}
+                      >
+                        Open
+                      </Link>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -273,6 +284,12 @@ export default function AdminOrdersTable({
                     }
                   />
                 </div>
+                <Link
+                  href={`/admin/orders/${encodeURIComponent(order.internalRef)}`}
+                  className={`${adminBtnSecondary} inline-block mt-4 text-sm`}
+                >
+                  Send customer update →
+                </Link>
               </li>
             ))}
           </ul>
