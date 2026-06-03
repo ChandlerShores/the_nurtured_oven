@@ -22,7 +22,7 @@ export function checkRateLimit(
 ): { allowed: boolean; retryAfterSec: number } {
   const now = Date.now()
   if (buckets.size > 500) {
-    for (const [k, bucket] of buckets) {
+    for (const [k, bucket] of Array.from(buckets.entries())) {
       if (now - bucket.windowStart > options.windowMs) buckets.delete(k)
     }
   }

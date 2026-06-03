@@ -9,7 +9,10 @@ import {
   type DashboardStats,
 } from "@/lib/admin/dashboard-stats"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
-import { adminBtnPrimary } from "@/components/admin/ui/admin-button"
+import {
+  adminBtnPrimary,
+  adminBtnSecondary,
+} from "@/components/admin/ui/admin-button"
 
 interface AdminDashboardViewProps {
   stats: DashboardStats
@@ -56,10 +59,35 @@ export default function AdminDashboardView({
             Weekly Orders Overview · {stats.batchLabel}
           </p>
         </div>
-        <Link href="/admin/orders" className={adminBtnPrimary}>
-          View all orders
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/orders" className={adminBtnPrimary}>
+            View all orders
+          </Link>
+          <Link href="/admin/financials" className={adminBtnSecondary}>
+            Financials
+          </Link>
+        </div>
       </header>
+
+      <nav
+        className="flex flex-wrap gap-2 text-sm"
+        aria-label="Quick portal links"
+      >
+        {[
+          { href: "/admin/production", label: "Production list" },
+          { href: "/admin/deliveries", label: "Deliveries" },
+          { href: "/admin/menu", label: "Menu editor" },
+          { href: "/admin/financials", label: "Bake week P&L" },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-full border border-oatmeal/70 bg-warm-white px-3 py-1.5 text-charcoal hover:bg-linen/80 transition-colors"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
 
       {loadError ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3">

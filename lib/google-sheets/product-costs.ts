@@ -66,6 +66,18 @@ export interface ProductCostUpdate {
   notes: string
 }
 
+export function resolveProductCostSheetRow(
+  existing: ProductCostRow[],
+  slug: string,
+  sheetRow?: number
+): number | undefined {
+  if (sheetRow && sheetRow >= 2) return sheetRow
+  const key = slug.trim().toLowerCase()
+  if (!key) return undefined
+  const match = existing.find((c) => c.slug.trim().toLowerCase() === key)
+  return match && match.sheetRow >= 2 ? match.sheetRow : undefined
+}
+
 function formatMoneyForSheet(cents: number): string {
   if (cents <= 0) return ""
   return (cents / 100).toFixed(2)

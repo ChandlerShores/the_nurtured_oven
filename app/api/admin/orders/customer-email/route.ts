@@ -1,18 +1,24 @@
 import { NextResponse } from "next/server"
 import { isCustomerEmailType } from "@/lib/admin/customer-email-types"
+import {
+  parseAdminInternalRef,
+  readAdminJsonBody,
+} from "@/lib/admin/api-input"
 import { requireAdminApi } from "@/lib/admin/require-admin"
 import { sendCustomerOrderEmail } from "@/lib/admin/send-customer-order-email"
 import { fetchCustomerEmailsForOrder } from "@/lib/google-sheets/customer-emails"
+import { clampString } from "@/lib/security/public-input"
 
 export async function GET(request: Request) {
   const unauthorized = await requireAdminApi()
   if (unauthorized) return unauthorized
 
-  const internalRef =
-    new URL(request.url).searchParams.get("internalRef")?.trim() ?? ""
+  const internalRef = parseAdminInternalRef(
+    new URL(request.url).searchParams.get("internalRef")
+  )
   if (!internalRef) {
     return NextResponse.json(
-      { error: "internalRef is required." },
+      { error: "Valid internalRef is required." },
       { status: 400 }
     )
   }
@@ -33,24 +39,15 @@ export async function POST(request: Request) {
   const unauthorized = await requireAdminApi()
   if (unauthorized) return unauthorized
 
-  let body: {
-    internalRef?: string
-    type?: string
-    subject?: string
-    message?: string
-  }
-  try {
-    body = (await request.json()) as typeof body
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 })
-  }
+  const parsed = await readAdminJsonBody(request)
+  if (!parsed.ok) return parsed.response
 
-  const internalRef = body.internalRef?.trim() ?? ""
-  const type = body.type?.trim() ?? ""
+  const internalRef = parseAdminInternalRef(parsed.body.internalRef)
+  const type = clampString(parsed.body.type, 32)
 
   if (!internalRef) {
     return NextResponse.json(
-      { error: "internalRef is required." },
+      { error: "Valid internalRef is required." },
       { status: 400 }
     )
   }
@@ -63,8 +60,8 @@ export async function POST(request: Request) {
     const result = await sendCustomerOrderEmail({
       internalRef,
       type,
-      customSubject: body.subject,
-      customMessage: body.message,
+      customSubject: clampString(parsed.body.subject, 200),
+      customMessage: clampString(parsed.body.message, 4000),
     })
 
     if (!result.ok) {

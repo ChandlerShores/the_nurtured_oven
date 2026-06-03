@@ -2,8 +2,8 @@
  * Append rows to the Google Sheets Menu tab (or seed headers + fallback items).
  * Run: pnpm sheets:append-menu
  */
-import { readFileSync } from "fs"
 import { getSheetsClient, sheetTabFromRange } from "../lib/google-sheets/client"
+import { loadEnvLocal } from "./lib/load-env-local"
 import {
   activeMenuRows,
   parseMenuSheetRows,
@@ -26,29 +26,6 @@ const MENU_HEADERS = [
   "allergens",
   "notes",
 ]
-
-function loadEnvLocal(): void {
-  try {
-    const raw = readFileSync(".env.local", "utf8")
-    for (const line of raw.split(/\r?\n/)) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith("#")) continue
-      const i = trimmed.indexOf("=")
-      if (i < 0) continue
-      const key = trimmed.slice(0, i).trim()
-      let value = trimmed.slice(i + 1).trim()
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1)
-      }
-      if (!process.env[key]) process.env[key] = value
-    }
-  } catch {
-    console.warn("No .env.local found; using existing process.env")
-  }
-}
 
 type MenuAppendRow = {
   slug: string

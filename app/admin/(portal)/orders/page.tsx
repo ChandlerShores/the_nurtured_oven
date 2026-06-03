@@ -1,16 +1,10 @@
-import { redirect } from "next/navigation"
 import AdminOrdersTable from "@/components/admin/AdminOrdersTable"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
-import { isAdminAuthenticated } from "@/lib/admin/auth"
 import { fetchCurrentWeekOrders } from "@/lib/google-sheets/orders"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminOrdersPage() {
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login?next=/admin/orders")
-  }
-
   let batchLabel = ""
   let orders: Awaited<ReturnType<typeof fetchCurrentWeekOrders>>["orders"] = []
   let loadError: string | null = null

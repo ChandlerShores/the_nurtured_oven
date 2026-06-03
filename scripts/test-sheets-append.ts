@@ -1,29 +1,6 @@
-import { readFileSync } from "fs"
 import { appendPaidOrderToSheet } from "../lib/google-sheets/append-paid-order"
 import type { PaidOrderDetails } from "../lib/order/paid-order-details"
-
-function loadEnvLocal(): void {
-  try {
-    const raw = readFileSync(".env.local", "utf8")
-    for (const line of raw.split(/\r?\n/)) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith("#")) continue
-      const i = trimmed.indexOf("=")
-      if (i < 0) continue
-      const key = trimmed.slice(0, i).trim()
-      let value = trimmed.slice(i + 1).trim()
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1)
-      }
-      if (!process.env[key]) process.env[key] = value
-    }
-  } catch {
-    console.warn("No .env.local found; using existing process.env")
-  }
-}
+import { loadEnvLocal } from "./lib/load-env-local"
 
 const base: PaidOrderDetails = {
   fulfillmentMethod: "pickup",

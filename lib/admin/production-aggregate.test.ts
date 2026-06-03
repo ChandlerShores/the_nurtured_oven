@@ -19,6 +19,8 @@ function line(
     customerName: "",
     slug: "",
     category: "",
+    unitPriceCents: 0,
+    lineTotalCents: 0,
     fulfillmentMethod: "pickup",
     orderStatus: "New",
     ...partial,

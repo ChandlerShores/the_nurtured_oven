@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server"
+import {
+  parseAdminProductCostsPatch,
+  readAdminJsonBody,
+} from "@/lib/admin/api-input"
 import { requireAdminApi } from "@/lib/admin/require-admin"
 import {
   fetchProductCostsFromSheet,
+  resolveProductCostSheetRow,
   upsertProductCostRow,
-  type ProductCostUpdate,
 } from "@/lib/google-sheets/product-costs"
 
 export async function GET() {
@@ -26,38 +30,52 @@ export async function PATCH(request: Request) {
   const unauthorized = await requireAdminApi()
   if (unauthorized) return unauthorized
 
-  let body: {
-    costs?: (ProductCostUpdate & { sheetRow?: number })[]
-  }
-  try {
-    body = (await request.json()) as typeof body
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 })
-  }
+  const parsed = await readAdminJsonBody(request)
+  if (!parsed.ok) return parsed.response
 
-  const costs = body.costs
-  if (!Array.isArray(costs) || costs.length === 0) {
-    return NextResponse.json({ error: "No costs to save." }, { status: 400 })
+  const costs = parseAdminProductCostsPatch(parsed.body)
+  if (!costs.ok) {
+    return NextResponse.json({ error: costs.error }, { status: 400 })
   }
 
   try {
-    for (const row of costs) {
-      if (!row.slug?.trim()) continue
-      await upsertProductCostRow(
-        {
-          slug: row.slug,
-          name: row.name ?? row.slug,
-          ingredientCostPerUnit: row.ingredientCostPerUnit ?? "",
-          packagingCostPerUnit: row.packagingCostPerUnit ?? "",
-          laborMinutesPerUnit: Number(row.laborMinutesPerUnit) || 0,
-          active: row.active !== false,
-          notes: row.notes ?? "",
-        },
+    const existing = await fetchProductCostsFromSheet()
+    let saved = 0
+
+    for (const row of costs.costs) {
+      const sheetRow = resolveProductCostSheetRow(
+        existing,
+        row.slug,
         row.sheetRow
       )
+      const savedRow = await upsertProductCostRow(
+        {
+          slug: row.slug,
+          name: row.name,
+          ingredientCostPerUnit: row.ingredientCostPerUnit,
+          packagingCostPerUnit: row.packagingCostPerUnit,
+          laborMinutesPerUnit: row.laborMinutesPerUnit,
+          active: row.active,
+          notes: row.notes,
+        },
+        sheetRow
+      )
+      const key = row.slug.toLowerCase()
+      const idx = existing.findIndex(
+        (c) => c.slug.trim().toLowerCase() === key
+      )
+      if (idx >= 0) {
+        existing[idx] = { ...existing[idx]!, sheetRow: savedRow }
+      }
+      saved += 1
     }
+
     const updated = await fetchProductCostsFromSheet()
-    return NextResponse.json({ ok: true, costs: updated })
+    return NextResponse.json({
+      ok: true,
+      saved,
+      costs: updated,
+    })
   } catch (err) {
     console.error("[admin] product costs save failed", err)
     return NextResponse.json(

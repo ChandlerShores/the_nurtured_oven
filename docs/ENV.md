@@ -127,4 +127,7 @@ When `WEEKLY_ORDERING_DISABLED` is not set, the site uses the real schedule in `
 
 ```bash
 pnpm env:check
+pnpm typecheck
+pnpm test:unit
+pnpm test:e2e:admin
 ```

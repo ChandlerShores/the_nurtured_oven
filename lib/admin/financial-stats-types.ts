@@ -69,10 +69,26 @@ export interface FinancialWeekSnapshot {
   expenses: FinancialExpenseRow[]
 }
 
+/** Single bake-week dashboard (internal builder output). */
+export interface FinancialWeekDashboard {
+  selectedWeek: FulfillmentWeekOption
+  weekOptions: FulfillmentWeekOption[]
+  summary: FinancialSummary
+  productProfit: ProductProfitRow[]
+  expenses: FinancialExpenseRow[]
+  productCosts: FinancialProductCostRow[]
+}
+
+export interface FinancialEstimateNotes {
+  laborRateLabel: string
+  squareFeeLabel: string
+}
+
 export interface FinancialDashboardData {
   weekOptions: FulfillmentWeekOption[]
   initialWeekKey: string
   weekSnapshots: Record<string, FinancialWeekSnapshot>
   weekTrend: FinancialWeekTrendPoint[]
   productCosts: FinancialProductCostRow[]
+  estimateNotes: FinancialEstimateNotes
 }

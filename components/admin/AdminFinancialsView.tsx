@@ -1,7 +1,7 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   ExpenseCategoryChart,
   FinancialDetailsStrip,
@@ -55,9 +55,29 @@ export default function AdminFinancialsView({
   initialData,
 }: AdminFinancialsViewProps) {
   const router = useRouter()
-  const { weekOptions, weekSnapshots, weekTrend, productCosts } = initialData
+  const searchParams = useSearchParams()
+  const { weekOptions, weekSnapshots, weekTrend, productCosts, estimateNotes } =
+    initialData
 
   const [activeWeekKey, setActiveWeekKey] = useState(initialData.initialWeekKey)
+
+  const weekFromUrl = searchParams.get("week")?.trim() ?? ""
+
+  useEffect(() => {
+    if (weekFromUrl && weekSnapshots[weekFromUrl]) {
+      setActiveWeekKey(weekFromUrl)
+    }
+  }, [weekFromUrl, weekSnapshots])
+
+  const selectWeek = useCallback(
+    (weekKey: string) => {
+      setActiveWeekKey(weekKey)
+      const params = new URLSearchParams(searchParams.toString())
+      params.set("week", weekKey)
+      router.replace(`/admin/financials?${params.toString()}`, { scroll: false })
+    },
+    [router, searchParams]
+  )
 
   const snapshot = useMemo(() => {
     return (
@@ -72,9 +92,28 @@ export default function AdminFinancialsView({
   const expenses = snapshot?.expenses ?? []
   const selectedWeek = snapshot?.selectedWeek
 
+  const costsSyncKey = useMemo(
+    () =>
+      productCosts
+        .map(
+          (c) =>
+            `${c.sheetRow}:${c.slug}:${c.ingredientCostPerUnitCents}:${c.packagingCostPerUnitCents}:${c.laborMinutesPerUnit}:${c.active}`
+        )
+        .join("|"),
+    [productCosts]
+  )
+
   const [costDrafts, setCostDrafts] = useState<CostDraft[]>(() =>
     costsToDrafts(productCosts)
   )
+  const [syncedCostsKey, setSyncedCostsKey] = useState(costsSyncKey)
+
+  useEffect(() => {
+    if (costsSyncKey !== syncedCostsKey) {
+      setCostDrafts(costsToDrafts(productCosts))
+      setSyncedCostsKey(costsSyncKey)
+    }
+  }, [costsSyncKey, syncedCostsKey, productCosts])
   const [costSaving, setCostSaving] = useState(false)
   const [costMessage, setCostMessage] = useState<string | null>(null)
 
@@ -183,7 +222,7 @@ export default function AdminFinancialsView({
           </span>
           <select
             value={activeWeekKey}
-            onChange={(e) => setActiveWeekKey(e.target.value)}
+            onChange={(e) => selectWeek(e.target.value)}
             className="rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2 text-charcoal min-w-[12rem]"
           >
             {weekOptions.length === 0 ? (
@@ -203,14 +242,14 @@ export default function AdminFinancialsView({
       </div>
 
       <FinancialHero summary={summary} />
-      <FinancialDetailsStrip summary={summary} />
+      <FinancialDetailsStrip summary={summary} estimateNotes={estimateNotes} />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
         <MoneyFlowChart summary={summary} />
         <WeekRevenueTrendChart
           trend={weekTrend}
           activeWeekKey={activeWeekKey}
-          onSelectWeek={setActiveWeekKey}
+          onSelectWeek={selectWeek}
         />
       </div>
 

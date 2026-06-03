@@ -12,11 +12,12 @@ import {
   type MoneySegment,
 } from "@/lib/admin/financial-chart-data"
 import type {
+  FinancialEstimateNotes,
+  FinancialExpenseRow,
   FinancialSummary,
   FinancialWeekTrendPoint,
   ProductProfitRow,
 } from "@/lib/admin/financial-stats-types"
-import type { FinancialExpenseRow } from "@/lib/admin/financial-stats-types"
 import type { MoneySegmentId } from "@/lib/admin/financial-chart-data"
 
 /** Inline fills — Tailwind cannot see dynamic class names from other files. */
@@ -72,7 +73,13 @@ export function FinancialHero({ summary }: { summary: FinancialSummary }) {
   )
 }
 
-export function FinancialDetailsStrip({ summary }: { summary: FinancialSummary }) {
+export function FinancialDetailsStrip({
+  summary,
+  estimateNotes,
+}: {
+  summary: FinancialSummary
+  estimateNotes: FinancialEstimateNotes
+}) {
   const items = [
     { label: "Net after Square", value: summary.estimatedNetRevenueCents },
     { label: "Square (est.)", value: summary.estimatedSquareFeesCents },
@@ -99,7 +106,7 @@ export function FinancialDetailsStrip({ summary }: { summary: FinancialSummary }
         </span>
       ))}
       <span className="text-caption text-xs w-full sm:w-auto">
-        Square: 2.9% + $0.30/order · Labor $22/hr unless env overrides
+        Square: {estimateNotes.squareFeeLabel} · Labor {estimateNotes.laborRateLabel}
       </span>
     </div>
   )
@@ -155,7 +162,7 @@ export function MoneyFlowChart({ summary }: { summary: FinancialSummary }) {
   return (
     <DashboardCard
       title="Where the money went"
-      subtitle="Share of gross revenue this bake week (estimated)"
+      subtitle="Approximate share of gross revenue (profit slice may differ from hero when costs are incomplete)"
     >
       {gross <= 0 ? (
         <EmptyState

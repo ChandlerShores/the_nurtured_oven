@@ -1,11 +1,10 @@
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import AdminOrderCustomerEmail from "@/components/admin/AdminOrderCustomerEmail"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
 import { adminBtnSecondary } from "@/components/admin/ui/admin-button"
-import { isAdminAuthenticated } from "@/lib/admin/auth"
 import { fetchCustomerEmailsForOrder } from "@/lib/google-sheets/customer-emails"
 import { findOrderByInternalRef } from "@/lib/google-sheets/orders"
 
@@ -22,10 +21,6 @@ function formatMethod(method: string): string {
 }
 
 export default async function AdminOrderDetailPage({ params }: PageProps) {
-  if (!(await isAdminAuthenticated())) {
-    redirect(`/admin/login?next=/admin/orders/${encodeURIComponent(params.internalRef)}`)
-  }
-
   const internalRef = decodeURIComponent(params.internalRef).trim()
   const order = await findOrderByInternalRef(internalRef)
   if (!order) {

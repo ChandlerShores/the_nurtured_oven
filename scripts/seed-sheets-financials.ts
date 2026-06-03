@@ -4,8 +4,8 @@
  *
  * Idempotent: skips slugs / SEED expenses already present.
  */
-import { readFileSync } from "fs"
 import { buildCurrentMenuFromSheetRows } from "../lib/content/menu-from-sheet"
+import { loadEnvLocal } from "./lib/load-env-local"
 import { fallbackCurrentMenu } from "../lib/content/currentMenu"
 import {
   DEFAULT_PRODUCT_COSTS_RANGE,
@@ -49,29 +49,6 @@ const WEEKLY_EXPENSES_HEADERS = [
 const SEED_NOTE = "SEED — sample row; edit or delete"
 
 const WEEKS_OF_EXPENSES = 5
-
-function loadEnvLocal(): void {
-  try {
-    const raw = readFileSync(".env.local", "utf8")
-    for (const line of raw.split(/\r?\n/)) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith("#")) continue
-      const i = trimmed.indexOf("=")
-      if (i < 0) continue
-      const key = trimmed.slice(0, i).trim()
-      let value = trimmed.slice(i + 1).trim()
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1)
-      }
-      if (!process.env[key]) process.env[key] = value
-    }
-  } catch {
-    console.warn("No .env.local found; using existing process.env")
-  }
-}
 
 function normalizeHeader(cell: string): string {
   return cell.trim().toLowerCase().replace(/\s+/g, " ")

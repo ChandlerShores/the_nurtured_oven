@@ -1,17 +1,11 @@
-import { redirect } from "next/navigation"
 import AdminMenuManager from "@/components/admin/AdminMenuManager"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
-import { isAdminAuthenticated } from "@/lib/admin/auth"
 import { toAdminMenuItemView } from "@/lib/admin/menu-present"
 import { fetchAllMenuRowsFromSheet } from "@/lib/google-sheets/menu-admin"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminMenuPage() {
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login?next=/admin/menu")
-  }
-
   let loadError: string | null = null
   let items: ReturnType<typeof toAdminMenuItemView>[] = []
   let loadedAt = new Date().toISOString()

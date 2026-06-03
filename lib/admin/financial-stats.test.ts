@@ -1,6 +1,9 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import { buildFinancialDashboard } from "@/lib/admin/financial-stats"
+import {
+  buildFinancialDashboard,
+  buildFinancialDashboardPayload,
+} from "@/lib/admin/financial-stats"
 import type { AdminOrderLineRow, AdminOrderRow } from "@/lib/google-sheets/orders"
 
 function order(partial: Partial<AdminOrderRow> & Pick<AdminOrderRow, "internalRef">): AdminOrderRow {
@@ -84,5 +87,23 @@ describe("buildFinancialDashboard", () => {
     const data = buildFinancialDashboard(orders, lines, costs, [], "2026-06-06")
     assert.equal(data.summary.estimatedProductCostsCents, 300)
     assert.equal(data.productProfit[0]?.unitsSold, 2)
+  })
+})
+
+describe("buildFinancialDashboardPayload", () => {
+  it("includes estimate notes and week snapshots", () => {
+    const orders = [
+      order({ internalRef: "a", amount: "25.00", fulfillmentLabel: "2026-06-06" }),
+    ]
+    const payload = buildFinancialDashboardPayload(
+      orders,
+      [line({ internalRef: "a", slug: "cookie" })],
+      [],
+      [],
+      "2026-06-06"
+    )
+    assert.ok(payload.estimateNotes.laborRateLabel.includes("/hr"))
+    assert.ok(payload.weekSnapshots["2026-06-06"])
+    assert.equal(payload.initialWeekKey, "2026-06-06")
   })
 })

@@ -1,20 +1,14 @@
 import Link from "next/link"
-import { redirect } from "next/navigation"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
 import EmptyState from "@/components/admin/ui/EmptyState"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
 import { adminBtnPrimary } from "@/components/admin/ui/admin-button"
-import { isAdminAuthenticated } from "@/lib/admin/auth"
 import { buildDashboardStats } from "@/lib/admin/dashboard-stats"
 import { fetchCurrentWeekAdminData } from "@/lib/google-sheets/orders"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminProductionPage() {
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login?next=/admin/production")
-  }
-
   let batchLabel = ""
   let fulfillmentDate = ""
   let loadError: string | null = null

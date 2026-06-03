@@ -1,6 +1,4 @@
-import { redirect } from "next/navigation"
 import AdminDashboardView from "@/components/admin/AdminDashboardView"
-import { isAdminAuthenticated } from "@/lib/admin/auth"
 import { buildDashboardStats } from "@/lib/admin/dashboard-stats"
 import { fetchCurrentWeekAdminData } from "@/lib/google-sheets/orders"
 
@@ -20,10 +18,6 @@ function dashboardGreeting(): string {
 }
 
 export default async function AdminDashboardPage() {
-  if (!(await isAdminAuthenticated())) {
-    redirect("/admin/login")
-  }
-
   let batchLabel = ""
   let fulfillmentDate = ""
   let loadError: string | null = null

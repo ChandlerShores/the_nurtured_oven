@@ -1,6 +1,8 @@
 import { parseMoneyToCents } from "@/lib/admin/money"
+import { buildFinancialEstimateNotes } from "@/lib/admin/financial-estimates"
 import type {
   FinancialDashboardData,
+  FinancialWeekDashboard,
   FinancialWeekSnapshot,
   FinancialWeekTrendPoint,
   FulfillmentWeekOption,
@@ -29,7 +31,9 @@ const DEFAULT_LABOR_CENTS_PER_MINUTE = Math.round((22 * 100) / 60)
 
 export type {
   FinancialDashboardData,
+  FinancialEstimateNotes,
   FinancialSummary,
+  FinancialWeekDashboard,
   FinancialWeekSnapshot,
   FinancialWeekTrendPoint,
   FulfillmentWeekOption,
@@ -147,7 +151,7 @@ export function buildFinancialDashboard(
   productCosts: ProductCostRow[],
   expenses: WeeklyExpenseRow[],
   weekKey?: string
-): FinancialDashboardData {
+): FinancialWeekDashboard {
   const ctx = getWeeklyFulfillmentContext()
   const weekOptions = listFulfillmentWeekOptions(orders)
 
@@ -366,5 +370,6 @@ export function buildFinancialDashboardPayload(
     weekSnapshots,
     weekTrend,
     productCosts,
+    estimateNotes: buildFinancialEstimateNotes(),
   }
 }

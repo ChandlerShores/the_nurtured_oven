@@ -2,8 +2,8 @@
  * Seed ~1 month of synthetic paid orders into Google Sheets (Orders + Order Line Items).
  * Run: pnpm sheets:seed-month
  */
-import { readFileSync } from "fs"
 import { fulfillmentPolicy } from "../lib/content/fulfillment"
+import { loadEnvLocal } from "./lib/load-env-local"
 import { appendPaidOrdersToSheet } from "../lib/google-sheets/append-paid-order"
 import { getWeeklyCatalogFallback } from "../lib/order/catalog-build"
 import { calculateOrderTotalCents } from "../lib/order/delivery-fee"
@@ -83,29 +83,6 @@ const MESSAGES = [
   "Gift for neighbor",
   "Please ring doorbell",
 ]
-
-function loadEnvLocal(): void {
-  try {
-    const raw = readFileSync(".env.local", "utf8")
-    for (const line of raw.split(/\r?\n/)) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith("#")) continue
-      const i = trimmed.indexOf("=")
-      if (i < 0) continue
-      const key = trimmed.slice(0, i).trim()
-      let value = trimmed.slice(i + 1).trim()
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1)
-      }
-      if (!process.env[key]) process.env[key] = value
-    }
-  } catch {
-    console.warn("No .env.local found; using existing process.env")
-  }
-}
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0")
