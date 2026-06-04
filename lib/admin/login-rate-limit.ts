@@ -1,9 +1,8 @@
 import {
-  checkRateLimit,
-  clearRateLimit,
+  clearRateLimitAsync,
+  consumeRateLimitAsync,
   delayRateLimitedResponse,
   getClientIpFromRequest,
-  recordRateLimitFailure,
 } from "@/lib/security/rate-limit"
 
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
@@ -13,19 +12,15 @@ export function getLoginClientKey(request: Request): string {
   return getClientIpFromRequest(request)
 }
 
-export function checkLoginRateLimit(clientKey: string) {
-  return checkRateLimit(clientKey, {
+export async function consumeLoginRateLimitAsync(clientKey: string) {
+  return consumeRateLimitAsync(clientKey, {
     windowMs: LOGIN_WINDOW_MS,
     maxAttempts: LOGIN_MAX_ATTEMPTS,
   })
 }
 
-export function recordFailedLoginAttempt(clientKey: string): void {
-  recordRateLimitFailure(clientKey, { windowMs: LOGIN_WINDOW_MS })
-}
-
-export function clearLoginAttempts(clientKey: string): void {
-  clearRateLimit(clientKey)
+export async function clearLoginAttemptsAsync(clientKey: string): Promise<void> {
+  await clearRateLimitAsync(clientKey)
 }
 
 export async function delayFailedLoginResponse(): Promise<void> {

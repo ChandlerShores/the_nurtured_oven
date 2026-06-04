@@ -8,33 +8,32 @@ import {
   readPublicJsonBody,
 } from "@/lib/security/public-input"
 import {
-  checkRateLimit,
+  consumeRateLimitAsync,
   delayRateLimitedResponse,
   getClientIpFromRequest,
-  recordRateLimitHit,
 } from "@/lib/security/rate-limit"
 import { isAllowedCheckoutUrl } from "@/lib/security/safe-external-url"
 import { createWeeklyCheckout } from "@/lib/square/checkout"
 import { isSquareConfigured } from "@/lib/square/client"
 
 const CHECKOUT_LIMIT = { windowMs: 15 * 60 * 1000, maxAttempts: 12 }
+const MAX_QUANTITY_PER_ITEM = 20
+const MAX_CART_QUANTITY = 40
 
 export async function POST(req: NextRequest) {
-  const rateKey = `checkout:${getClientIpFromRequest(req)}`
-  const limit = checkRateLimit(rateKey, CHECKOUT_LIMIT)
-  if (!limit.allowed) {
-    return NextResponse.json(
-      { error: "Too many checkout attempts. Please try again later." },
-      {
-        status: 429,
-        headers: { "Retry-After": String(limit.retryAfterSec) },
-      }
-    )
-  }
-
-  recordRateLimitHit(rateKey, { windowMs: CHECKOUT_LIMIT.windowMs })
-
   try {
+    const rateKey = `checkout:${getClientIpFromRequest(req)}`
+    const limit = await consumeRateLimitAsync(rateKey, CHECKOUT_LIMIT)
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "Too many checkout attempts. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(limit.retryAfterSec) },
+        }
+      )
+    }
+
     if (!isMenuOpen()) {
       return NextResponse.json(
         { error: getDisabledOrderMessage() },
@@ -107,16 +106,23 @@ export async function POST(req: NextRequest) {
       }
 
       const slug = item.slug.trim()
-      const qty = Math.min(20, Math.floor(item.quantity))
+      const qty = Math.floor(item.quantity)
       mergedQuantities.set(slug, (mergedQuantities.get(slug) ?? 0) + qty)
     }
 
     const normalizedItems: { slug: string; quantity: number }[] = []
+    let totalQuantity = 0
     for (const [slug, quantity] of mergedQuantities) {
       const catalogItem = catalogBySlug.get(slug)
       if (!catalogItem) {
         return NextResponse.json(
           { error: `Menu item "${slug}" is not available.` },
+          { status: 400 }
+        )
+      }
+      if (quantity > MAX_QUANTITY_PER_ITEM) {
+        return NextResponse.json(
+          { error: `${catalogItem.name} is limited to ${MAX_QUANTITY_PER_ITEM} per order.` },
           { status: 400 }
         )
       }
@@ -126,7 +132,15 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         )
       }
+      totalQuantity += quantity
       normalizedItems.push({ slug, quantity })
+    }
+
+    if (totalQuantity > MAX_CART_QUANTITY) {
+      return NextResponse.json(
+        { error: `Orders are limited to ${MAX_CART_QUANTITY} total items.` },
+        { status: 400 }
+      )
     }
 
     if (normalizedItems.length === 0) {

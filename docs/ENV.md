@@ -1,133 +1,167 @@
-# Environment variables — Production vs Preview
+# Environment Variables
 
-Vercel lets you use **different values per deployment tier**. This project expects:
+Audience: developers and deployment maintainers.
 
-| Tier | Vercel checkbox | Square | Typical URL |
-|------|-----------------|--------|-------------|
-| **Production** | Production | `SQUARE_ENVIRONMENT=production` + production token/location | `https://thenurturedoven.com` |
-| **Preview** | Preview | `SQUARE_ENVIRONMENT=sandbox` + sandbox token/location | `https://*.vercel.app` (auto) |
-| **Local** | `.env.local` | sandbox | `http://localhost:3000` |
+This project uses different values for local development, Vercel Preview, and Vercel Production. Do not commit secrets. Use the example files as templates only.
 
-Template files (copy values into Vercel — do not commit secrets):
+| Environment | Template / Location | Square Mode | URL |
+|---|---|---|---|
+| Local | `.env.example` copied to `.env.local` | Sandbox | `http://localhost:3000` |
+| Vercel Preview | `.env.preview.example` values in Vercel Preview | Sandbox | `https://*.vercel.app` |
+| Vercel Production | `.env.production.example` values in Vercel Production | Production | `https://thenurturedoven.com` |
 
-- [`.env.production.example`](../.env.production.example) → Production only
-- [`.env.preview.example`](../.env.preview.example) → Preview only
-- [`.env.example`](../.env.example) → local `.env.local`
-
-## Vercel setup
-
-1. **Project → Settings → Environment Variables**
-2. Add each variable and select which environments apply:
-   - Production-only vars → check **Production**
-   - Preview-only vars → check **Preview**
-   - Shared (e.g. `RESEND_API_KEY`, `OWNER_EMAIL`) → check **Production** and **Preview** (and Development if you use `vercel dev`)
-3. **Redeploy** after changes (especially `NEXT_PUBLIC_*`).
-
-## `NEXT_PUBLIC_APP_URL`
-
-- **Production:** `https://thenurturedoven.com` (required for stable checkout redirect + webhook).
-- **Preview:** can be **unset** — server code falls back to `https://${VERCEL_URL}` for each deploy.
-- **Local:** `http://localhost:3000`
-
-## Square webhooks (two subscriptions)
-
-| Square dashboard mode | Notification URL |
-|----------------------|------------------|
-| **Production** app | `https://thenurturedoven.com/api/webhooks/square` |
-| **Sandbox** app | Your preview URL + `/api/webhooks/square`, or ngrok for localhost |
-
-Each subscription needs its own **signature key** and matching `SQUARE_WEBHOOK_NOTIFICATION_URL` in that Vercel environment.
-
-Event: **`payment.updated`** only.
-
-See also [SECURITY.md](./SECURITY.md) for threat model and production checklist.
-
-## Admin dashboard (`/admin`)
-
-Set in Production (and Preview if you test admin on branch deploys):
-
-- `ADMIN_PASSWORD` — shared password for `/admin/login`. **At least 12 characters.** Server-only (never `NEXT_PUBLIC_`). Use a long random string (password manager), not a dictionary word.
-- `ADMIN_SESSION_SECRET` (recommended) — separate random secret (32+ characters) used to sign the session cookie. If omitted, a key is derived from `ADMIN_PASSWORD` (works, but a dedicated secret is stronger).
-
-The admin session uses an **httpOnly**, **SameSite=Strict** cookie (`tno_admin_session`, 3-day max age). Login is rate-limited and checked in **middleware** for every `/admin` page and `/api/admin` route. Google Sheets credentials are server-only — never sent to the browser.
-
-## Google Sheets export (paid orders + weekly menu)
-
-Set these variables in any environment where you want automatic row inserts after paid Square webhooks, or live menu data from the **Menu** tab:
-
-- `GOOGLE_SHEET_ID` (required) — e.g. `1gBJMFJk0KGRdbnFrdBrQP1iZE0yjdlHwIrLOh5sFgLg`
-- `GOOGLE_SERVICE_ACCOUNT_EMAIL` (required)
-- `GOOGLE_PRIVATE_KEY` (required)
-- `GOOGLE_SHEETS_ORDERS_RANGE` (optional, default `Orders!A:R`)
-- `GOOGLE_SHEETS_LINE_ITEMS_RANGE` (optional, default `Order Line Items!A:M`)
-- `GOOGLE_SHEETS_MENU_RANGE` (optional, default `Menu!A:L`)
-- `GOOGLE_SHEETS_CUSTOMER_EMAILS_RANGE` (optional, default `Customer Emails!A:J`)
-- `GOOGLE_SHEETS_RANGE` (legacy alias for orders range only)
-
-### Customer Emails tab (admin order updates)
-
-When the baker sends a transactional update from `/admin/orders/[ref]`, one row is appended to **Customer Emails** with columns:
-
-`Timestamp`, `Internal reference`, `Square order ID`, `Customer name`, `Customer email`, `Email type`, `Subject`, `Message`, `Sent status`, `Resend message ID`
-
-Requires the same service account **Editor** access on the spreadsheet. Create the tab with that header row if it does not exist yet.
-
-### Product Costs tab (admin financials)
-
-Header row (columns A–G): `Item slug`, `Item name`, `Ingredient cost per unit`, `Packaging cost per unit`, `Labor minutes per unit`, `Active`, `Notes`
-
-Used to estimate cost of goods on `/admin/financials`. Optional env: `FINANCIAL_LABOR_RATE_PER_HOUR` (default 22), `FINANCIAL_SQUARE_FEE_BPS` (default 290 = 2.9%), `FINANCIAL_SQUARE_FEE_FIXED_CENTS` (default 30).
-
-### Weekly Expenses tab (admin financials)
-
-Header row (columns A–J): `Expense timestamp`, `Expense date`, `Fulfillment date`, `Category`, `Vendor`, `Description`, `Amount`, `Payment method`, `Notes`
-
-Optional: `GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE` (default `Weekly Expenses!A:J`), `GOOGLE_SHEETS_PRODUCT_COSTS_RANGE` (default `Product Costs!A:G`).
-
-Seed headers and starter rows (from Menu + last 5 bake weeks): `pnpm sheets:seed-financials`
-
-### Menu tab (read-only)
-
-The site loads weekly products from the **Menu** tab. Header row (columns A–L):
-
-`slug`, `name`, `description`, `price`, `active`, `featured`, `category`, `sort_order`, `image_slug`, `image_url`, `allergens`, `notes`
-
-Only rows with `active` = TRUE are shown. Rows are sorted by `sort_order`. If the sheet is unavailable, the hardcoded fallback in `lib/content/currentMenu.ts` is used.
-
-Admin menu photo uploads:
-
-- **Local dev:** files save to `public/images/menu/{slug}.jpg` (or `.png` / `.webp`).
-- **Vercel:** set `BLOB_READ_WRITE_TOKEN` (Vercel Dashboard → Storage → Blob) so uploads use public Blob URLs. Without it, use the image URL field or commit files under `public/images/menu/`.
-
-Service account requirements:
-
-1. Enable Google Sheets API in your Google Cloud project.
-2. Create a service account key JSON.
-3. Share the target sheet with the service account email as **Editor**.
-4. Copy values from the JSON into env vars:
-   - `client_email` → `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-   - `private_key` → `GOOGLE_PRIVATE_KEY`
-
-## Weekly ordering window
-
-| Variable | Default | Effect |
-|----------|---------|--------|
-| `WEEKLY_ORDERING_DISABLED` | off | Set to `true`, `1`, or `yes` to **always** close weekly ordering and checkout (any environment, including Production). |
-| `ORDERING_TEST_WEEKDAY` | — | **Local `pnpm dev` only** (`NODE_ENV=development`). Fakes the clock; ignored on Vercel. |
-
-When `WEEKLY_ORDERING_DISABLED` is not set, the site uses the real schedule in `lib/menu/schedule.ts` (America/New_York).
-
-## Common mistakes
-
-- Putting Application ID (`sq0idp-...`) in `SQUARE_LOCATION_ID` → use Location ID (`LX5V0NV78YEX5` style).
-- Production token with `SQUARE_ENVIRONMENT=sandbox` (or the reverse).
-- Webhook URL in Square does not **exactly** match `SQUARE_WEBHOOK_NOTIFICATION_URL`.
-
-## Check deployment tier (local)
+Run this after changing env values:
 
 ```bash
 pnpm env:check
-pnpm typecheck
-pnpm test:unit
-pnpm test:e2e:admin
 ```
+
+## Required In Production
+
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_APP_URL` | Canonical public URL for redirects and Square return URLs. Production should be `https://thenurturedoven.com`. |
+| `SQUARE_ACCESS_TOKEN` | Square access token for the selected environment. |
+| `SQUARE_LOCATION_ID` | Square Location ID, not the Application ID. |
+| `SQUARE_ENVIRONMENT` | `production` on live site, `sandbox` on local/preview. |
+| `SQUARE_WEBHOOK_SIGNATURE_KEY` | Signature key from the matching Square webhook subscription. |
+| `SQUARE_WEBHOOK_NOTIFICATION_URL` | Exact URL registered in Square, usually `https://thenurturedoven.com/api/webhooks/square`. |
+| `REDIS_URL` | Required in production for shared rate limits, webhook idempotency, and checkout/order matching across server instances. |
+| `ADMIN_PASSWORD` | Shared admin login password. Use at least 12 characters. |
+| `ADMIN_SESSION_SECRET` | Separate random session signing secret. Use at least 32 characters. |
+| `GOOGLE_SHEET_ID` | Spreadsheet ID for orders, menu, financials, and email logs. |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Google service account email. |
+| `GOOGLE_PRIVATE_KEY` | Google service account private key. |
+
+## Optional / Shared
+
+| Variable | Purpose |
+|---|---|
+| `RESEND_API_KEY` | Enables transactional email. Without it, email helpers may skip sends in local/dev contexts. |
+| `OWNER_EMAIL` | Owner notification inbox. |
+| `EMAIL_FROM_ADDRESS` | From address for transactional email. |
+| `EMAIL_FROM_NAME` | Display name for transactional email. |
+| `EMAIL_REPLY_TO` | Reply-to address. |
+| `BLOB_READ_WRITE_TOKEN` | Required for admin menu image uploads on Vercel. Local dev writes to `public/images/menu/`. |
+| `WEEKLY_ORDERING_DISABLED` | Emergency kill switch. Set `true`, `1`, or `yes` to close weekly checkout. |
+| `ORDERING_TEST_WEEKDAY` | Local `pnpm dev` only. Fakes weekly ordering schedule for development. Ignored on Vercel. |
+| `FINANCIAL_LABOR_RATE_PER_HOUR` | Labor estimate for financials. Default: `22`. |
+| `FINANCIAL_SQUARE_FEE_BPS` | Square fee basis points for estimates. Default: `290`. |
+| `FINANCIAL_SQUARE_FEE_FIXED_CENTS` | Square fixed fee estimate. Default: `30`. |
+
+## App URL Resolution
+
+Server code resolves the public URL in this order:
+
+1. `NEXT_PUBLIC_APP_URL`
+2. `https://${VERCEL_URL}`
+3. `http://localhost:3000`
+
+Production should set `NEXT_PUBLIC_APP_URL`. Preview can usually leave it unset so each deploy uses its own `VERCEL_URL`.
+
+## Square Webhook Variables
+
+Square webhook verification requires both:
+
+- `SQUARE_WEBHOOK_SIGNATURE_KEY`
+- `SQUARE_WEBHOOK_NOTIFICATION_URL`
+
+The notification URL must exactly match the URL registered in the Square Developer Dashboard, including scheme, domain, path, and trailing slash behavior.
+
+Expected event subscriptions:
+
+| Environment | Event | URL |
+|---|---|---|
+| Production Square app | `payment.updated` | `https://thenurturedoven.com/api/webhooks/square` |
+| Sandbox Square app | `payment.updated` | Preview URL or tunnel URL + `/api/webhooks/square` |
+
+Payment details live in [PAYMENTS.md](./PAYMENTS.md).
+
+## Google Sheets
+
+The service account must have Editor access to the spreadsheet.
+
+Required setup:
+
+1. Enable Google Sheets API in Google Cloud.
+2. Create a service account key.
+3. Share the spreadsheet with the service account email as Editor.
+4. Put `client_email` in `GOOGLE_SERVICE_ACCOUNT_EMAIL`.
+5. Put `private_key` in `GOOGLE_PRIVATE_KEY`.
+
+## Sheets Ranges
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `GOOGLE_SHEETS_ORDERS_RANGE` | `Orders!A:R` | Paid order header rows |
+| `GOOGLE_SHEETS_LINE_ITEMS_RANGE` | `Order Line Items!A:M` | Paid order line items |
+| `GOOGLE_SHEETS_MENU_RANGE` | `Menu!A:L` | Public/admin menu rows |
+| `GOOGLE_SHEETS_CUSTOMER_EMAILS_RANGE` | `Customer Emails!A:J` | Admin customer email log |
+| `GOOGLE_SHEETS_PRODUCT_COSTS_RANGE` | `Product Costs!A:G` | Product cost estimates |
+| `GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE` | `Weekly Expenses!A:J` | Weekly expenses |
+| `GOOGLE_SHEETS_RANGE` | none | Legacy alias for orders range only |
+
+Important: the parser understands an optional `sold_out` column after `notes`, but the current default range and admin save path are `Menu!A:L`. If you add a manual `sold_out` column, set `GOOGLE_SHEETS_MENU_RANGE=Menu!A:M` and verify admin saves before relying on it operationally.
+
+## Required Tab Headers
+
+### Menu
+
+Default columns A-L:
+
+`slug`, `name`, `description`, `price`, `active`, `featured`, `category`, `sort_order`, `image_slug`, `image_url`, `allergens`, `notes`
+
+Optional column M:
+
+`sold_out`
+
+Only active rows appear publicly. Rows are sorted by `sort_order`. If Sheets is unavailable or has no active rows, the app uses `lib/content/currentMenu.ts`.
+
+### Orders
+
+The paid-order webhook writes order rows to the `Orders` tab and line items to `Order Line Items`. Do not change these columns casually; the sheet writers use fixed column order.
+
+### Customer Emails
+
+Header row:
+
+`Timestamp`, `Internal reference`, `Square order ID`, `Customer name`, `Customer email`, `Email type`, `Subject`, `Message`, `Sent status`, `Resend message ID`
+
+### Product Costs
+
+Header row:
+
+`Item slug`, `Item name`, `Ingredient cost per unit`, `Packaging cost per unit`, `Labor minutes per unit`, `Active`, `Notes`
+
+### Weekly Expenses
+
+Header row:
+
+`Expense timestamp`, `Expense date`, `Fulfillment date`, `Category`, `Vendor`, `Description`, `Amount`, `Payment method`, `Notes`
+
+Seed financial tabs:
+
+```bash
+pnpm sheets:seed-financials
+```
+
+## Redis
+
+Production requires `REDIS_URL`.
+
+Redis is used for:
+
+- Shared checkout, inquiry, and admin login rate limits.
+- Square webhook idempotency.
+- Payment fulfillment phase tracking.
+- Website checkout/order matching across server instances.
+
+Local and Preview can run without Redis, but rate limits and webhook/order matching become best-effort process or file state.
+
+## Common Mistakes
+
+- Putting Square Application ID in `SQUARE_LOCATION_ID`.
+- Mixing a production Square token with `SQUARE_ENVIRONMENT=sandbox`, or the reverse.
+- Setting a Square webhook URL that does not exactly match `SQUARE_WEBHOOK_NOTIFICATION_URL`.
+- Forgetting to redeploy after changing Vercel env vars.
+- Giving the Google service account Viewer access instead of Editor.

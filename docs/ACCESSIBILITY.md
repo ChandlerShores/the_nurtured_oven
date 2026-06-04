@@ -25,7 +25,6 @@ Run these before major releases or visible UI changes.
 3. At mobile width: open menu → Tab stays inside drawer → Escape closes → focus returns to hamburger button.
 4. FAQ page: expand/collapse items; collapsed answers are not read when tabbing past buttons.
 5. Contact `/contact`: switch intent tabs with arrow keys; all fields reachable; submit with empty cart shows alert.
-6. Home gallery lightbox (if open): Escape closes dialog.
 
 ### Screen reader (VoiceOver on Mac or NVDA on Windows)
 
@@ -67,7 +66,6 @@ When adding new copy, run the DevTools contrast checker (4.5:1 normal text, 3:1 
 
 - Add `eslint-plugin-jsx-a11y` to catch missing `alt`, invalid ARIA, and label issues at lint time.
 - Add Playwright a11y smoke tests with `@axe-core/playwright` on `/`, `/contact`, `/faq`.
-- Gallery lightbox: focus trap + focus return (same pattern as mobile nav).
 
 ## Related files
 

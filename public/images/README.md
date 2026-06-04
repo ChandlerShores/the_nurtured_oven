@@ -1,53 +1,53 @@
-# Site images — The Nurtured Oven
+# Site Images
 
-Owner photography and exports live in this folder. The site references these filenames; replace a file to update the site without code changes.
+Audience: builders and content maintainers.
 
-## Wild Flower Fund
+Owner photography, product images, and brand exports live here. The site references these filenames directly. Replacing a file with the same name is usually safer than changing code paths.
 
-| File | Use | Status |
-|------|-----|--------|
-| `wildflower-meadow.png` | Homepage fund banner (full-width meadow photo) | **Upload** — wide landscape, soft wildflowers, warm light |
+## Menu Images
 
-## This week's menu (Week 1)
+Admin menu rows can use:
 
-| File | Use | Status |
-|------|-----|--------|
-| `cinnamon_roll_hero.png` | Weekly feature + homepage hero | In repo |
-| `oatmeal_cookie_spring.png` | Signature staple (Oatmeal Cookie) | In repo |
-| `marshmallow-cloud-bar.png` | Special treat (Marshmallow Cloud Bar) | **Upload before deploy** |
+- `image_url`: full hosted URL or public path.
+- `image_slug`: resolves to `/images/menu/{image_slug}.jpg`.
+- Uploaded file from `/admin/menu`.
 
-## Current assets (owner / brand)
+Local admin uploads write to `public/images/menu/`. Vercel uploads require `BLOB_READ_WRITE_TOKEN`; otherwise use a hosted image URL or commit the image file.
 
-| File | Typical use |
-|------|-------------|
-| `rustic_bread_hero.png` | Homepage hero |
-| `oatmeal_cookie_tulips.png` | Emotional section backdrop, gift section photo |
-| `cloudbar_stretch.png` | Cloud bar stretch shot — social, Gathering gift |
-| `seasonal-feature.png` | Homepage “Ready to order?” CTA background |
-| `weekly_comfort_box.png` | Weekly Comfort Box (menu, gifts, social) |
-| `tulip_gift_box.png` | Gift box imagery, homepage cards |
-| `oatmeal-cookie.png` | Little Extras, homepage cards |
-| `sour-dough-loaf.png` | Social / spare |
-| `cloud-bar-in-package.png` | Gift boxes category, menu gift section |
-| `biscoff_cookie.png` | Cookies category & menu |
-| `caramel-brownie.png` | Brownies category & menu |
+## Current Files
+
+| File | Typical Use |
+|---|---|
+| `biscoff_cookie.png` | Cookie/category imagery |
 | `biscoff-butter-cloud-bar.png` | Biscoff cloud bar product |
-| `chai-brownie.png` | Seasonal treats category, menu, recent bakes |
-| `vanilla-bean-buttercream.png` | Available for future sections or swaps |
-| `founder_family.png` | About + homepage founder story |
-| `nurtured-oven-flowers-logo.png` | Brand mark (optional future use in header) |
+| `caramel-brownie.png` | Brownie product/category imagery |
+| `chai-brownie.png` | Seasonal product imagery |
+| `cinnamon_roll_hero.png` | Cinnamon roll feature imagery |
+| `cloud-bar-in-package.png` | Gift/category imagery |
+| `cloudbar_stretch.png` | Cloud bar detail imagery |
+| `founder_family.png` | About/founder imagery |
+| `marshmallow-cloud-bar.png` | Marshmallow cloud bar product |
+| `nurtured-oven-flowers-logo.png` | Brand mark |
+| `nurtured-oven-flowers-logo-cream.png` | Cream brand mark variant |
+| `nurtured-oven-flowers-logo-transparent.png` | Transparent brand mark variant |
 | `nurtured-oven-full-logo.png` | Full logo |
 | `nurtured-oven-script-logo.png` | Script logo |
+| `oatmeal_cookie_spring.png` | Oatmeal cookie product |
+| `oatmeal_cookie_tulips.png` | Oatmeal/tulip lifestyle image |
+| `oatmeal-cookie.png` | Oatmeal cookie image |
+| `rustic_bread_hero.png` | Homepage/hero image |
+| `seasonal-feature.png` | Seasonal CTA/background image |
+| `sour-dough-loaf.png` | Spare/social image |
+| `tulip_gift_box.png` | Gift box imagery |
+| `vanilla-bean-buttercream.png` | Future product/section image |
+| `weekly_comfort_box.png` | Weekly Comfort Box imagery |
 
-## Replacing later
+## Replacement Rules
 
-When you have new photos, keep the same filenames above **or** update paths in:
+1. Prefer keeping filenames stable.
+2. Use warm natural-light food photography.
+3. Hero images should be wide enough for text overlays.
+4. Product/category images should crop cleanly at square and 4:3 ratios.
+5. Avoid committing very large source exports; keep production images web-ready.
 
-- `components/home/` (Hero, EmotionalSection, GiftSection, FinalCta, TreatGrid)
-- `lib/content/menu.ts`, `lib/content/gifts.ts`, `lib/content/social.ts`, `lib/content/founder.ts`
-
-## Photography tips
-
-- Natural light, parchment, linen, real crumbs and packaging
-- Hero: wide landscape, room for text overlay
-- Category tiles: roughly square, warm tones
+When changing filenames, check references in `components/`, `app/`, and `lib/content/`.

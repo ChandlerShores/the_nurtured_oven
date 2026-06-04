@@ -73,6 +73,18 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = await processPaymentWebhookEvent(event)
+    if (result.action === "in_progress") {
+      return webhookJson(
+        {
+          received: true,
+          ...result,
+        },
+        {
+          status: 503,
+          headers: { "Retry-After": "30" },
+        }
+      )
+    }
     return webhookJson({
       received: true,
       ...result,

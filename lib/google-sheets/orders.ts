@@ -1,4 +1,5 @@
 import {
+  GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
   getSheetsClient,
   sheetTabFromRange,
 } from "@/lib/google-sheets/client"
@@ -97,10 +98,15 @@ export async function fetchAllOrdersFromSheet(): Promise<AdminOrderRow[]> {
   }
 
   const tab = sheetTabFromRange(client.ordersRange)
-  const res = await client.sheets.spreadsheets.values.get({
-    spreadsheetId: client.spreadsheetId,
-    range: `${tab}!A2:R`,
-  })
+  const res = await client.sheets.spreadsheets.values.get(
+    {
+      spreadsheetId: client.spreadsheetId,
+      range: `${tab}!A2:R`,
+    },
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 
   return parseOrdersDataRows((res.data.values as string[][]) ?? [])
 }
@@ -170,10 +176,15 @@ export async function fetchAllOrderLineItemsFromSheet(): Promise<
   }
 
   const tab = sheetTabFromRange(client.lineItemsRange)
-  const res = await client.sheets.spreadsheets.values.get({
-    spreadsheetId: client.spreadsheetId,
-    range: `${tab}!A2:M`,
-  })
+  const res = await client.sheets.spreadsheets.values.get(
+    {
+      spreadsheetId: client.spreadsheetId,
+      range: `${tab}!A2:M`,
+    },
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 
   return parseOrderLineItemRows((res.data.values as string[][]) ?? [])
 }
@@ -258,10 +269,15 @@ async function updateLineItemStatuses(
   status: string
 ): Promise<void> {
   const tab = sheetTabFromRange(client.lineItemsRange)
-  const res = await client.sheets.spreadsheets.values.get({
-    spreadsheetId: client.spreadsheetId,
-    range: `${tab}!A2:M`,
-  })
+  const res = await client.sheets.spreadsheets.values.get(
+    {
+      spreadsheetId: client.spreadsheetId,
+      range: `${tab}!A2:M`,
+    },
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 
   const values = (res.data.values as string[][]) ?? []
   const data: { range: string; values: string[][] }[] = []
@@ -278,13 +294,18 @@ async function updateLineItemStatuses(
 
   if (data.length === 0) return
 
-  await client.sheets.spreadsheets.values.batchUpdate({
-    spreadsheetId: client.spreadsheetId,
-    requestBody: {
-      valueInputOption: "USER_ENTERED",
-      data,
+  await client.sheets.spreadsheets.values.batchUpdate(
+    {
+      spreadsheetId: client.spreadsheetId,
+      requestBody: {
+        valueInputOption: "USER_ENTERED",
+        data,
+      },
     },
-  })
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 }
 
 export async function updateOrderStatusInSheet(
@@ -300,12 +321,17 @@ export async function updateOrderStatusInSheet(
   const tab = sheetTabFromRange(client.ordersRange)
   const statusCol = columnLetter(17)
 
-  await client.sheets.spreadsheets.values.update({
-    spreadsheetId: client.spreadsheetId,
-    range: `${tab}!${statusCol}${sheetRow}`,
-    valueInputOption: "USER_ENTERED",
-    requestBody: { values: [[status]] },
-  })
+  await client.sheets.spreadsheets.values.update(
+    {
+      spreadsheetId: client.spreadsheetId,
+      range: `${tab}!${statusCol}${sheetRow}`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: { values: [[status]] },
+    },
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 
   if (internalRef.trim()) {
     await updateLineItemStatuses(client, internalRef.trim(), status)
@@ -334,4 +360,37 @@ export async function sheetHasPaidOrder(
     if (ref && order.internalRef === ref) return true
     return false
   })
+}
+
+export function orderLineItemDedupeKey(value: {
+  slug?: string
+  name?: string
+}): string {
+  const slug = value.slug?.trim().toLowerCase()
+  if (slug) return `slug:${slug}`
+  return `name:${(value.name ?? "").trim().toLowerCase()}`
+}
+
+/** Returns existing menu line-item keys for a paid order (dedupe for webhook retries). */
+export async function fetchPaidOrderLineItemMap(
+  squareOrderId?: string,
+  internalRef?: string
+): Promise<Map<string, AdminOrderLineRow>> {
+  const sqId = squareOrderId?.trim()
+  const ref = internalRef?.trim()
+  const rows = new Map<string, AdminOrderLineRow>()
+  if (!sqId && !ref) return rows
+
+  const all = await fetchAllOrderLineItemsFromSheet()
+  for (const line of all) {
+    const matchesOrder =
+      Boolean(sqId && line.squareOrderId === sqId) ||
+      Boolean(ref && line.internalRef === ref)
+    if (!matchesOrder) continue
+
+    const key = orderLineItemDedupeKey(line)
+    if (key !== "name:" && !rows.has(key)) rows.set(key, line)
+  }
+
+  return rows
 }

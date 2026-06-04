@@ -1,5 +1,7 @@
 import { formatFromHeader, getEmailConfig, isEmailConfigured } from "@/lib/email/config"
 
+export const EMAIL_SEND_TIMEOUT_MS = 15_000
+
 export interface SendEmailInput {
   to: string[]
   subject: string
@@ -36,6 +38,8 @@ export async function sendEmail(
   }
 
   const config = getEmailConfig()
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), EMAIL_SEND_TIMEOUT_MS)
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -52,6 +56,7 @@ export async function sendEmail(
         text: input.text,
         html: input.html,
       }),
+      signal: controller.signal,
     })
 
     if (!res.ok) {
@@ -77,7 +82,13 @@ export async function sendEmail(
 
     return { success: true, messageId }
   } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      console.error("[Email] Resend request timed out.")
+      return { success: false, error: "Email request timed out" }
+    }
     console.error("[Email] Network error:", err)
     return { success: false, error: "Failed to send email" }
+  } finally {
+    clearTimeout(timeout)
   }
 }

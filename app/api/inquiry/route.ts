@@ -10,30 +10,27 @@ import {
   readPublicJsonBody,
 } from "@/lib/security/public-input"
 import {
-  checkRateLimit,
+  consumeRateLimitAsync,
   delayRateLimitedResponse,
   getClientIpFromRequest,
-  recordRateLimitHit,
 } from "@/lib/security/rate-limit"
 
 const INQUIRY_LIMIT = { windowMs: 15 * 60 * 1000, maxAttempts: 6 }
 
 export async function POST(req: NextRequest) {
-  const rateKey = `inquiry:${getClientIpFromRequest(req)}`
-  const limit = checkRateLimit(rateKey, INQUIRY_LIMIT)
-  if (!limit.allowed) {
-    return NextResponse.json(
-      { error: "Too many messages sent. Please try again later." },
-      {
-        status: 429,
-        headers: { "Retry-After": String(limit.retryAfterSec) },
-      }
-    )
-  }
-
-  recordRateLimitHit(rateKey, { windowMs: INQUIRY_LIMIT.windowMs })
-
   try {
+    const rateKey = `inquiry:${getClientIpFromRequest(req)}`
+    const limit = await consumeRateLimitAsync(rateKey, INQUIRY_LIMIT)
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { error: "Too many messages sent. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": String(limit.retryAfterSec) },
+        }
+      )
+    }
+
     const parsed = await readPublicJsonBody(req)
     if (!parsed.ok) return parsed.response
     const body = parsed.body

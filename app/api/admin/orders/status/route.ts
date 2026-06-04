@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import {
   parseAdminInternalRef,
-  parseAdminSheetRow,
   readAdminJsonBody,
 } from "@/lib/admin/api-input"
 import { isValidOrderStatus } from "@/lib/admin/order-status"
@@ -25,30 +24,25 @@ export async function PATCH(request: Request) {
   }
 
   const internalRef = parseAdminInternalRef(parsed.body.internalRef)
-  let sheetRow = parseAdminSheetRow(parsed.body.sheetRow)
-
-  if (internalRef) {
-    const order = await findOrderByInternalRef(internalRef)
-    if (!order) {
-      return NextResponse.json({ error: "Order not found." }, { status: 404 })
-    }
-    sheetRow = order.sheetRow
-  }
-
-  if (!sheetRow || sheetRow < 2) {
+  if (!internalRef) {
     return NextResponse.json(
-      { error: "Order reference is required." },
+      { error: "Valid order reference is required." },
       { status: 400 }
     )
   }
 
+  const order = await findOrderByInternalRef(internalRef)
+  if (!order) {
+    return NextResponse.json({ error: "Order not found." }, { status: 404 })
+  }
+
   try {
     await updateOrderStatusInSheet(
-      sheetRow,
+      order.sheetRow,
       status,
-      internalRef ?? ""
+      internalRef
     )
-    return NextResponse.json({ ok: true, status, sheetRow })
+    return NextResponse.json({ ok: true, status, sheetRow: order.sheetRow })
   } catch (err) {
     console.error("[admin] order status update failed", err)
     return NextResponse.json(

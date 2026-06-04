@@ -31,7 +31,7 @@ export interface SquareWebhookEvent {
 }
 
 export interface ProcessPaymentWebhookResult {
-  action: "processed" | "ignored" | "duplicate" | "skipped"
+  action: "processed" | "ignored" | "duplicate" | "skipped" | "in_progress"
   reason?: string
   paymentId?: string
   orderId?: string
@@ -86,17 +86,16 @@ export async function resolveWebhookPayment(
   return fetched ?? embedded
 }
 
-function phaseAtLeast(
-  current: PaymentFulfillmentPhase,
-  target: PaymentFulfillmentPhase
-): boolean {
-  const order: PaymentFulfillmentPhase[] = [
-    "processing",
-    "emails_sent",
-    "sheet_written",
-    "completed",
-  ]
-  return order.indexOf(current) >= order.indexOf(target)
+export function getFulfillmentRecoveryPlan(
+  startPhase: PaymentFulfillmentPhase
+): {
+  writeSheet: boolean
+  sendEmail: boolean
+} {
+  return {
+    writeSheet: startPhase !== "sheet_written" && startPhase !== "completed",
+    sendEmail: startPhase !== "emails_sent" && startPhase !== "completed",
+  }
 }
 
 export async function processPaymentWebhookEvent(
@@ -180,29 +179,55 @@ export async function processPaymentWebhookEvent(
     }
   }
 
+  if (fulfillment.outcome === "in_progress") {
+    return {
+      action: "in_progress",
+      reason: "Payment fulfillment is already in progress",
+      paymentId,
+      orderId: match.squareOrderId,
+    }
+  }
+
   const startPhase = fulfillment.phase ?? "processing"
+  const leaseToken = fulfillment.leaseToken
   let sideEffectsStarted = startPhase !== "processing"
 
   try {
     const details = await resolvePaidOrderDetails(payment, match.order)
+    const recoveryPlan = getFulfillmentRecoveryPlan(startPhase)
 
-    if (!phaseAtLeast(startPhase, "emails_sent")) {
-      await sendPaidOrderEmails(details, ownerEmail)
-      await advancePaymentFulfillment(paymentId, "emails_sent", match.squareOrderId)
+    if (recoveryPlan.writeSheet) {
       sideEffectsStarted = true
+      await appendPaidOrderToSheet(details)
+      await advancePaymentFulfillment(
+        paymentId,
+        "sheet_written",
+        match.squareOrderId,
+        leaseToken
+      )
     }
 
-    if (!phaseAtLeast(startPhase, "sheet_written")) {
-      await appendPaidOrderToSheet(details)
-      await advancePaymentFulfillment(paymentId, "sheet_written", match.squareOrderId)
+    if (recoveryPlan.sendEmail) {
       sideEffectsStarted = true
+      await sendPaidOrderEmails(details, ownerEmail)
+      await advancePaymentFulfillment(
+        paymentId,
+        "emails_sent",
+        match.squareOrderId,
+        leaseToken
+      )
     }
 
     await markWebsiteOrderPaid(match.squareOrderId, paymentId)
-    await advancePaymentFulfillment(paymentId, "completed", match.squareOrderId)
+    await advancePaymentFulfillment(
+      paymentId,
+      "completed",
+      match.squareOrderId,
+      leaseToken
+    )
   } catch (err) {
     if (!sideEffectsStarted) {
-      await releasePaymentFulfillment(paymentId)
+      await releasePaymentFulfillment(paymentId, leaseToken)
     }
     throw err
   }

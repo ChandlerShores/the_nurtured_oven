@@ -5,8 +5,15 @@ import type {
   PaidOrderLineItem,
 } from "@/lib/order/paid-order-details"
 import { WEEKLY_FULFILLMENT_TIMEZONE } from "@/lib/order/weekly-fulfillment"
-import { getSheetsClient } from "@/lib/google-sheets/client"
-import { sheetHasPaidOrder } from "@/lib/google-sheets/orders"
+import {
+  GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+  getSheetsClient,
+} from "@/lib/google-sheets/client"
+import {
+  fetchPaidOrderLineItemMap,
+  orderLineItemDedupeKey,
+  sheetHasPaidOrder,
+} from "@/lib/google-sheets/orders"
 import { getDeploymentTier } from "@/lib/env/deployment"
 import type { sheets_v4 } from "googleapis"
 
@@ -68,6 +75,32 @@ function resolveItemCategory(
 ): string {
   if (!slug) return ""
   return catalogBySlug.get(slug)?.category ?? ""
+}
+
+function assertExistingLineItemMatches(
+  existing: {
+    quantity: number
+    unitPriceCents: number
+    lineTotalCents: number
+  },
+  expected: {
+    key: string
+    quantity: number
+    unitPriceCents?: number
+    lineTotalCents?: number
+  }
+): void {
+  if (
+    existing.quantity !== expected.quantity ||
+    (expected.unitPriceCents != null &&
+      existing.unitPriceCents !== expected.unitPriceCents) ||
+    (expected.lineTotalCents != null &&
+      existing.lineTotalCents !== expected.lineTotalCents)
+  ) {
+    throw new Error(
+      `Existing line item ${expected.key} does not match paid Square order.`
+    )
+  }
 }
 
 /** One row for the Orders tab (column G = total quantity; header is "Total quantity" in sheet). */
@@ -142,13 +175,18 @@ async function appendValues(
 ): Promise<void> {
   if (values.length === 0) return
 
-  await sheets.spreadsheets.values.append({
-    spreadsheetId,
-    range,
-    valueInputOption: "USER_ENTERED",
-    insertDataOption: "INSERT_ROWS",
-    requestBody: { values },
-  })
+  await sheets.spreadsheets.values.append(
+    {
+      spreadsheetId,
+      range,
+      valueInputOption: "USER_ENTERED",
+      insertDataOption: "INSERT_ROWS",
+      requestBody: { values },
+    },
+    {
+      timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
+    }
+  )
 }
 
 export interface SheetOrderEntry {
@@ -190,34 +228,82 @@ export async function appendPaidOrdersToSheet(
   const catalogBySlug = new Map(catalog.map((item) => [item.slug, item]))
 
   for (const { details, orderedAt } of entries) {
-    if (
-      await sheetHasPaidOrder(details.squareOrderId, details.internalRef)
-    ) {
-      continue
+    const orderTimestamp = formatOrderTimestamp(orderedAt ?? new Date())
+    const hasOrder = await sheetHasPaidOrder(
+      details.squareOrderId,
+      details.internalRef
+    )
+    const existingLineItems = await fetchPaidOrderLineItemMap(
+      details.squareOrderId,
+      details.internalRef
+    )
+
+    if (!hasOrder) {
+      ordersRows.push(buildOrdersRow(details, orderTimestamp))
     }
 
-    const orderTimestamp = formatOrderTimestamp(orderedAt ?? new Date())
-    ordersRows.push(buildOrdersRow(details, orderTimestamp))
-    lineItemRows.push(
-      ...buildLineItemRows(details, orderTimestamp, catalogBySlug)
-    )
+    const detailRows = buildLineItemRows(details, orderTimestamp, catalogBySlug)
+    const expectedMenuItems = menuLineItems(details.lineItems)
+    for (let i = 0; i < detailRows.length; i++) {
+      const item = expectedMenuItems[i]
+      if (!item) continue
+      const key = orderLineItemDedupeKey(item)
+      const { unitPriceCents, lineTotalCents } = resolveLineItemPricing(
+        item,
+        catalogBySlug
+      )
+      if (key === "name:") {
+        throw new Error(`Line item "${item.name}" is missing a stable slug.`)
+      }
+      const existing = existingLineItems.get(key)
+      if (existing) {
+        assertExistingLineItemMatches(existing, {
+          key,
+          quantity: item.quantity,
+          unitPriceCents,
+          lineTotalCents,
+        })
+        continue
+      }
+      lineItemRows.push(detailRows[i]!)
+      existingLineItems.set(key, {
+        sheetRow: -1,
+        orderedAt: "",
+        fulfillmentLabel: "",
+        internalRef: details.internalRef ?? "",
+        squareOrderId: details.squareOrderId ?? "",
+        customerName: details.customerName ?? "",
+        slug: item.slug ?? "",
+        name: item.name,
+        category: resolveItemCategory(item.slug, catalogBySlug),
+        quantity: item.quantity,
+        unitPriceCents: unitPriceCents ?? 0,
+        lineTotalCents: lineTotalCents ?? 0,
+        fulfillmentMethod: details.fulfillmentMethod,
+        orderStatus: details.orderStatus ?? "New",
+      })
+    }
   }
 
-  if (ordersRows.length === 0) return
+  if (ordersRows.length === 0 && lineItemRows.length === 0) return
 
   try {
-    await appendValues(
-      client.sheets,
-      client.spreadsheetId,
-      client.ordersRange,
-      ordersRows
-    )
-    await appendValues(
-      client.sheets,
-      client.spreadsheetId,
-      client.lineItemsRange,
-      lineItemRows
-    )
+    if (ordersRows.length > 0) {
+      await appendValues(
+        client.sheets,
+        client.spreadsheetId,
+        client.ordersRange,
+        ordersRows
+      )
+    }
+    if (lineItemRows.length > 0) {
+      await appendValues(
+        client.sheets,
+        client.spreadsheetId,
+        client.lineItemsRange,
+        lineItemRows
+      )
+    }
   } catch (err) {
     console.error("[Google Sheets] Failed to append paid order:", err)
     throw err

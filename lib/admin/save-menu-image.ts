@@ -2,6 +2,7 @@ import "server-only"
 
 import { mkdir, writeFile } from "fs/promises"
 import path from "path"
+import { getDeploymentTier } from "@/lib/env/deployment"
 
 const MAX_BYTES = 5 * 1024 * 1024
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"])
@@ -38,6 +39,12 @@ export async function saveMenuImageFile(
       addRandomSuffix: false,
     })
     return { imageUrl: blob.url, imageSlug: slug }
+  }
+
+  if (getDeploymentTier() !== "development") {
+    throw new Error(
+      "Menu image uploads require BLOB_READ_WRITE_TOKEN outside local development."
+    )
   }
 
   const dir = path.join(process.cwd(), "public", "images", "menu")

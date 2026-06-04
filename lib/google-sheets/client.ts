@@ -1,6 +1,7 @@
 import { google } from "googleapis"
 
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets"
+export const GOOGLE_SHEETS_REQUEST_TIMEOUT_MS = 15_000
 export const DEFAULT_ORDERS_RANGE = "Orders!A:R"
 export const DEFAULT_LINE_ITEMS_RANGE = "Order Line Items!A:M"
 export const DEFAULT_CUSTOMER_EMAILS_RANGE = "Customer Emails!A:J"
