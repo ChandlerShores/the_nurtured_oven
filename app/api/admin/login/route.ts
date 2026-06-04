@@ -33,8 +33,7 @@ export async function POST(request: Request) {
       )
     }
 
-    let body: { password?: string }
-    body = (await request.json()) as { password?: string }
+    const body = (await request.json()) as { password?: string }
     const password = body.password ?? ""
     if (!password || !verifyAdminPassword(password)) {
       await delayFailedLoginResponse()
