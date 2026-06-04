@@ -40,7 +40,7 @@ function sheetRowToProduct(
     image,
     squareCheckoutUrl: "",
     orderButtonText: `Order ${row.name}`,
-    soldOut: false,
+    soldOut: row.soldOut,
     limitedQuantity: false,
     limitedQuantityNote: row.notes || undefined,
   }

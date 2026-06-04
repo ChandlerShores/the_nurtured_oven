@@ -44,7 +44,8 @@ export function checkRateLimit(
   return { allowed: true, retryAfterSec: 0 }
 }
 
-export function recordRateLimitFailure(
+/** Increment attempt counter after checkRateLimit allows the request. */
+export function recordRateLimitHit(
   key: string,
   options: { windowMs: number }
 ): void {
@@ -55,6 +56,14 @@ export function recordRateLimitFailure(
     return
   }
   bucket.count += 1
+}
+
+/** @deprecated Use recordRateLimitHit for per-attempt limits; kept for login failure-only counting. */
+export function recordRateLimitFailure(
+  key: string,
+  options: { windowMs: number }
+): void {
+  recordRateLimitHit(key, options)
 }
 
 export function clearRateLimit(key: string): void {

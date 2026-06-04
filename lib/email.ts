@@ -1,4 +1,5 @@
 import type { PaidOrderDetails } from "@/lib/order/paid-order-details"
+import { getDeploymentTier } from "@/lib/env/deployment"
 import { getEmailConfig } from "@/lib/email/config"
 import {
   shouldSendInquiryCustomerReply,
@@ -9,9 +10,20 @@ import {
   buildCustomerPaidOrderEmail,
   buildOwnerPaidOrderEmail,
 } from "@/lib/email/html/paid-order-html"
-import { sendEmail } from "@/lib/email/send"
+import { sendEmail, type SendEmailResult } from "@/lib/email/send"
 
 export type { InquiryEmailData } from "@/lib/email/inquiry-email"
+
+function assertEmailDelivered(result: SendEmailResult, context: string): void {
+  if (result.skipped && getDeploymentTier() === "production") {
+    throw new Error(
+      `Email not configured in production (${context}). Set RESEND_API_KEY.`
+    )
+  }
+  if (!result.success) {
+    throw new Error(result.error ?? `Failed to send ${context}`)
+  }
+}
 
 export async function sendInquiryEmail(
   data: InquiryEmailData,
@@ -32,6 +44,12 @@ export async function sendInquiryEmail(
   if (!ownerResult.success) {
     return ownerResult
   }
+  if (ownerResult.skipped && getDeploymentTier() === "production") {
+    return {
+      success: false,
+      error: "Email is not configured. Set RESEND_API_KEY.",
+    }
+  }
 
   if (shouldSendInquiryCustomerReply(data.intent)) {
     const customer = buildInquiryCustomerEmail(data)
@@ -46,6 +64,12 @@ export async function sendInquiryEmail(
     if (!customerResult.success) {
       return customerResult
     }
+    if (customerResult.skipped && getDeploymentTier() === "production") {
+      return {
+        success: false,
+        error: "Email is not configured. Set RESEND_API_KEY.",
+      }
+    }
   }
 
   return { success: true }
@@ -59,22 +83,28 @@ export async function sendPaidOrderEmails(
   const toOwner = ownerEmail ?? config.ownerEmail
 
   const owner = buildOwnerPaidOrderEmail(data)
-  await sendEmail({
-    to: [toOwner],
-    subject: owner.subject,
-    text: owner.text,
-    html: owner.html,
-    replyTo: data.customerEmail,
-  })
+  assertEmailDelivered(
+    await sendEmail({
+      to: [toOwner],
+      subject: owner.subject,
+      text: owner.text,
+      html: owner.html,
+      replyTo: data.customerEmail,
+    }),
+    "owner paid-order notification"
+  )
 
   if (data.customerEmail) {
     const customer = buildCustomerPaidOrderEmail(data, config.replyToEmail)
-    await sendEmail({
-      to: [data.customerEmail],
-      subject: customer.subject,
-      text: customer.text,
-      html: customer.html,
-      replyTo: config.replyToEmail,
-    })
+    assertEmailDelivered(
+      await sendEmail({
+        to: [data.customerEmail],
+        subject: customer.subject,
+        text: customer.text,
+        html: customer.html,
+        replyTo: config.replyToEmail,
+      }),
+      "customer paid-order confirmation"
+    )
   }
 }

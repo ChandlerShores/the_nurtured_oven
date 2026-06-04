@@ -1,6 +1,7 @@
 import { ORDER_STATUS_OPTIONS } from "@/lib/admin/order-status"
 import { getOrderDisplayStatus } from "@/lib/admin/order-filters"
 import type { OrderStatus } from "@/lib/admin/order-status"
+import { parseMoneyToCents } from "@/lib/admin/money"
 import {
   buildProductionList,
   totalBakeQuantity,
@@ -11,7 +12,26 @@ import { formatBatchLabel } from "@/lib/order/weekly-fulfillment"
 
 export type { ItemQuantity } from "@/lib/admin/production-aggregate"
 
-const CLOSED_STATUSES = new Set(["Complete", "Delivered", "Refunded"])
+const CLOSED_STATUSES = new Set([
+  "Complete",
+  "Delivered / Picked Up",
+  "Delivered",
+  "Refunded",
+  "Cancelled",
+])
+
+const EXCLUDED_REVENUE_STATUSES = new Set(["Refunded", "Cancelled"])
+
+function isPaidPayment(order: AdminOrderRow): boolean {
+  const status = order.paymentStatus.trim().toLowerCase()
+  return status === "paid" || status === "completed"
+}
+
+function countsForRevenue(order: AdminOrderRow): boolean {
+  if (!isPaidPayment(order)) return false
+  const status = order.orderStatus.trim()
+  return !EXCLUDED_REVENUE_STATUSES.has(status)
+}
 
 export interface DashboardStats {
   batchLabel: string
@@ -27,15 +47,6 @@ export interface DashboardStats {
   topItems: ItemQuantity[]
   productionList: ItemQuantity[]
   recentOrders: AdminOrderRow[]
-}
-
-function parseAmountCents(amount: string): number {
-  const cleaned = amount.replace(/[$,\s]/g, "").trim()
-  if (!cleaned) return 0
-  const n = Number(cleaned)
-  if (!Number.isFinite(n)) return 0
-  if (cleaned.includes(".") || n < 500) return Math.round(n * 100)
-  return Math.round(n)
 }
 
 function formatRevenue(cents: number): string {
@@ -70,7 +81,9 @@ export function buildDashboardStats(
   }
 
   for (const order of orders) {
-    revenueCents += parseAmountCents(order.amount)
+    if (countsForRevenue(order)) {
+      revenueCents += parseMoneyToCents(order.amount)
+    }
 
     const method = order.fulfillmentMethod.trim().toLowerCase()
     if (method === "pickup") pickupCount += 1

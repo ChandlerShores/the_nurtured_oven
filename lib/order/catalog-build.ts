@@ -10,6 +10,7 @@ export function buildWeeklyCatalog(menu: CurrentMenu): CatalogItem[] {
     unitLabel: item.unitLabel,
     image: item.image,
     category: item.roleLabel,
+    soldOut: item.soldOut ?? false,
   }))
 
   items.push({
@@ -19,6 +20,7 @@ export function buildWeeklyCatalog(menu: CurrentMenu): CatalogItem[] {
     unitLabel: menu.featured.unitLabel,
     image: menu.featured.image,
     category: menu.featured.featuredEyebrow ?? menu.featured.roleLabel,
+    soldOut: menu.featured.soldOut ?? false,
   })
 
   return items

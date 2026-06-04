@@ -11,6 +11,7 @@ const MENU_HEADERS = [
   "image_url",
   "allergens",
   "notes",
+  "sold_out",
 ] as const
 
 export interface MenuSheetRow {
@@ -27,6 +28,7 @@ export interface MenuSheetRow {
   imageUrl: string
   allergens: string[]
   notes: string
+  soldOut: boolean
 }
 
 function normalizeHeader(value: string): string {
@@ -109,6 +111,7 @@ export function parseMenuSheetRows(values: string[][]): MenuSheetRow[] {
       imageUrl: record.image_url?.trim() ?? "",
       allergens: parseAllergens(record.allergens ?? ""),
       notes: record.notes?.trim() ?? "",
+      soldOut: parseBoolean(record.sold_out ?? ""),
     })
   }
 
@@ -148,5 +151,6 @@ export function menuRowToSheetValues(row: MenuSheetRow): string[] {
     row.imageUrl,
     formatAllergensForSheet(row.allergens),
     row.notes,
+    formatBooleanForSheet(row.soldOut ?? false),
   ]
 }

@@ -40,7 +40,7 @@ export default function AdminDeliveriesView({
   const unmapped = deliveryOrders.filter((o) => !hasAddress(o))
   const pending = deliveryOrders.filter((o) => {
     const s = o.orderStatus.trim()
-    return s !== "Delivered" && s !== "Complete"
+    return s !== "Delivered / Picked Up" && s !== "Delivered" && s !== "Complete"
   })
 
   const [savingRef, setSavingRef] = useState<string | null>(null)
@@ -55,7 +55,7 @@ export default function AdminDeliveriesView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           internalRef,
-          status: "Delivered" as OrderStatus,
+          status: "Delivered / Picked Up" as OrderStatus,
         }),
       })
       if (!res.ok) {
@@ -132,7 +132,8 @@ export default function AdminDeliveriesView({
                         Open in Maps
                       </a>
                     ) : null}
-                    {order.orderStatus !== "Delivered" &&
+                    {order.orderStatus !== "Delivered / Picked Up" &&
+                    order.orderStatus !== "Delivered" &&
                     order.orderStatus !== "Complete" ? (
                       <button
                         type="button"

@@ -8,11 +8,14 @@ import {
 import { resolvePaidOrderDetails } from "@/lib/square/resolve-paid-order"
 import { appendPaidOrderToSheet } from "@/lib/google-sheets/append-paid-order"
 import { getSquareClient } from "@/lib/square/client"
+import type { PaymentFulfillmentPhase } from "@/lib/square/webhook-idempotency"
 import {
-  claimSquarePayment,
+  acquirePaymentFulfillment,
+  advancePaymentFulfillment,
   hasProcessedSquarePayment,
   markWebsiteOrderPaid,
-  releaseSquarePaymentClaim,
+  releasePaymentFulfillment,
+  requireRedisInProduction,
 } from "@/lib/square/website-order-store"
 
 const PAYMENT_EVENT_TYPES = new Set(["payment.created", "payment.updated"])
@@ -83,10 +86,25 @@ export async function resolveWebhookPayment(
   return fetched ?? embedded
 }
 
+function phaseAtLeast(
+  current: PaymentFulfillmentPhase,
+  target: PaymentFulfillmentPhase
+): boolean {
+  const order: PaymentFulfillmentPhase[] = [
+    "processing",
+    "emails_sent",
+    "sheet_written",
+    "completed",
+  ]
+  return order.indexOf(current) >= order.indexOf(target)
+}
+
 export async function processPaymentWebhookEvent(
   event: SquareWebhookEvent,
   ownerEmail: string = process.env.OWNER_EMAIL || siteConfig.ownerEmail
 ): Promise<ProcessPaymentWebhookResult> {
+  requireRedisInProduction()
+
   const eventType = event.type
 
   if (!isPaymentWebhookEvent(eventType)) {
@@ -148,7 +166,12 @@ export async function processPaymentWebhookEvent(
     }
   }
 
-  if (!(await claimSquarePayment(paymentId, match.squareOrderId))) {
+  const fulfillment = await acquirePaymentFulfillment(
+    paymentId,
+    match.squareOrderId
+  )
+
+  if (fulfillment.outcome === "duplicate") {
     return {
       action: "duplicate",
       reason: "Payment already processed",
@@ -157,13 +180,30 @@ export async function processPaymentWebhookEvent(
     }
   }
 
+  const startPhase = fulfillment.phase ?? "processing"
+  let sideEffectsStarted = startPhase !== "processing"
+
   try {
     const details = await resolvePaidOrderDetails(payment, match.order)
-    await sendPaidOrderEmails(details, ownerEmail)
-    await appendPaidOrderToSheet(details)
+
+    if (!phaseAtLeast(startPhase, "emails_sent")) {
+      await sendPaidOrderEmails(details, ownerEmail)
+      await advancePaymentFulfillment(paymentId, "emails_sent", match.squareOrderId)
+      sideEffectsStarted = true
+    }
+
+    if (!phaseAtLeast(startPhase, "sheet_written")) {
+      await appendPaidOrderToSheet(details)
+      await advancePaymentFulfillment(paymentId, "sheet_written", match.squareOrderId)
+      sideEffectsStarted = true
+    }
+
     await markWebsiteOrderPaid(match.squareOrderId, paymentId)
+    await advancePaymentFulfillment(paymentId, "completed", match.squareOrderId)
   } catch (err) {
-    await releaseSquarePaymentClaim(paymentId)
+    if (!sideEffectsStarted) {
+      await releasePaymentFulfillment(paymentId)
+    }
     throw err
   }
 

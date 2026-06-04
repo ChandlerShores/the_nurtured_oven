@@ -1,3 +1,5 @@
+import { getDeploymentTier } from "@/lib/env/deployment"
+
 export const ADMIN_SESSION_COOKIE = "tno_admin_session"
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 3
 const MIN_ADMIN_PASSWORD_LENGTH = 12
@@ -20,6 +22,10 @@ export async function getAdminSessionSecret(): Promise<string | undefined> {
   const dedicated = process.env.ADMIN_SESSION_SECRET?.trim()
   if (dedicated && dedicated.length >= MIN_SESSION_SECRET_LENGTH) {
     return dedicated
+  }
+
+  if (getDeploymentTier() === "production") {
+    return undefined
   }
 
   const password = process.env.ADMIN_PASSWORD?.trim()

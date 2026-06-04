@@ -12,7 +12,7 @@ Template files (copy values into Vercel — do not commit secrets):
 
 - [`.env.production.example`](../.env.production.example) → Production only
 - [`.env.preview.example`](../.env.preview.example) → Preview only
-- [`.env.development.example`](../.env.development.example) → local `.env.local`
+- [`.env.example`](../.env.example) → local `.env.local`
 
 ## Vercel setup
 

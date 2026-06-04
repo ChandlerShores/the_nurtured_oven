@@ -318,3 +318,20 @@ export async function findOrderByInternalRef(
   const all = await fetchAllOrdersFromSheet()
   return all.find((o) => o.internalRef === internalRef.trim())
 }
+
+/** Returns true when a paid order row already exists (dedupe for webhook retries). */
+export async function sheetHasPaidOrder(
+  squareOrderId?: string,
+  internalRef?: string
+): Promise<boolean> {
+  const sqId = squareOrderId?.trim()
+  const ref = internalRef?.trim()
+  if (!sqId && !ref) return false
+
+  const all = await fetchAllOrdersFromSheet()
+  return all.some((order) => {
+    if (sqId && order.squareOrderId === sqId) return true
+    if (ref && order.internalRef === ref) return true
+    return false
+  })
+}

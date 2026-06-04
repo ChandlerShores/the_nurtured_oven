@@ -5,5 +5,12 @@ export function safeAdminNextPath(raw: string | null | undefined): string {
   if (path.includes("://") || path.startsWith("//") || path.includes("\\")) {
     return "/admin"
   }
-  return path
+  if (path.includes("..")) return "/admin"
+
+  const pathOnly = path.split("?")[0]?.split("#")[0] ?? path
+  if (!pathOnly.startsWith("/admin") || pathOnly.includes("..")) {
+    return "/admin"
+  }
+
+  return pathOnly
 }

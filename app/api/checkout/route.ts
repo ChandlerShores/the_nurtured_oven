@@ -5,12 +5,13 @@ import { getWeeklyCatalog } from "@/lib/order/catalog"
 import {
   clampString,
   isReasonableEmail,
+  readPublicJsonBody,
 } from "@/lib/security/public-input"
 import {
   checkRateLimit,
   delayRateLimitedResponse,
   getClientIpFromRequest,
-  recordRateLimitFailure,
+  recordRateLimitHit,
 } from "@/lib/security/rate-limit"
 import { isAllowedCheckoutUrl } from "@/lib/security/safe-external-url"
 import { createWeeklyCheckout } from "@/lib/square/checkout"
@@ -31,6 +32,8 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  recordRateLimitHit(rateKey, { windowMs: CHECKOUT_LIMIT.windowMs })
+
   try {
     if (!isMenuOpen()) {
       return NextResponse.json(
@@ -49,7 +52,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const body = await req.json()
+    const parsed = await readPublicJsonBody(req)
+    if (!parsed.ok) return parsed.response
+    const body = parsed.body
+
     const name = clampString(body.name, 120)
     const email = clampString(body.email, 254)
     const phone = clampString(body.phone, 40)
@@ -82,17 +88,48 @@ export async function POST(req: NextRequest) {
     }
 
     const catalog = await getWeeklyCatalog()
-    const catalogSlugs = new Set(catalog.map((item) => item.slug))
+    const catalogBySlug = new Map(catalog.map((item) => [item.slug, item]))
 
-    const validItems = lineItems.filter(
-      (item: { slug?: string; quantity?: number }) =>
-        item.slug &&
-        typeof item.quantity === "number" &&
-        item.quantity > 0 &&
-        catalogSlugs.has(item.slug)
-    )
+    const mergedQuantities = new Map<string, number>()
+    for (const item of lineItems) {
+      if (
+        !item ||
+        typeof item !== "object" ||
+        typeof item.slug !== "string" ||
+        typeof item.quantity !== "number" ||
+        !Number.isFinite(item.quantity) ||
+        item.quantity <= 0
+      ) {
+        return NextResponse.json(
+          { error: "Each line item must include a valid menu item and quantity." },
+          { status: 400 }
+        )
+      }
 
-    if (validItems.length === 0) {
+      const slug = item.slug.trim()
+      const qty = Math.min(20, Math.floor(item.quantity))
+      mergedQuantities.set(slug, (mergedQuantities.get(slug) ?? 0) + qty)
+    }
+
+    const normalizedItems: { slug: string; quantity: number }[] = []
+    for (const [slug, quantity] of mergedQuantities) {
+      const catalogItem = catalogBySlug.get(slug)
+      if (!catalogItem) {
+        return NextResponse.json(
+          { error: `Menu item "${slug}" is not available.` },
+          { status: 400 }
+        )
+      }
+      if (catalogItem.soldOut) {
+        return NextResponse.json(
+          { error: `${catalogItem.name} is sold out.` },
+          { status: 400 }
+        )
+      }
+      normalizedItems.push({ slug, quantity })
+    }
+
+    if (normalizedItems.length === 0) {
       return NextResponse.json(
         { error: "Please add at least one valid menu item." },
         { status: 400 }
@@ -118,10 +155,7 @@ export async function POST(req: NextRequest) {
       name,
       email,
       phone: phone || undefined,
-      lineItems: validItems.map((item: { slug: string; quantity: number }) => ({
-        slug: item.slug,
-        quantity: Math.min(20, Math.floor(item.quantity)),
-      })),
+      lineItems: normalizedItems,
       fulfillment: fulfillment === "delivery" ? "delivery" : "pickup",
       deliveryCity: fulfillment === "delivery" ? deliveryCity : undefined,
       deliveryAddress: deliveryAddress || undefined,
@@ -140,7 +174,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ checkoutUrl })
   } catch (err) {
     console.error("[Checkout]", err)
-    recordRateLimitFailure(rateKey, { windowMs: CHECKOUT_LIMIT.windowMs })
     await delayRateLimitedResponse()
     return NextResponse.json(
       { error: "Could not start checkout. Please try again or contact us." },

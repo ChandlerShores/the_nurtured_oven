@@ -16,6 +16,7 @@ export interface AdminMenuItemPayload {
   imageUrl: string
   allergens: string
   notes: string
+  soldOut?: boolean
 }
 
 export type ParsedMenuItemFields = {
@@ -78,6 +79,7 @@ export function parseMenuItemFields(
         imageUrl: body.imageUrl?.trim() ?? "",
         allergens,
         notes: body.notes?.trim() ?? "",
+        soldOut: Boolean(body.soldOut),
       },
     },
   }

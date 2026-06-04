@@ -6,6 +6,8 @@ import type {
 } from "@/lib/order/paid-order-details"
 import { WEEKLY_FULFILLMENT_TIMEZONE } from "@/lib/order/weekly-fulfillment"
 import { getSheetsClient } from "@/lib/google-sheets/client"
+import { sheetHasPaidOrder } from "@/lib/google-sheets/orders"
+import { getDeploymentTier } from "@/lib/env/deployment"
 import type { sheets_v4 } from "googleapis"
 
 function normalizeLineItemsSummary(items: PaidOrderLineItem[]): string {
@@ -171,6 +173,11 @@ export async function appendPaidOrdersToSheet(
 
   const client = getSheetsClient()
   if (!client) {
+    if (getDeploymentTier() === "production") {
+      throw new Error(
+        "Google Sheets is not configured. Set GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL, and GOOGLE_PRIVATE_KEY."
+      )
+    }
     console.warn(
       "[Google Sheets] Skipping export: set GOOGLE_SHEET_ID, GOOGLE_SERVICE_ACCOUNT_EMAIL, and GOOGLE_PRIVATE_KEY."
     )
@@ -183,6 +190,12 @@ export async function appendPaidOrdersToSheet(
   const catalogBySlug = new Map(catalog.map((item) => [item.slug, item]))
 
   for (const { details, orderedAt } of entries) {
+    if (
+      await sheetHasPaidOrder(details.squareOrderId, details.internalRef)
+    ) {
+      continue
+    }
+
     const orderTimestamp = formatOrderTimestamp(orderedAt ?? new Date())
     ordersRows.push(buildOrdersRow(details, orderTimestamp))
     lineItemRows.push(
@@ -190,18 +203,25 @@ export async function appendPaidOrdersToSheet(
     )
   }
 
-  await appendValues(
-    client.sheets,
-    client.spreadsheetId,
-    client.ordersRange,
-    ordersRows
-  )
-  await appendValues(
-    client.sheets,
-    client.spreadsheetId,
-    client.lineItemsRange,
-    lineItemRows
-  )
+  if (ordersRows.length === 0) return
+
+  try {
+    await appendValues(
+      client.sheets,
+      client.spreadsheetId,
+      client.ordersRange,
+      ordersRows
+    )
+    await appendValues(
+      client.sheets,
+      client.spreadsheetId,
+      client.lineItemsRange,
+      lineItemRows
+    )
+  } catch (err) {
+    console.error("[Google Sheets] Failed to append paid order:", err)
+    throw err
+  }
 }
 
 export async function appendPaidOrderToSheet(

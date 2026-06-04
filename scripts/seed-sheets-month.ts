@@ -2,6 +2,7 @@
  * Seed ~1 month of synthetic paid orders into Google Sheets (Orders + Order Line Items).
  * Run: pnpm sheets:seed-month
  */
+import { ORDER_STATUS_OPTIONS } from "../lib/admin/order-status"
 import { fulfillmentPolicy } from "../lib/content/fulfillment"
 import { loadEnvLocal } from "./lib/load-env-local"
 import { appendPaidOrdersToSheet } from "../lib/google-sheets/append-paid-order"
@@ -64,14 +65,9 @@ const STREETS = [
   "89 Elm Ave",
 ]
 
-const ORDER_STATUSES = [
-  "New",
-  "Baking",
-  "Packed",
-  "Delivered / Picked Up",
-  "Complete",
-  "Cancelled",
-] as const
+const ORDER_STATUSES = ORDER_STATUS_OPTIONS.filter(
+  (s) => s !== "Refunded" && s !== "Issue"
+)
 
 const DIETARY_NOTES = ["", "", "", "Nut-free please", "No nuts", "Gluten-aware"]
 

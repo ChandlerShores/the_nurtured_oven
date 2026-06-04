@@ -6,4 +6,5 @@ export interface CatalogItem {
   image?: string
   /** Baker-facing category (from menu roleLabel or featured eyebrow). */
   category?: string
+  soldOut?: boolean
 }

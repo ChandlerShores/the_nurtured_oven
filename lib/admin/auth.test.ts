@@ -58,5 +58,6 @@ describe("admin auth", () => {
     assert.equal(safeAdminNextPath("https://evil.com"), "/admin")
     assert.equal(safeAdminNextPath("//evil.com"), "/admin")
     assert.equal(safeAdminNextPath("/shop"), "/admin")
+    assert.equal(safeAdminNextPath("/admin/../shop"), "/admin")
   })
 })

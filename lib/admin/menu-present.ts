@@ -19,6 +19,7 @@ export interface AdminMenuItemView {
   imageUrl: string
   allergens: string
   notes: string
+  soldOut: boolean
   image: string
 }
 
@@ -43,6 +44,7 @@ export function toAdminMenuItemView(row: MenuSheetRowWithIndex): AdminMenuItemVi
     imageUrl: row.imageUrl,
     allergens: row.allergens.join(", "),
     notes: row.notes,
+    soldOut: row.soldOut ?? false,
     image: resolveMenuImage(row.imageUrl, row.imageSlug, row.slug),
   }
 }
@@ -69,6 +71,7 @@ function adminItemToSheetRow(item: AdminMenuItemView): MenuSheetRowWithIndex {
       .map((t) => t.trim().toLowerCase())
       .filter(Boolean),
     notes: item.notes,
+    soldOut: item.soldOut ?? false,
   }
 }
 

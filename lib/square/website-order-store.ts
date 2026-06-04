@@ -1,11 +1,15 @@
 import { mkdirSync, readFileSync, writeFileSync } from "fs"
 import { dirname, join } from "path"
 import { isRedisConfigured } from "@/lib/square/redis-client"
+import { getDeploymentTier } from "@/lib/env/deployment"
 import {
-  claimSquarePaymentRedis,
+  acquirePaymentFulfillmentRedis,
+  advancePaymentFulfillmentRedis,
   hasProcessedSquarePaymentRedis,
-  markSquarePaymentProcessedRedis,
   releaseSquarePaymentClaimRedis,
+  type AcquireFulfillmentResult,
+  type PaymentFulfillmentPhase,
+  type ProcessedPaymentRecord,
 } from "@/lib/square/webhook-idempotency"
 
 export type WebsiteOrderStatus = "pending" | "paid"
@@ -23,7 +27,7 @@ export interface WebsiteOrderRecord {
 interface WebsiteOrderStoreSnapshot {
   ordersBySquareOrderId: Record<string, WebsiteOrderRecord>
   ordersByInternalRef: Record<string, string>
-  processedPaymentIds: Record<string, { orderId?: string; processedAt: string }>
+  processedPaymentIds: Record<string, ProcessedPaymentRecord>
 }
 
 const STORE_KEY = "__tnoWebsiteOrderStore__"
@@ -156,29 +160,73 @@ export async function hasProcessedSquarePayment(
   }
 
   const snapshot = loadSnapshot()
-  return Boolean(snapshot.processedPaymentIds[paymentId])
+  const record = snapshot.processedPaymentIds[paymentId]
+  return record?.phase === "completed"
 }
 
-export async function claimSquarePayment(
+function acquirePaymentFulfillmentLocal(
   paymentId: string,
   orderId?: string
-): Promise<boolean> {
-  if (isRedisConfigured()) {
-    return claimSquarePaymentRedis(paymentId, orderId)
-  }
-
+): AcquireFulfillmentResult {
   const snapshot = loadSnapshot()
-  if (snapshot.processedPaymentIds[paymentId]) return false
+  const existing = snapshot.processedPaymentIds[paymentId]
+
+  if (existing) {
+    const phase = existing.phase ?? "completed"
+    if (phase === "completed") {
+      return { outcome: "duplicate", phase: "completed" }
+    }
+    return { outcome: "resume", phase }
+  }
 
   snapshot.processedPaymentIds[paymentId] = {
     orderId,
     processedAt: new Date().toISOString(),
+    phase: "processing",
   }
   persistSnapshot(snapshot)
-  return true
+  return { outcome: "claimed", phase: "processing" }
 }
 
-export async function releaseSquarePaymentClaim(paymentId: string): Promise<void> {
+function advancePaymentFulfillmentLocal(
+  paymentId: string,
+  phase: PaymentFulfillmentPhase,
+  orderId?: string
+): void {
+  const snapshot = loadSnapshot()
+  const existing = snapshot.processedPaymentIds[paymentId]
+  snapshot.processedPaymentIds[paymentId] = {
+    orderId: orderId ?? existing?.orderId,
+    processedAt: new Date().toISOString(),
+    phase,
+  }
+  persistSnapshot(snapshot)
+}
+
+export async function acquirePaymentFulfillment(
+  paymentId: string,
+  orderId?: string
+): Promise<AcquireFulfillmentResult> {
+  if (isRedisConfigured()) {
+    return acquirePaymentFulfillmentRedis(paymentId, orderId)
+  }
+  return acquirePaymentFulfillmentLocal(paymentId, orderId)
+}
+
+export async function advancePaymentFulfillment(
+  paymentId: string,
+  phase: PaymentFulfillmentPhase,
+  orderId?: string
+): Promise<void> {
+  if (isRedisConfigured()) {
+    await advancePaymentFulfillmentRedis(paymentId, phase, orderId)
+    return
+  }
+  advancePaymentFulfillmentLocal(paymentId, phase, orderId)
+}
+
+/** Release only when fulfillment failed before any side effect (phase still processing). */
+export async function releasePaymentFulfillment(paymentId: string): Promise<void> {
   if (isRedisConfigured()) {
     await releaseSquarePaymentClaimRedis(paymentId)
     return
@@ -189,21 +237,34 @@ export async function releaseSquarePaymentClaim(paymentId: string): Promise<void
   persistSnapshot(snapshot)
 }
 
+/** @deprecated Use acquirePaymentFulfillment */
+export async function claimSquarePayment(
+  paymentId: string,
+  orderId?: string
+): Promise<boolean> {
+  const result = await acquirePaymentFulfillment(paymentId, orderId)
+  return result.outcome === "claimed"
+}
+
+/** @deprecated Use releasePaymentFulfillment */
+export async function releaseSquarePaymentClaim(paymentId: string): Promise<void> {
+  await releasePaymentFulfillment(paymentId)
+}
+
+/** @deprecated Use advancePaymentFulfillment with phase completed */
 export async function markSquarePaymentProcessed(
   paymentId: string,
   orderId?: string
 ): Promise<void> {
-  if (isRedisConfigured()) {
-    await markSquarePaymentProcessedRedis(paymentId, orderId)
-    return
-  }
+  await advancePaymentFulfillment(paymentId, "completed", orderId)
+}
 
-  const snapshot = loadSnapshot()
-  snapshot.processedPaymentIds[paymentId] = {
-    orderId,
-    processedAt: new Date().toISOString(),
+export function requireRedisInProduction(): void {
+  if (getDeploymentTier() === "production" && !isRedisConfigured()) {
+    throw new Error(
+      "REDIS_URL is required in production for webhook idempotency."
+    )
   }
-  persistSnapshot(snapshot)
 }
 
 /** Test helper — clears in-memory snapshot only. */

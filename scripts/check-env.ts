@@ -86,7 +86,12 @@ console.log(
   mask(process.env.ADMIN_SESSION_SECRET)
 )
 const secretLen = process.env.ADMIN_SESSION_SECRET?.trim().length ?? 0
-if (
+if (tier === "production" && secretLen < 32) {
+  console.error(
+    "  ERROR: ADMIN_SESSION_SECRET (32+ chars) is required in production.\n"
+  )
+  process.exitCode = 1
+} else if (
   (tier === "production" || tier === "preview") &&
   adminPw.length >= 12 &&
   secretLen < 32
@@ -94,6 +99,16 @@ if (
   console.warn(
     "  Warning: Set ADMIN_SESSION_SECRET (32+ chars) for stronger session signing.\n"
   )
+}
+console.log("")
+console.log("Webhook idempotency")
+if (tier === "production" && !isRedisConfigured()) {
+  console.error(
+    "  ERROR: REDIS_URL is required in production for webhook idempotency.\n"
+  )
+  process.exitCode = 1
+} else {
+  console.log("  Production Redis requirement:", tier === "production" ? "enforced" : "n/a")
 }
 console.log("")
 console.log("Ordering")

@@ -123,6 +123,7 @@ export function adminMenuItemFromCreateResult(
     imageUrl: form.imageUrl,
     allergens: form.allergens,
     notes: form.notes,
+    soldOut: false,
     image: "",
   }
   return adminMenuItemFromForm(form, base)

@@ -7,12 +7,13 @@ import {
   clampString,
   isReasonableEmail,
   parseInquiryIntent,
+  readPublicJsonBody,
 } from "@/lib/security/public-input"
 import {
   checkRateLimit,
   delayRateLimitedResponse,
   getClientIpFromRequest,
-  recordRateLimitFailure,
+  recordRateLimitHit,
 } from "@/lib/security/rate-limit"
 
 const INQUIRY_LIMIT = { windowMs: 15 * 60 * 1000, maxAttempts: 6 }
@@ -30,8 +31,12 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  recordRateLimitHit(rateKey, { windowMs: INQUIRY_LIMIT.windowMs })
+
   try {
-    const body = await req.json()
+    const parsed = await readPublicJsonBody(req)
+    if (!parsed.ok) return parsed.response
+    const body = parsed.body
 
     const intent = parseInquiryIntent(body.intent)
     const name = clampString(body.name, 120)
@@ -112,12 +117,12 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-  } catch {
-    recordRateLimitFailure(rateKey, { windowMs: INQUIRY_LIMIT.windowMs })
+  } catch (err) {
+    console.error("[Inquiry]", err)
     await delayRateLimitedResponse()
     return NextResponse.json(
-      { error: "Invalid request." },
-      { status: 400 }
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
     )
   }
 }
