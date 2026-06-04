@@ -221,7 +221,7 @@ export default function AdminMenuEditDrawer({
         aria-label="Close editor"
         onClick={onClose}
       />
-      <div className="relative w-full max-w-md bg-cream shadow-warm h-full overflow-y-auto">
+      <div className="relative w-full max-w-none sm:max-w-md bg-cream shadow-warm h-full overflow-y-auto pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5">
           <div className="flex items-start justify-between gap-3">
             <div>

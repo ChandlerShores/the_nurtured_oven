@@ -21,9 +21,10 @@ Use this document for routine admin work in `/admin`. Technical setup lives in [
 | Orders | `/admin/orders` | Status updates and order detail |
 | Production | `/admin/production` | Bake quantities by item |
 | Deliveries | `/admin/deliveries` | Friday delivery route |
+| Pickup | `/admin/pickup` | Friday pickup queue and handoff |
 | Menu | `/admin/menu` | Public menu rows, prices, images |
 | Financials | `/admin/financials` | Revenue, costs, expenses, margin estimates |
-| Settings | `/admin/settings` | Operational reminders |
+| Settings | `/admin/settings` | Ordering kill switches, sold-out toggles, sync status |
 
 ## Login
 
@@ -64,7 +65,9 @@ Use `/admin/deliveries` Thursday or Friday morning.
 4. Mark delivered after drop-off.
 5. Confirm "Still out" is zero when the route is done.
 
-Pickup orders are managed from Orders, not Deliveries.
+Use `/admin/pickup` on Friday for the pickup queue (status, mark picked up, customer emails via order detail). Deliveries stay on `/admin/deliveries`.
+
+Orders and Production include a **Bake week** dropdown to review prior fulfillment weeks.
 
 ## Menu Updates
 
@@ -118,13 +121,17 @@ If a customer paid but the order is missing:
 
 ## Emergency Ordering Close
 
-Set this in Vercel for the affected environment:
+**Preferred (no redeploy):** `/admin/settings` → **Stop all ordering** → **Close ordering now**. Stored in Redis when `REDIS_URL` is set (production).
+
+**Per-item sold out:** Same page → **Item sold-out** → **Mark sold out** on one active menu row. Checkout blocks that item only; the rest of the week can stay open.
+
+**Environment lock (overrides admin toggle):** In Vercel:
 
 ```text
 WEEKLY_ORDERING_DISABLED=true
 ```
 
-Redeploy if needed. Remove it or set it false to return to the normal Friday-to-Wednesday ordering schedule.
+Redeploy if needed. Remove it or set it false to return to schedule-based control from admin.
 
 ## Related Docs
 

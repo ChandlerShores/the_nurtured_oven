@@ -22,6 +22,7 @@ export interface AdminOrderRow {
   fulfillmentMethod: string
   deliveryAddress: string
   deliveryCity: string
+  deliveryZip: string
   dietary: string
   message: string
   paymentStatus: string
@@ -30,6 +31,16 @@ export interface AdminOrderRow {
   receiptUrl: string
   amount: string
   orderStatus: string
+  routeOrder: number | null
+  routeBatchId: string
+}
+
+function parseSheetRouteOrder(value: string | undefined): number | null {
+  const raw = (value ?? "").trim()
+  if (!raw) return null
+  const n = Number(raw)
+  if (!Number.isFinite(n) || n < 1) return null
+  return Math.floor(n)
 }
 
 function parseOrdersDataRows(values: string[][]): AdminOrderRow[] {
@@ -39,8 +50,8 @@ function parseOrdersDataRows(values: string[][]): AdminOrderRow[] {
     const row = values[i]
     if (!row?.length) continue
 
-    const internalRef = (row[13] ?? "").trim()
-    const squareOrderId = (row[14] ?? "").trim()
+    const internalRef = (row[14] ?? "").trim()
+    const squareOrderId = (row[15] ?? "").trim()
     if (!internalRef && !squareOrderId) continue
 
     rows.push({
@@ -55,14 +66,17 @@ function parseOrdersDataRows(values: string[][]): AdminOrderRow[] {
       fulfillmentMethod: row[7] ?? "",
       deliveryAddress: row[8] ?? "",
       deliveryCity: row[9] ?? "",
-      dietary: row[10] ?? "",
-      message: row[11] ?? "",
-      paymentStatus: row[12] ?? "",
+      deliveryZip: row[10] ?? "",
+      dietary: row[11] ?? "",
+      message: row[12] ?? "",
+      paymentStatus: row[13] ?? "",
       internalRef,
       squareOrderId,
-      receiptUrl: row[15] ?? "",
-      amount: row[16] ?? "",
-      orderStatus: (row[17] ?? "New").trim() || "New",
+      receiptUrl: row[16] ?? "",
+      amount: row[17] ?? "",
+      orderStatus: (row[18] ?? "New").trim() || "New",
+      routeOrder: parseSheetRouteOrder(row[19]),
+      routeBatchId: (row[20] ?? "").trim(),
     })
   }
 
@@ -101,7 +115,7 @@ export async function fetchAllOrdersFromSheet(): Promise<AdminOrderRow[]> {
   const res = await client.sheets.spreadsheets.values.get(
     {
       spreadsheetId: client.spreadsheetId,
-      range: `${tab}!A2:R`,
+      range: `${tab}!A2:U`,
     },
     {
       timeout: GOOGLE_SHEETS_REQUEST_TIMEOUT_MS,
@@ -225,6 +239,17 @@ export async function fetchCurrentWeekOrderLineItems(): Promise<{
   }
 }
 
+export async function fetchAllAdminData(): Promise<{
+  orders: AdminOrderRow[]
+  lineItems: AdminOrderLineRow[]
+}> {
+  const [orders, lineItems] = await Promise.all([
+    fetchAllOrdersFromSheet(),
+    fetchAllOrderLineItemsFromSheet(),
+  ])
+  return { orders, lineItems }
+}
+
 export async function fetchCurrentWeekAdminData(): Promise<{
   batchLabel: string
   fulfillmentDate: string
@@ -265,9 +290,13 @@ function columnLetter(index: number): string {
 
 async function updateLineItemStatuses(
   client: NonNullable<ReturnType<typeof getSheetsClient>>,
-  internalRef: string,
+  keys: { internalRef?: string; squareOrderId?: string },
   status: string
 ): Promise<void> {
+  const internalRef = keys.internalRef?.trim()
+  const squareOrderId = keys.squareOrderId?.trim()
+  if (!internalRef && !squareOrderId) return
+
   const tab = sheetTabFromRange(client.lineItemsRange)
   const res = await client.sheets.spreadsheets.values.get(
     {
@@ -285,7 +314,11 @@ async function updateLineItemStatuses(
   for (let i = 0; i < values.length; i++) {
     const row = values[i]
     const ref = (row?.[2] ?? "").trim()
-    if (ref !== internalRef) continue
+    const sqId = (row?.[3] ?? "").trim()
+    const matchesOrder =
+      Boolean(internalRef && ref === internalRef) ||
+      Boolean(squareOrderId && sqId === squareOrderId)
+    if (!matchesOrder) continue
     data.push({
       range: `${tab}!M${i + 2}`,
       values: [[status]],
@@ -311,7 +344,7 @@ async function updateLineItemStatuses(
 export async function updateOrderStatusInSheet(
   sheetRow: number,
   status: string,
-  internalRef: string
+  keys: { internalRef?: string; squareOrderId?: string }
 ): Promise<void> {
   const client = getSheetsClient()
   if (!client) {
@@ -319,7 +352,7 @@ export async function updateOrderStatusInSheet(
   }
 
   const tab = sheetTabFromRange(client.ordersRange)
-  const statusCol = columnLetter(17)
+  const statusCol = columnLetter(18)
 
   await client.sheets.spreadsheets.values.update(
     {
@@ -333,9 +366,7 @@ export async function updateOrderStatusInSheet(
     }
   )
 
-  if (internalRef.trim()) {
-    await updateLineItemStatuses(client, internalRef.trim(), status)
-  }
+  await updateLineItemStatuses(client, keys, status)
 }
 
 export async function findOrderByInternalRef(
@@ -343,6 +374,13 @@ export async function findOrderByInternalRef(
 ): Promise<AdminOrderRow | undefined> {
   const all = await fetchAllOrdersFromSheet()
   return all.find((o) => o.internalRef === internalRef.trim())
+}
+
+export async function findOrderBySheetRow(
+  sheetRow: number
+): Promise<AdminOrderRow | undefined> {
+  const all = await fetchAllOrdersFromSheet()
+  return all.find((o) => o.sheetRow === sheetRow)
 }
 
 /** Returns true when a paid order row already exists (dedupe for webhook retries). */

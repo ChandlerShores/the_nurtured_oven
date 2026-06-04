@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "./menu-curate.css"
 import { getCurrentMenu } from "@/lib/content/load-menu"
-import { isMenuOpen } from "@/lib/menu/ordering"
+import { isMenuOpenAsync } from "@/lib/menu/ordering"
 import MenuHero from "@/components/menu/MenuHero"
 import FeaturedProduct from "@/components/menu/FeaturedProduct"
 import OrderingStrip from "@/components/menu/OrderingStrip"
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MenuPage() {
   const menu = await getCurrentMenu()
-  const orderingOpen = isMenuOpen()
+  const orderingOpen = await isMenuOpenAsync()
 
   return (
     <div className="bg-cream">

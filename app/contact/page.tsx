@@ -3,14 +3,14 @@ import ContactPageContent from "@/components/contact/ContactPageContent"
 import { buildWeeklyCatalog } from "@/lib/order/catalog-build"
 import { getCurrentMenu } from "@/lib/content/load-menu"
 import { resolvePrefillSlugFromCatalog } from "@/lib/contact/prefill"
-import { getOrderingPublicState } from "@/lib/menu/ordering-gate"
+import { getOrderingPublicStateAsync } from "@/lib/menu/ordering-gate"
 
 interface ContactPageProps {
   searchParams?: { item?: string }
 }
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
-  const ordering = getOrderingPublicState()
+  const ordering = await getOrderingPublicStateAsync()
   const menu = await getCurrentMenu()
   const catalog = buildWeeklyCatalog(menu)
   const prefillSlug = resolvePrefillSlugFromCatalog(

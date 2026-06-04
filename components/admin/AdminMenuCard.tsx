@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useState } from "react"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import { adminBtnPrimary, adminBtnSecondary } from "@/components/admin/ui/admin-button"
 import type { AdminMenuItemView } from "@/lib/admin/menu-present"
@@ -54,23 +55,32 @@ export default function AdminMenuCard({
   saveError,
 }: AdminMenuCardProps) {
   const busy = saveStatus === "saving"
+  const [imageFailed, setImageFailed] = useState(false)
   return (
-    <article className="rounded-softer border border-oatmeal/60 bg-warm-white shadow-gentle overflow-hidden">
-      <div className="relative aspect-[4/3] bg-oatmeal/30">
-        <Image
-          src={item.image}
-          alt={item.name}
-          fill
-          className="object-cover object-center"
-          sizes="(max-width: 640px) 100vw, 280px"
-        />
+    <article className="rounded-lg border border-espresso/15 bg-warm-white shadow-gentle overflow-hidden">
+      <div className="relative aspect-[4/3] bg-linen">
+        {imageFailed || !item.image ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-linen text-center px-4">
+            <p className="font-heading text-lg text-espresso">No image</p>
+            <p className="text-caption text-xs mt-1">Add upload or image URL</p>
+          </div>
+        ) : (
+          <Image
+            src={item.image}
+            alt={item.name}
+            fill
+            onError={() => setImageFailed(true)}
+            className="object-cover object-center"
+            sizes="(max-width: 640px) 100vw, 280px"
+          />
+        )}
         {item.featured ? (
-          <span className="absolute top-2 left-2 bg-blush/90 text-cream text-xs font-medium px-2.5 py-1 rounded-full">
+          <span className="absolute top-2 left-2 bg-blush text-cream text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
             Featured
           </span>
         ) : null}
         {!item.active ? (
-          <span className="absolute top-2 right-2 bg-espresso/80 text-cream text-xs font-medium px-2.5 py-1 rounded-full">
+          <span className="absolute top-2 right-2 bg-espresso text-cream text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
             Hidden
           </span>
         ) : null}
@@ -78,7 +88,7 @@ export default function AdminMenuCard({
       <div className="p-4 space-y-3">
         <div>
           {item.category ? (
-            <p className="text-caption text-xs uppercase tracking-wide mb-1">
+            <p className="text-caption text-xs uppercase tracking-wide mb-1 font-semibold">
               {item.category}
             </p>
           ) : null}
@@ -87,10 +97,11 @@ export default function AdminMenuCard({
             {item.featured && item.active ? (
               <StatusPill status="Featured" />
             ) : null}
+            {item.soldOut ? <StatusPill status="Sold out" /> : null}
           </div>
-          <h3 className="font-heading text-lg text-charcoal mt-2">{item.name}</h3>
+          <h3 className="font-heading text-lg text-espresso mt-2">{item.name}</h3>
           <p className="text-caption text-sm mt-1 line-clamp-3">{item.description}</p>
-          <p className="font-medium text-charcoal mt-2">{item.priceLabel}</p>
+          <p className="font-semibold text-espresso mt-2">{item.priceLabel}</p>
           {item.allergens ? (
             <p className="text-caption text-xs mt-2">
               <span className="text-blush font-medium">Allergens:</span>{" "}
@@ -107,12 +118,12 @@ export default function AdminMenuCard({
           </p>
         </div>
 
-        <div className="flex flex-nowrap items-center gap-2 text-sm">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <button
             type="button"
             disabled={busy}
             onClick={() => onToggleActive(!item.active)}
-            className={`${adminBtnSecondary} shrink-0 px-2.5 py-1.5 text-xs whitespace-nowrap`}
+            className={`${adminBtnSecondary} px-3 py-2 text-sm whitespace-nowrap`}
           >
             {item.active ? "Hide" : "Show"}
           </button>
@@ -121,7 +132,7 @@ export default function AdminMenuCard({
               type="button"
               disabled={busy || item.featured}
               onClick={() => onToggleFeatured(true)}
-              className="shrink-0 w-[6.75rem] rounded-full border border-blush/50 text-blush px-2 py-1.5 font-body text-xs text-center whitespace-nowrap hover:bg-blush/10 disabled:opacity-50"
+              className="rounded-md border border-blush bg-blush/10 text-espresso px-3 py-2 font-body text-sm font-semibold text-center whitespace-nowrap hover:bg-blush/20 disabled:opacity-50"
             >
               {item.featured ? "Featured" : "Set featured"}
             </button>
@@ -130,7 +141,7 @@ export default function AdminMenuCard({
             type="button"
             disabled={busy}
             onClick={onEdit}
-            className={`${adminBtnPrimary} shrink-0 ml-auto px-2.5 py-1.5 text-xs whitespace-nowrap`}
+            className={`${adminBtnPrimary} col-span-2 px-3 py-2 text-sm whitespace-nowrap`}
           >
             Edit
           </button>

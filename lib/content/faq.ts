@@ -32,7 +32,12 @@ export const faqEntries: FaqEntry[] = [
   {
     question: "Do you offer local delivery?",
     answer:
-      "Free Friday pickup. Georgetown & Lexington delivery is $7, or free on orders $40+. We deliver during a set Friday window; exact times aren't guaranteed.",
+      "Yes — free Friday pickup, or local delivery in Georgetown and Lexington. Delivery fees depend on your area and order size; enter your city and zip at checkout to see your exact fee before you pay. We deliver during a set Friday window; exact times aren't guaranteed.",
+  },
+  {
+    question: "How is delivery calculated?",
+    answer:
+      "Your fee is based on your delivery area and how much you're ordering. Most Lexington addresses: $7, free on orders $40+. Georgetown area: $10 under $40, then a small adjustment until $55+. Some extended Lexington zips (40509, 40515, 40516): $12 until $55+. Pick your city, enter your zip at checkout, and the cart shows your fee before payment.",
   },
   {
     question: "What are the Comfort Box gift tiers?",

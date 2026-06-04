@@ -1,4 +1,5 @@
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import { formatDeliveryFeeConfirmationNote } from "@/lib/delivery/delivery-fee-policy"
 import type { PaidOrderDetails } from "@/lib/order/paid-order-details"
 import { formatBatchLabel } from "@/lib/order/weekly-fulfillment"
 import { customerEmailSignature, ownerEmailFooter } from "@/lib/email/signature"
@@ -29,6 +30,7 @@ export function formatDeliveryBlock(details: PaidOrderDetails): string | null {
   const parts: string[] = []
   if (details.deliveryCity) parts.push(details.deliveryCity)
   if (details.deliveryAddress) parts.push(details.deliveryAddress)
+  if (details.deliveryZip) parts.push(details.deliveryZip)
 
   if (parts.length === 0) return null
   return parts.join(", ")
@@ -124,9 +126,16 @@ export function formatCustomerPaidOrderBody(
   ]
 
   if (details.deliveryFeeCents) {
-    lines.push(`Delivery fee: ${formatMoney(details.deliveryFeeCents)}`)
+    lines.push(
+      formatDeliveryFeeConfirmationNote({
+        feeCents: details.deliveryFeeCents,
+        subtotalCents: details.subtotalCents,
+        deliveryCity: details.deliveryCity,
+        deliveryZip: details.deliveryZip,
+      })
+    )
   } else if (details.fulfillmentMethod === "delivery") {
-    lines.push("Delivery: included with your order")
+    lines.push("Delivery included with your order")
   }
 
   lines.push("", "FULFILLMENT", `When: ${batch}`, `How: ${method}`)

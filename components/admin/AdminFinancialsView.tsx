@@ -128,6 +128,9 @@ export default function AdminFinancialsView({
   const [expenseError, setExpenseError] = useState<string | null>(null)
 
   const fulfillmentForExpense = selectedWeek?.fulfillmentDate ?? ""
+  const incompleteCosts = costDrafts.filter(
+    (c) => c.active && !c.ingredient && !c.packaging && !c.laborMinutes
+  )
 
   async function saveProductCosts() {
     setCostSaving(true)
@@ -215,15 +218,15 @@ export default function AdminFinancialsView({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end gap-3">
-        <label className="text-sm font-body">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+        <label className="text-sm font-body w-full sm:w-auto sm:min-w-[12rem]">
           <span className="text-caption text-xs uppercase tracking-wide block mb-1">
             Bake week
           </span>
           <select
             value={activeWeekKey}
             onChange={(e) => selectWeek(e.target.value)}
-            className="rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2 text-charcoal min-w-[12rem]"
+            className="w-full rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2.5 min-h-[44px] text-base text-charcoal"
           >
             {weekOptions.length === 0 ? (
               <option value="">No paid orders yet</option>
@@ -242,6 +245,18 @@ export default function AdminFinancialsView({
       </div>
 
       <FinancialHero summary={summary} />
+      {!summary.hasProductCosts || incompleteCosts.length > 0 || expenses.length === 0 ? (
+        <div className="rounded-lg border border-terracotta/35 bg-terracotta/10 px-4 py-3 text-sm text-espresso">
+          <p className="font-semibold">Financial data needs review</p>
+          <ul className="mt-2 list-disc list-inside space-y-1 text-caption">
+            {!summary.hasProductCosts ? <li>Add product costs before trusting profit.</li> : null}
+            {incompleteCosts.length > 0 ? (
+              <li>{incompleteCosts.length} active items have no cost assumptions.</li>
+            ) : null}
+            {expenses.length === 0 ? <li>No weekly expenses logged for this bake week.</li> : null}
+          </ul>
+        </div>
+      ) : null}
       <FinancialDetailsStrip summary={summary} estimateNotes={estimateNotes} />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
@@ -271,7 +286,7 @@ export default function AdminFinancialsView({
           <div className="overflow-x-auto -mx-2">
             <table className="w-full text-left text-sm min-w-[640px]">
               <thead>
-                <tr className="border-b border-oatmeal/60 text-caption text-xs uppercase tracking-wide">
+                <tr className="border-b border-espresso/20 text-caption text-xs uppercase tracking-wide">
                   <th className="px-3 py-2">Item</th>
                   <th className="px-3 py-2 text-right">Units</th>
                   <th className="px-3 py-2 text-right">Revenue</th>
@@ -284,11 +299,11 @@ export default function AdminFinancialsView({
                 {productProfit.map((row, i) => (
                   <tr
                     key={row.slug || row.name}
-                    className={`border-b border-oatmeal/30 ${
+                    className={`border-b border-espresso/10 ${
                       i % 2 === 0 ? "bg-warm-white" : "bg-linen/35"
                     }`}
                   >
-                    <td className="px-3 py-2 font-medium">{row.name}</td>
+                    <td className="px-3 py-2 font-semibold text-espresso">{row.name}</td>
                     <td className="px-3 py-2 text-right tabular-nums">
                       {row.unitsSold}
                     </td>
@@ -319,17 +334,19 @@ export default function AdminFinancialsView({
       </DashboardCard>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <DashboardCard title="Weekly expenses">
+        <DashboardCard title="Weekly expenses" subtitle="Add this week's expenses before closing the batch">
           {expenses.length === 0 ? (
-            <EmptyState
-              title="No expenses logged"
-              message="Add ingredients, packaging, or other costs for this bake week below."
-            />
+            <div className="rounded-lg border border-terracotta/35 bg-terracotta/10 px-4 py-3 mb-4">
+              <p className="font-semibold text-espresso">No expenses logged</p>
+              <p className="text-caption mt-1">
+                Add ingredients, packaging, delivery supplies, or other costs in the form below.
+              </p>
+            </div>
           ) : (
             <div className="overflow-x-auto mb-6">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-oatmeal/60 text-caption text-xs uppercase tracking-wide">
+                  <tr className="border-b border-espresso/20 text-caption text-xs uppercase tracking-wide">
                     <th className="px-3 py-2">Date</th>
                     <th className="px-3 py-2">Category</th>
                     <th className="px-3 py-2">Vendor</th>
@@ -341,7 +358,7 @@ export default function AdminFinancialsView({
                   {expenses.map((row, i) => (
                     <tr
                       key={`${row.sheetRow}-${i}`}
-                      className={`border-b border-oatmeal/30 ${
+                      className={`border-b border-espresso/10 ${
                         i % 2 === 0 ? "bg-warm-white" : "bg-linen/35"
                       }`}
                     >
@@ -361,9 +378,9 @@ export default function AdminFinancialsView({
 
           <form
             onSubmit={submitExpense}
-            className="space-y-3 border-t border-oatmeal/40 pt-4"
+            className="space-y-3 border-t border-espresso/15 pt-4"
           >
-            <p className="font-medium text-charcoal text-sm">Add expense</p>
+            <p className="font-semibold text-espresso text-base">Add this week&apos;s expenses</p>
             {expenseError ? (
               <p className="text-sm text-red-800">{expenseError}</p>
             ) : null}
@@ -375,7 +392,7 @@ export default function AdminFinancialsView({
                   required
                   value={expenseDate}
                   onChange={(e) => setExpenseDate(e.target.value)}
-                  className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                  className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
                 />
               </label>
               <label className="text-sm block">
@@ -385,7 +402,7 @@ export default function AdminFinancialsView({
                   value={expenseCategory}
                   onChange={(e) => setExpenseCategory(e.target.value)}
                   placeholder="Ingredients, packaging…"
-                  className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                  className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
                 />
               </label>
               <label className="text-sm block">
@@ -393,7 +410,7 @@ export default function AdminFinancialsView({
                 <input
                   value={expenseVendor}
                   onChange={(e) => setExpenseVendor(e.target.value)}
-                  className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                  className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
                 />
               </label>
               <label className="text-sm block">
@@ -403,7 +420,7 @@ export default function AdminFinancialsView({
                   value={expenseAmount}
                   onChange={(e) => setExpenseAmount(e.target.value)}
                   placeholder="0.00"
-                  className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                  className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
                 />
               </label>
             </div>
@@ -412,7 +429,7 @@ export default function AdminFinancialsView({
               <input
                 value={expenseDescription}
                 onChange={(e) => setExpenseDescription(e.target.value)}
-                className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
               />
             </label>
             <label className="text-sm block">
@@ -420,7 +437,7 @@ export default function AdminFinancialsView({
               <input
                 value={expensePayment}
                 onChange={(e) => setExpensePayment(e.target.value)}
-                className="mt-1 w-full rounded-soft border border-oatmeal/80 px-3 py-2"
+                className="mt-1 w-full rounded-md border border-espresso/25 px-3 py-2"
               />
             </label>
             <button
@@ -428,7 +445,7 @@ export default function AdminFinancialsView({
               disabled={expenseSaving}
               className={adminBtnPrimary}
             >
-              {expenseSaving ? "Saving…" : "Add expense"}
+              {expenseSaving ? "Saving…" : "Add this week's expenses"}
             </button>
           </form>
         </DashboardCard>
@@ -441,9 +458,13 @@ export default function AdminFinancialsView({
             {costDrafts.map((row, index) => (
               <div
                 key={row.slug}
-                className="rounded-soft border border-oatmeal/50 bg-linen/25 p-3 text-sm space-y-2"
+                className={`rounded-lg border p-3 text-sm space-y-2 ${
+                  row.active && !row.ingredient && !row.packaging && !row.laborMinutes
+                    ? "border-terracotta/45 bg-terracotta/10"
+                    : "border-espresso/15 bg-linen/25"
+                }`}
               >
-                <p className="font-medium text-charcoal">
+                <p className="font-semibold text-espresso">
                   {row.name || row.slug}
                   <span className="text-caption text-xs ml-2">{row.slug}</span>
                 </p>
@@ -457,7 +478,7 @@ export default function AdminFinancialsView({
                         next[index] = { ...row, ingredient: e.target.value }
                         setCostDrafts(next)
                       }}
-                      className="mt-0.5 w-full rounded-soft border border-oatmeal/60 px-2 py-1"
+                      className="mt-0.5 w-full rounded-md border border-espresso/25 px-2 py-1"
                     />
                   </label>
                   <label className="text-xs">
@@ -469,7 +490,7 @@ export default function AdminFinancialsView({
                         next[index] = { ...row, packaging: e.target.value }
                         setCostDrafts(next)
                       }}
-                      className="mt-0.5 w-full rounded-soft border border-oatmeal/60 px-2 py-1"
+                      className="mt-0.5 w-full rounded-md border border-espresso/25 px-2 py-1"
                     />
                   </label>
                   <label className="text-xs">
@@ -481,14 +502,14 @@ export default function AdminFinancialsView({
                         next[index] = { ...row, laborMinutes: e.target.value }
                         setCostDrafts(next)
                       }}
-                      className="mt-0.5 w-full rounded-soft border border-oatmeal/60 px-2 py-1"
+                      className="mt-0.5 w-full rounded-md border border-espresso/25 px-2 py-1"
                     />
                   </label>
                 </div>
               </div>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-oatmeal/40">
+          <div className="flex flex-wrap items-center gap-3 mt-4 pt-4 border-t border-espresso/15">
             <button
               type="button"
               disabled={costSaving || costDrafts.length === 0}

@@ -47,6 +47,13 @@ export function parseAdminInternalRef(value: unknown): string | null {
   return ref
 }
 
+/** Sheet-stored order ref (legacy seed rows, manual entries). Not validated as TNO format. */
+export function parseAdminSheetOrderRef(value: unknown): string | null {
+  const ref = clampString(value, 48)
+  if (!ref || ref.length < 2) return null
+  return ref
+}
+
 export function parseAdminSheetRow(value: unknown): number | undefined {
   const n = typeof value === "number" ? value : Number(value)
   if (!Number.isFinite(n) || n < 2 || n > 50_000) return undefined

@@ -19,6 +19,7 @@ function order(partial: Partial<AdminOrderRow> & Pick<AdminOrderRow, "internalRe
     fulfillmentMethod: "pickup",
     deliveryAddress: "",
     deliveryCity: "",
+    deliveryZip: "",
     dietary: "",
     message: "",
     paymentStatus: "Paid",
@@ -26,6 +27,8 @@ function order(partial: Partial<AdminOrderRow> & Pick<AdminOrderRow, "internalRe
     receiptUrl: "",
     amount: "25.00",
     orderStatus: "New",
+    routeOrder: null,
+    routeBatchId: "",
     ...partial,
   }
 }

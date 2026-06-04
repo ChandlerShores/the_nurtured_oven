@@ -6,6 +6,7 @@ export interface ContactFormState {
   fulfillment: string
   deliveryCity: string
   deliveryAddress: string
+  deliveryZip: string
   giftRecipient: string
   giftMessage: string
   giftOccasion: string
@@ -21,6 +22,7 @@ export const emptyContactFormState: ContactFormState = {
   fulfillment: "pickup",
   deliveryCity: "",
   deliveryAddress: "",
+  deliveryZip: "",
   giftRecipient: "",
   giftMessage: "",
   giftOccasion: "",

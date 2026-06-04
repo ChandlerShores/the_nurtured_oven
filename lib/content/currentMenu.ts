@@ -19,7 +19,7 @@ export const fallbackCurrentMenu: CurrentMenu = {
   cutoffText:
     "Preorder by Wednesday at noon for Friday pickup or delivery.",
   fulfillmentText:
-    "Friday pickup (free) or local delivery in Georgetown & Lexington ($7, free on orders $40+)",
+    "Friday pickup (free) or local delivery in Georgetown & Lexington (from $7; fee shown at checkout)",
 
   announcementBarText: undefined,
 
@@ -80,7 +80,7 @@ export const fallbackCurrentMenu: CurrentMenu = {
   orderCta: {
     heading: "Ready to order?",
     openBody:
-      "Place your order by Wednesday at noon and pay at checkout to confirm. Pickup is free; Georgetown & Lexington delivery is $7 (free on orders $40+).",
+      "Place your order by Wednesday at noon and pay at checkout to confirm. Pickup is free; delivery fees vary by area and appear once you enter your zip.",
     openButtonText: "Place My Order",
     squareCheckoutUrl: "",
   },

@@ -35,35 +35,35 @@ export function FinancialHero({ summary }: { summary: FinancialSummary }) {
       : null
 
   return (
-    <section className="rounded-softer border border-sage/35 bg-gradient-to-br from-sage/20 via-warm-white to-linen/60 shadow-warm p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-6">
+    <section className="rounded-lg border border-sage-deep/35 bg-warm-white shadow-warm p-5 sm:p-8">
+      <div className="flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-6">
         <div className="min-w-0 flex-1">
-          <p className="text-caption text-xs uppercase tracking-wide text-olive/90">
+          <p className="text-caption text-xs uppercase tracking-wide font-semibold">
             Estimated profit · {summary.batchLabel}
           </p>
-          <p className="font-heading text-4xl sm:text-5xl text-charcoal mt-2 tabular-nums">
+          <p className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso mt-2 tabular-nums break-words">
             {profitDisplay ?? "—"}
           </p>
           {!summary.hasProductCosts ? (
-            <p className="text-sm text-olive/90 mt-2 max-w-md">
+            <p className="text-sm text-espresso/80 mt-2 max-w-md">
               Add product costs below to see profit. Until then, use gross revenue
               and the breakdown chart.
             </p>
           ) : null}
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 shrink-0">
-          <div className="text-right sm:text-left">
-            <p className="text-caption text-xs uppercase tracking-wide">Gross revenue</p>
-            <p className="font-heading text-2xl text-charcoal tabular-nums mt-1">
+        <div className="grid grid-cols-2 gap-4 w-full sm:w-auto sm:gap-6 shrink-0">
+          <div>
+            <p className="text-caption text-xs uppercase tracking-wide font-semibold">Gross revenue</p>
+            <p className="font-heading text-2xl sm:text-3xl text-espresso tabular-nums mt-1">
               {formatCentsDisplay(summary.grossRevenueCents)}
             </p>
           </div>
-          <div className="text-right sm:text-left">
-            <p className="text-caption text-xs uppercase tracking-wide">Paid orders</p>
-            <p className="font-heading text-2xl text-charcoal tabular-nums mt-1">
+          <div>
+            <p className="text-caption text-xs uppercase tracking-wide font-semibold">Paid orders</p>
+            <p className="font-heading text-2xl sm:text-3xl text-espresso tabular-nums mt-1">
               {summary.paidOrderCount}
             </p>
-            <p className="text-xs text-olive/80 mt-1">
+            <p className="text-xs text-espresso/75 mt-1">
               {formatCentsDisplay(summary.averageOrderValueCents)} avg
             </p>
           </div>
@@ -92,11 +92,12 @@ export function FinancialDetailsStrip({
   ]
 
   return (
-    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-olive/90 px-1">
-      {items.map((item) => (
-        <span key={item.label}>
-          <span className="text-caption">{item.label}</span>{" "}
-          <span className="font-medium text-charcoal tabular-nums">
+    <div className="rounded-lg border border-espresso/15 bg-warm-white px-4 py-3 text-sm text-espresso/85">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {items.map((item) => (
+        <span key={item.label} className="block">
+          <span className="text-caption text-xs block">{item.label}</span>
+          <span className="font-semibold text-espresso tabular-nums">
             {item.value != null && item.value > 0
               ? formatCentsDisplay(item.value)
               : item.value === 0
@@ -104,10 +105,11 @@ export function FinancialDetailsStrip({
                 : "—"}
           </span>
         </span>
-      ))}
-      <span className="text-caption text-xs w-full sm:w-auto">
-        Square: {estimateNotes.squareFeeLabel} · Labor {estimateNotes.laborRateLabel}
-      </span>
+        ))}
+      </div>
+      <p className="text-caption text-xs mt-3 border-t border-espresso/10 pt-3">
+        Estimate assumptions: Square {estimateNotes.squareFeeLabel}; labor {estimateNotes.laborRateLabel}.
+      </p>
     </div>
   )
 }

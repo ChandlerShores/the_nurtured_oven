@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { littleExtras } from "@/lib/content/little-extras"
-import { isWeeklyOrderingAccepted } from "@/lib/menu/ordering-gate"
+import { isWeeklyOrderingAcceptedAsync } from "@/lib/menu/ordering-gate"
 import Button from "@/components/ui/Button"
 import Divider from "@/components/ui/Divider"
 
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
     "Grab a Little Extras box on Fridays: leftover batches, test flavors, and beautifully imperfect treats at a friendly price. First paid, first claimed.",
 }
 
-export default function LittleExtrasPage() {
-  const orderingOpen = isWeeklyOrderingAccepted()
+export default async function LittleExtrasPage() {
+  const orderingOpen = await isWeeklyOrderingAcceptedAsync()
 
   return (
     <div className="bg-cream">

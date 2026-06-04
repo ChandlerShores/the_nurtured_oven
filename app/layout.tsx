@@ -3,7 +3,7 @@ import { headers } from "next/headers"
 import { Lora, Inter, Dancing_Script } from "next/font/google"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
-import { getOrderingPublicState } from "@/lib/menu/ordering-gate"
+import { getOrderingPublicStateAsync } from "@/lib/menu/ordering-gate"
 import "./globals.css"
 
 const lora = Lora({
@@ -30,12 +30,12 @@ export const metadata: Metadata = {
     "Small-batch comfort sweets, made weekly, boxed beautifully, and shared with care. Order by Wednesday for free Friday pickup or local delivery in Georgetown & Lexington.",
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const ordering = getOrderingPublicState()
+  const ordering = await getOrderingPublicStateAsync()
   const pathname = headers().get("x-pathname") ?? ""
   const isAdmin = pathname.startsWith("/admin")
 

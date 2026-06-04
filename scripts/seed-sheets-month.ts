@@ -3,7 +3,6 @@
  * Run: pnpm sheets:seed-month
  */
 import { ORDER_STATUS_OPTIONS } from "../lib/admin/order-status"
-import { fulfillmentPolicy } from "../lib/content/fulfillment"
 import { loadEnvLocal } from "./lib/load-env-local"
 import { appendPaidOrdersToSheet } from "../lib/google-sheets/append-paid-order"
 import { getWeeklyCatalogFallback } from "../lib/order/catalog-build"
@@ -186,20 +185,6 @@ function buildSyntheticOrder(
     slug: i.slug!,
     quantity: i.quantity,
   }))
-  const { subtotalCents, deliveryFeeCents, totalCents } = calculateOrderTotalCents(
-    cartLines,
-    fulfillmentMethod
-  )
-
-  if (deliveryFeeCents > 0) {
-    lineItems.push({
-      name: fulfillmentPolicy.deliveryLineItemName,
-      quantity: 1,
-      type: "delivery_fee",
-      unitPriceCents: deliveryFeeCents,
-      lineTotalCents: deliveryFeeCents,
-    })
-  }
 
   const deliveryCity =
     fulfillmentMethod === "delivery"
@@ -207,6 +192,28 @@ function buildSyntheticOrder(
       : undefined
   const deliveryAddress =
     fulfillmentMethod === "delivery" ? pick(rng, STREETS) : undefined
+  const deliveryZip =
+    fulfillmentMethod === "delivery"
+      ? deliveryCity === "Georgetown"
+        ? "40324"
+        : String(40502 + Math.floor(rng() * 16))
+      : undefined
+
+  const { subtotalCents, deliveryFeeCents, totalCents, deliveryLineItemName } =
+    await calculateOrderTotalCents(cartLines, fulfillmentMethod, {
+      deliveryCity,
+      deliveryZip,
+    })
+
+  if (deliveryFeeCents > 0) {
+    lineItems.push({
+      name: deliveryLineItemName,
+      quantity: 1,
+      type: "delivery_fee",
+      unitPriceCents: deliveryFeeCents,
+      lineTotalCents: deliveryFeeCents,
+    })
+  }
 
   const seq = String(weekIndex * 100 + orderInWeek).padStart(3, "0")
   const internalRef = `TNO-${batch.ymd}-SEED${seq}`
@@ -225,6 +232,7 @@ function buildSyntheticOrder(
       lineItems,
       deliveryCity,
       deliveryAddress,
+      deliveryZip,
       dietary: pick(rng, DIETARY_NOTES) || undefined,
       message: pick(rng, MESSAGES) || undefined,
       subtotalCents,

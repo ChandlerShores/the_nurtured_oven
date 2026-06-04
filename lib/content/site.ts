@@ -8,7 +8,7 @@ export const siteConfig = {
   serviceArea: {
     label: "Georgetown & Lexington",
     deliveryNote:
-      "Free Friday pickup; local delivery $7 (free on orders $40+)",
+      "Free Friday pickup; local delivery from $7 (fee shown at checkout)",
   },
   social: {
     instagram: {

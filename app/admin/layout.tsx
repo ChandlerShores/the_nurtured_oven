@@ -11,7 +11,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div className="min-h-[100dvh] bg-admin-bg font-body text-charcoal">
+    <div className="min-h-[100dvh] overflow-x-clip bg-admin-bg font-body text-charcoal">
       {children}
     </div>
   )

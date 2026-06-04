@@ -1,11 +1,17 @@
 import type { CurrentMenu, MenuProduct } from "@/lib/content/menu-types"
 import {
   getOrderingClosedMessage,
+  getOrderingClosedMessageAsync,
   isWeeklyOrderingAccepted,
+  isWeeklyOrderingAcceptedAsync,
 } from "@/lib/menu/ordering-gate"
 
 export function isMenuOpen(now?: Date): boolean {
   return isWeeklyOrderingAccepted(now)
+}
+
+export async function isMenuOpenAsync(now?: Date): Promise<boolean> {
+  return isWeeklyOrderingAcceptedAsync(now)
 }
 
 export function isProductOrderable(
@@ -38,6 +44,10 @@ export function resolveOrderCtaHref(menu: CurrentMenu): string | undefined {
 
 export function getDisabledOrderMessage(): string {
   return getOrderingClosedMessage()
+}
+
+export async function getDisabledOrderMessageAsync(): Promise<string> {
+  return getOrderingClosedMessageAsync()
 }
 
 export function getProductGridClassName(itemCount: number): string {

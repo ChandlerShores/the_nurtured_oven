@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import { isGiftContactIntentEnabled } from "@/lib/content/launch"
 import { siteConfig } from "@/lib/content/site"
 import { sendInquiryEmail } from "@/lib/email"
-import { getOrderingClosedMessage, isWeeklyOrderingAccepted } from "@/lib/menu/ordering-gate"
+import {
+  getOrderingClosedMessageAsync,
+  isWeeklyOrderingAcceptedAsync,
+} from "@/lib/menu/ordering-gate"
 import {
   clampString,
   isReasonableEmail,
@@ -70,9 +73,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (intent === "weekly-order" && !isWeeklyOrderingAccepted()) {
+    if (intent === "weekly-order" && !(await isWeeklyOrderingAcceptedAsync())) {
       return NextResponse.json(
-        { error: getOrderingClosedMessage() },
+        { error: await getOrderingClosedMessageAsync() },
         { status: 403 }
       )
     }

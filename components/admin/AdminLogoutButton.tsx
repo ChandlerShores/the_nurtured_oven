@@ -23,7 +23,7 @@ export default function AdminLogoutButton() {
       type="button"
       onClick={handleLogout}
       disabled={loading}
-      className="text-sm text-olive hover:text-charcoal font-body disabled:opacity-60 w-full text-left"
+      className="text-sm text-olive hover:text-charcoal font-body disabled:opacity-60 w-full text-left min-h-[44px] py-2 touch-manipulation"
     >
       {loading ? "Signing out…" : "Sign out"}
     </button>

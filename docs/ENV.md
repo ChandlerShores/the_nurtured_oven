@@ -93,15 +93,15 @@ Required setup:
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `GOOGLE_SHEETS_ORDERS_RANGE` | `Orders!A:R` | Paid order header rows |
+| `GOOGLE_SHEETS_ORDERS_RANGE` | `Orders!A:U` | Paid order header rows |
 | `GOOGLE_SHEETS_LINE_ITEMS_RANGE` | `Order Line Items!A:M` | Paid order line items |
-| `GOOGLE_SHEETS_MENU_RANGE` | `Menu!A:L` | Public/admin menu rows |
+| `GOOGLE_SHEETS_MENU_RANGE` | `Menu!A:M` | Public/admin menu rows |
 | `GOOGLE_SHEETS_CUSTOMER_EMAILS_RANGE` | `Customer Emails!A:J` | Admin customer email log |
 | `GOOGLE_SHEETS_PRODUCT_COSTS_RANGE` | `Product Costs!A:G` | Product cost estimates |
 | `GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE` | `Weekly Expenses!A:J` | Weekly expenses |
 | `GOOGLE_SHEETS_RANGE` | none | Legacy alias for orders range only |
 
-Important: the parser understands an optional `sold_out` column after `notes`, but the current default range and admin save path are `Menu!A:L`. If you add a manual `sold_out` column, set `GOOGLE_SHEETS_MENU_RANGE=Menu!A:M` and verify admin saves before relying on it operationally.
+Important: include a `sold_out` column (column M) in the Menu tab header row, or admin saves that toggle sold-out will fail. Override with `GOOGLE_SHEETS_MENU_RANGE=Menu!A:L` only if you intentionally omit `sold_out` and do not use sold-out toggles in admin.
 
 ## Required Tab Headers
 
@@ -120,6 +120,34 @@ Only active rows appear publicly. Rows are sorted by `sort_order`. If Sheets is 
 ### Orders
 
 The paid-order webhook writes order rows to the `Orders` tab and line items to `Order Line Items`. Do not change these columns casually; the sheet writers use fixed column order.
+
+Columns **K–U** on the Orders tab (after the zip column insert):
+
+| Column | Header | Purpose |
+|--------|--------|---------|
+| K | `delivery_zip` | Customer zip code (40324 Georgetown; 40502–40517 Lexington) |
+| L | `dietary` | Allergy / dietary notes |
+| … | … | Message, payment, refs, amount, status (unchanged relative order) |
+| T | `route_order` | Locked stop sequence for a batch |
+| U | `route_batch_id` | Route batch identifier (e.g. `TNO-ROUTE-2026-06-06-A1B2C3`) |
+
+Lat/lng are no longer stored in the sheet; route optimization geocodes fresh each run using street, city, and zip.
+
+Add these headers to row 1 when using `/admin/deliveries` route optimization. Default read/write range is `Orders!A:U`.
+
+## Delivery route optimization (admin)
+
+Server-only variables for `/admin/deliveries`:
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `OPENROUTESERVICE_API_KEY` | For optimization | [openrouteservice.org](https://openrouteservice.org/dev/#/signup) — never expose client-side |
+
+Routes always start and end at **549 Hopewell Park, Lexington, KY 40511** (hardcoded; no env override).
+
+If the API key is missing, the admin UI still shows the unoptimized delivery list and a Google Maps round-trip link from the bakery.
+
+Geocoding runs on every optimize using street, city, and zip. Results prefer house-level matches over street centroids.
 
 ### Customer Emails
 

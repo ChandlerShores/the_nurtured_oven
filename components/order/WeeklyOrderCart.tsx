@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Image from "next/image"
-import { calculateOrderTotalCentsFromCatalog } from "@/lib/order/cart-totals"
-import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import { calculateOrderTotalCentsFromCatalog, getDeliveryFeeQuote } from "@/lib/order/cart-totals"
+import { getDeliveryFeeCartDisplay } from "@/lib/delivery/delivery-fee-policy"
 import type { CatalogItem } from "@/lib/order/catalog-types"
 
 function formatCents(cents: number): string {
@@ -16,6 +16,8 @@ interface WeeklyOrderCartProps {
   prefillSlug?: string
   onQuantitiesChange?: (items: { slug: string; quantity: number }[]) => void
   fulfillment?: "pickup" | "delivery"
+  deliveryCity?: string
+  deliveryZip?: string
   /** Polished rows with thumbnails for the contact page */
   variant?: "default" | "contact"
 }
@@ -26,6 +28,8 @@ export default function WeeklyOrderCart({
   prefillSlug,
   onQuantitiesChange,
   fulfillment = "pickup",
+  deliveryCity = "",
+  deliveryZip = "",
   variant = "default",
 }: WeeklyOrderCartProps) {
   const isContact = variant === "contact"
@@ -59,11 +63,21 @@ export default function WeeklyOrderCart({
     .filter(([, q]) => q > 0)
     .map(([slug, quantity]) => ({ slug, quantity }))
 
-  const { subtotalCents, deliveryFeeCents, totalCents } =
+  const { subtotalCents, totalCents } =
     calculateOrderTotalCentsFromCatalog(lineItems, fulfillment, catalog, {
-      freeDeliveryMinimumCents: fulfillmentPolicy.freeDeliveryMinimumCents,
-      deliveryFeeCents: fulfillmentPolicy.deliveryFeeCents,
+      deliveryCity,
+      deliveryZip,
     })
+
+  const deliveryQuote = getDeliveryFeeQuote(subtotalCents, fulfillment, {
+    deliveryCity,
+    deliveryZip,
+  })
+
+  const deliveryDisplay =
+    fulfillment === "delivery"
+      ? getDeliveryFeeCartDisplay(deliveryQuote, subtotalCents)
+      : null
 
   const comfortSlug = featuredSlug
 
@@ -160,15 +174,21 @@ export default function WeeklyOrderCart({
               {formatCents(subtotalCents)}
             </span>
           </p>
-          {fulfillment === "delivery" && (
-            <p>
-              Delivery:{" "}
-              <span className="font-heading text-espresso text-base">
-                {deliveryFeeCents === 0
-                  ? "Free (order $40+)"
-                  : formatCents(deliveryFeeCents)}
-              </span>
-            </p>
+          {fulfillment === "delivery" && deliveryDisplay && (
+            <div className="space-y-0.5">
+              <p>
+                Delivery:{" "}
+                <span className="font-heading text-espresso text-base">
+                  {deliveryDisplay.amountLabel}
+                </span>
+              </p>
+              {deliveryDisplay.detail && (
+                <p className="text-xs text-muted">{deliveryDisplay.detail}</p>
+              )}
+              {deliveryDisplay.nudge && (
+                <p className="text-xs text-olive">{deliveryDisplay.nudge}</p>
+              )}
+            </div>
           )}
           <p className="text-espresso">
             Estimated total:{" "}

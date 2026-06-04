@@ -10,6 +10,7 @@ export interface PaymentNoteInput {
   fulfillment: "pickup" | "delivery"
   deliveryCity?: string
   deliveryAddress?: string
+  deliveryZip?: string
   dietary?: string
   message?: string
   batch: Pick<WeeklyFulfillmentContext, "fulfillmentDate" | "internalRef">
@@ -67,7 +68,11 @@ export function buildPaymentNote(input: PaymentNoteInput): string {
   const deliveryLine =
     input.fulfillment === "delivery"
       ? truncateField(
-          formatDeliveryLine(input.deliveryCity, input.deliveryAddress) ?? "-",
+          formatDeliveryLine(
+            input.deliveryCity,
+            input.deliveryAddress,
+            input.deliveryZip
+          ) ?? "-",
           80
         )
       : "-"

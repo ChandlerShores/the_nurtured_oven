@@ -20,6 +20,7 @@ export interface PaidOrderDetails {
   lineItems: PaidOrderLineItem[]
   deliveryCity?: string
   deliveryAddress?: string
+  deliveryZip?: string
   dietary?: string
   message?: string
   subtotalCents?: number

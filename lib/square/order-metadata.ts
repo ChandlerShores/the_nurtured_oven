@@ -6,7 +6,8 @@ export type WeeklyFulfillmentMethod = "pickup" | "delivery"
 export function buildOrderMetadata(
   batch: WeeklyFulfillmentContext,
   fulfillment: WeeklyFulfillmentMethod,
-  deliveryCity?: string
+  deliveryCity?: string,
+  deliveryZip?: string
 ): Record<string, string> {
   const metadata: Record<string, string> = {
     source: "website",
@@ -22,6 +23,11 @@ export function buildOrderMetadata(
   const city = deliveryCity?.trim()
   if (fulfillment === "delivery" && city) {
     metadata.delivery_city = city
+  }
+
+  const zip = deliveryZip?.trim()
+  if (fulfillment === "delivery" && zip) {
+    metadata.delivery_zip = zip
   }
 
   if (batch.menuCycle) {

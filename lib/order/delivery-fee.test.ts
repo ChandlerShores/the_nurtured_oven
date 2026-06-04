@@ -1,6 +1,5 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
-import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import {
   calculateOrderTotalCentsFromCatalog,
   calculateSubtotalCentsFromCatalog,
@@ -9,38 +8,30 @@ import {
 import { getWeeklyCatalogFallback } from "@/lib/order/catalog-build"
 
 const catalog = getWeeklyCatalogFallback()
-const feeOptions = {
-  freeDeliveryMinimumCents: fulfillmentPolicy.freeDeliveryMinimumCents,
-  deliveryFeeCents: fulfillmentPolicy.deliveryFeeCents,
-}
 
 describe("delivery fee", () => {
-  it("charges $7 delivery under $40 subtotal", () => {
+  it("charges $7 standard Lexington under $40 subtotal", () => {
     const items = [{ slug: "marshmallow-cloud-bar", quantity: 2 }]
     const subtotal = calculateSubtotalCentsFromCatalog(items, catalog)
     assert.equal(subtotal, 3200)
     assert.equal(
-      getDeliveryFeeCents(
-        subtotal,
-        "delivery",
-        feeOptions.freeDeliveryMinimumCents,
-        feeOptions.deliveryFeeCents
-      ),
+      getDeliveryFeeCents(subtotal, "delivery", {
+        deliveryCity: "Lexington",
+        deliveryZip: "40503",
+      }),
       700
     )
   })
 
-  it("waives delivery at $40+ subtotal", () => {
+  it("waives standard Lexington delivery at $40+ subtotal", () => {
     const items = [{ slug: "cinnamon-rolls", quantity: 2 }]
     const subtotal = calculateSubtotalCentsFromCatalog(items, catalog)
     assert.equal(subtotal, 4200)
     assert.equal(
-      getDeliveryFeeCents(
-        subtotal,
-        "delivery",
-        feeOptions.freeDeliveryMinimumCents,
-        feeOptions.deliveryFeeCents
-      ),
+      getDeliveryFeeCents(subtotal, "delivery", {
+        deliveryCity: "Lexington",
+        deliveryZip: "40503",
+      }),
       0
     )
   })
@@ -50,8 +41,7 @@ describe("delivery fee", () => {
       getDeliveryFeeCents(
         2100,
         "pickup",
-        feeOptions.freeDeliveryMinimumCents,
-        feeOptions.deliveryFeeCents
+        { deliveryCity: "Lexington", deliveryZip: "40503" }
       ),
       0
     )
@@ -63,7 +53,7 @@ describe("delivery fee", () => {
       items,
       "delivery",
       catalog,
-      feeOptions
+      { deliveryCity: "Lexington", deliveryZip: "40503" }
     )
     assert.equal(totals.subtotalCents, 1600)
     assert.equal(totals.deliveryFeeCents, 700)

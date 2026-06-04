@@ -1,4 +1,5 @@
 import { fulfillmentPolicy } from "@/lib/content/fulfillment"
+import { formatDeliveryFeeConfirmationNote } from "@/lib/delivery/delivery-fee-policy"
 import type { PaidOrderDetails } from "@/lib/order/paid-order-details"
 import {
   formatCustomerPaidOrderBody,
@@ -42,7 +43,12 @@ export function buildCustomerPaidOrderEmail(
   if (details.deliveryFeeCents) {
     orderSection += htmlKeyValue(
       "Delivery",
-      formatMoney(details.deliveryFeeCents)
+      formatDeliveryFeeConfirmationNote({
+        feeCents: details.deliveryFeeCents,
+        subtotalCents: details.subtotalCents,
+        deliveryCity: details.deliveryCity,
+        deliveryZip: details.deliveryZip,
+      })
     )
   } else if (isDelivery) {
     orderSection += htmlParagraph("Delivery included with your order.")

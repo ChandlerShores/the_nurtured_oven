@@ -254,12 +254,12 @@ export default function AdminOrderCustomerEmail({
 
       {preview ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/40"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-charcoal/40"
           role="dialog"
           aria-modal="true"
           aria-labelledby="email-preview-title"
         >
-          <div className="w-full max-w-lg rounded-softer bg-warm-white border border-oatmeal/60 shadow-warm p-6 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-lg rounded-t-softer sm:rounded-softer bg-warm-white border border-oatmeal/60 shadow-warm p-5 sm:p-6 max-h-[92dvh] sm:max-h-[90vh] overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
             <h2
               id="email-preview-title"
               className="font-heading text-xl text-charcoal"
@@ -284,12 +284,12 @@ export default function AdminOrderCustomerEmail({
               Confirm to send this one-time update for order {order.internalRef}.
             </p>
 
-            <div className="flex flex-wrap gap-2 mt-5">
+            <div className="flex flex-col gap-2 mt-5 sm:flex-row sm:flex-wrap">
               <button
                 type="button"
                 disabled={phase === "sending"}
                 onClick={confirmSend}
-                className={adminBtnPrimary}
+                className={`${adminBtnPrimary} w-full sm:w-auto`}
               >
                 {phase === "sending" ? "Sending…" : "Send email"}
               </button>
@@ -297,7 +297,7 @@ export default function AdminOrderCustomerEmail({
                 type="button"
                 disabled={phase === "sending"}
                 onClick={() => setPreview(null)}
-                className={adminBtnSecondary}
+                className={`${adminBtnSecondary} w-full sm:w-auto`}
               >
                 Cancel
               </button>

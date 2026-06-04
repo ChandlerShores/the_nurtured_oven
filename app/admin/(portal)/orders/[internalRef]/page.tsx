@@ -77,6 +77,7 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                 <dd className="text-charcoal mt-0.5">
                   {order.deliveryAddress}
                   {order.deliveryCity ? `, ${order.deliveryCity}` : ""}
+                  {order.deliveryZip ? ` ${order.deliveryZip}` : ""}
                 </dd>
               </div>
             ) : null}

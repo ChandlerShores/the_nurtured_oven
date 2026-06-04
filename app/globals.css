@@ -71,11 +71,11 @@
   }
 
   .text-caption {
-    @apply text-espresso/75 text-sm leading-relaxed;
+    @apply text-espresso/80 text-sm leading-relaxed;
   }
 
   .text-hint {
-    @apply text-espresso/70 text-xs;
+    @apply text-espresso/75 text-xs;
   }
 
   .ornament-divider {

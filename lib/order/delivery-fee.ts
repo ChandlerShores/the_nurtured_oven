@@ -1,6 +1,5 @@
 import "server-only"
 
-import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import type { CartLineItem } from "@/lib/order/cart-totals"
 import {
   calculateOrderTotalCentsFromCatalog,
@@ -14,6 +13,7 @@ export {
   calculateSubtotalCentsFromCatalog,
   calculateOrderTotalCentsFromCatalog,
   getDeliveryFeeCents,
+  getDeliveryFeeQuote,
 } from "@/lib/order/cart-totals"
 
 export async function calculateSubtotalCents(
@@ -25,23 +25,28 @@ export async function calculateSubtotalCents(
 
 export async function calculateOrderTotalCents(
   lineItems: CartLineItem[],
-  fulfillment: "pickup" | "delivery"
-): Promise<{ subtotalCents: number; deliveryFeeCents: number; totalCents: number }> {
+  fulfillment: "pickup" | "delivery",
+  delivery?: { deliveryCity?: string; deliveryZip?: string }
+): Promise<{
+  subtotalCents: number
+  deliveryFeeCents: number
+  totalCents: number
+  deliveryLineItemName: string
+}> {
   const catalog = await getWeeklyCatalog()
   return calculateOrderTotalCentsFromCatalog(lineItems, fulfillment, catalog, {
-    freeDeliveryMinimumCents: fulfillmentPolicy.freeDeliveryMinimumCents,
-    deliveryFeeCents: fulfillmentPolicy.deliveryFeeCents,
+    deliveryCity: delivery?.deliveryCity,
+    deliveryZip: delivery?.deliveryZip,
   })
 }
 
 export function getDeliveryFeeCentsForPolicy(
   subtotalCents: number,
-  fulfillment: "pickup" | "delivery"
+  fulfillment: "pickup" | "delivery",
+  delivery?: { deliveryCity?: string; deliveryZip?: string }
 ): number {
-  return getDeliveryFeeCents(
-    subtotalCents,
-    fulfillment,
-    fulfillmentPolicy.freeDeliveryMinimumCents,
-    fulfillmentPolicy.deliveryFeeCents
-  )
+  return getDeliveryFeeCents(subtotalCents, fulfillment, {
+    deliveryCity: delivery?.deliveryCity,
+    deliveryZip: delivery?.deliveryZip,
+  })
 }

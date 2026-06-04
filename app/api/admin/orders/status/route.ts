@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server"
 import {
   parseAdminInternalRef,
+  parseAdminSheetOrderRef,
+  parseAdminSheetRow,
   readAdminJsonBody,
 } from "@/lib/admin/api-input"
 import { isValidOrderStatus } from "@/lib/admin/order-status"
 import { requireAdminApi } from "@/lib/admin/require-admin"
 import {
   findOrderByInternalRef,
+  findOrderBySheetRow,
   updateOrderStatusInSheet,
 } from "@/lib/google-sheets/orders"
 import { clampString } from "@/lib/security/public-input"
@@ -23,25 +26,32 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Invalid status." }, { status: 400 })
   }
 
-  const internalRef = parseAdminInternalRef(parsed.body.internalRef)
-  if (!internalRef) {
-    return NextResponse.json(
-      { error: "Valid order reference is required." },
-      { status: 400 }
-    )
+  const sheetRow = parseAdminSheetRow(parsed.body.sheetRow)
+  let order =
+    sheetRow !== undefined ? await findOrderBySheetRow(sheetRow) : undefined
+
+  if (!order) {
+    const internalRef =
+      parseAdminInternalRef(parsed.body.internalRef) ??
+      parseAdminSheetOrderRef(parsed.body.internalRef)
+    if (!internalRef) {
+      return NextResponse.json(
+        { error: "Valid order reference is required." },
+        { status: 400 }
+      )
+    }
+    order = await findOrderByInternalRef(internalRef)
   }
 
-  const order = await findOrderByInternalRef(internalRef)
   if (!order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 })
   }
 
   try {
-    await updateOrderStatusInSheet(
-      order.sheetRow,
-      status,
-      internalRef
-    )
+    await updateOrderStatusInSheet(order.sheetRow, status, {
+      internalRef: order.internalRef,
+      squareOrderId: order.squareOrderId,
+    })
     return NextResponse.json({ ok: true, status, sheetRow: order.sheetRow })
   } catch (err) {
     console.error("[admin] order status update failed", err)

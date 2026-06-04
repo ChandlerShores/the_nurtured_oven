@@ -1,18 +1,24 @@
 import AdminDeliveriesView from "@/components/admin/AdminDeliveriesView"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
-import { fetchCurrentWeekOrders } from "@/lib/google-sheets/orders"
+import { fetchCurrentWeekAdminData } from "@/lib/google-sheets/orders"
 
 export const dynamic = "force-dynamic"
 
 export default async function AdminDeliveriesPage() {
   let batchLabel = ""
-  let orders: Awaited<ReturnType<typeof fetchCurrentWeekOrders>>["orders"] = []
+  let fulfillmentDate = ""
+  let orders: Awaited<ReturnType<typeof fetchCurrentWeekAdminData>>["orders"] = []
+  let lineItems: Awaited<
+    ReturnType<typeof fetchCurrentWeekAdminData>
+  >["lineItems"] = []
   let loadError: string | null = null
 
   try {
-    const data = await fetchCurrentWeekOrders()
+    const data = await fetchCurrentWeekAdminData()
     batchLabel = data.batchLabel
+    fulfillmentDate = data.fulfillmentDate
     orders = data.orders
+    lineItems = data.lineItems
   } catch (err) {
     loadError =
       err instanceof Error ? err.message : "Could not load delivery orders."
@@ -30,7 +36,12 @@ export default async function AdminDeliveriesPage() {
           {loadError}
         </p>
       ) : (
-        <AdminDeliveriesView orders={orders} batchLabel={batchLabel} />
+        <AdminDeliveriesView
+          orders={orders}
+          lineItems={lineItems}
+          batchLabel={batchLabel}
+          fulfillmentDate={fulfillmentDate}
+        />
       )}
     </>
   )

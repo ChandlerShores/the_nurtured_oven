@@ -16,7 +16,7 @@ const steps = [
   {
     title: "Friday: pickup or delivery",
     description:
-      "Free pickup, or local delivery in Georgetown & Lexington ($7, free on orders $40+).",
+      "Free pickup, or local delivery in Georgetown & Lexington (from $7; your fee shows at checkout).",
   },
 ]
 

@@ -67,6 +67,7 @@ export default function ContactOrderForm({
             fulfillment: form.fulfillment,
             deliveryCity: form.deliveryCity,
             deliveryAddress: form.deliveryAddress,
+            deliveryZip: form.deliveryZip,
             dietary: form.dietary,
             message: form.message,
           }),
@@ -229,6 +230,7 @@ export default function ContactOrderForm({
                         if (value === "pickup") {
                           update("deliveryCity", "")
                           update("deliveryAddress", "")
+                          update("deliveryZip", "")
                         }
                         update("fulfillment", value)
                       }}
@@ -314,6 +316,8 @@ export default function ContactOrderForm({
                   fulfillment={
                     form.fulfillment === "delivery" ? "delivery" : "pickup"
                   }
+                  deliveryCity={form.deliveryCity}
+                  deliveryZip={form.deliveryZip}
                   onQuantitiesChange={setCartItems}
                 />
                 </div>

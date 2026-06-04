@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
+import { validateDeliveryCheckoutAddress, normalizeDeliveryZip } from "@/lib/delivery/address-validation"
 import { isDeliveryCity } from "@/lib/content/fulfillment"
-import { getDisabledOrderMessage, isMenuOpen } from "@/lib/menu/ordering"
+import { getDisabledOrderMessageAsync, isMenuOpenAsync } from "@/lib/menu/ordering"
 import { getWeeklyCatalog } from "@/lib/order/catalog"
 import {
   clampString,
@@ -34,9 +35,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!isMenuOpen()) {
+    if (!(await isMenuOpenAsync())) {
       return NextResponse.json(
-        { error: getDisabledOrderMessage() },
+        { error: await getDisabledOrderMessageAsync() },
         { status: 403 }
       )
     }
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
     const fulfillment = body.fulfillment
     const deliveryCity = clampString(body.deliveryCity, 80)
     const deliveryAddress = clampString(body.deliveryAddress, 200)
+    const deliveryZip = clampString(body.deliveryZip, 10)
     const dietary = clampString(body.dietary, 500)
     const message = clampString(body.message, 2000)
 
@@ -151,19 +153,20 @@ export async function POST(req: NextRequest) {
     }
 
     if (fulfillment === "delivery") {
-      if (!deliveryCity?.trim() || !isDeliveryCity(deliveryCity.trim())) {
-        return NextResponse.json(
-          { error: "Please select Georgetown or Lexington for delivery." },
-          { status: 400 }
-        )
-      }
-      if (!deliveryAddress?.trim()) {
-        return NextResponse.json(
-          { error: "Please enter your street address for delivery." },
-          { status: 400 }
-        )
+      const addressError = validateDeliveryCheckoutAddress({
+        city: deliveryCity?.trim() ?? "",
+        address: deliveryAddress?.trim() ?? "",
+        zip: deliveryZip?.trim() ?? "",
+      })
+      if (addressError) {
+        return NextResponse.json({ error: addressError }, { status: 400 })
       }
     }
+
+    const normalizedDeliveryZip =
+      fulfillment === "delivery" && deliveryCity && isDeliveryCity(deliveryCity.trim())
+        ? normalizeDeliveryZip(deliveryZip ?? "")
+        : null
 
     const { checkoutUrl } = await createWeeklyCheckout({
       name,
@@ -173,6 +176,7 @@ export async function POST(req: NextRequest) {
       fulfillment: fulfillment === "delivery" ? "delivery" : "pickup",
       deliveryCity: fulfillment === "delivery" ? deliveryCity : undefined,
       deliveryAddress: deliveryAddress || undefined,
+      deliveryZip: normalizedDeliveryZip ?? undefined,
       dietary: dietary || undefined,
       message: message || undefined,
     })

@@ -44,6 +44,15 @@ export function IconProduction(props: IconProps) {
   )
 }
 
+export function IconPickup(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 11V7a3 3 0 1 1 6 0v4" />
+      <path d="M5 11h14l-1 10H6L5 11z" />
+    </svg>
+  )
+}
+
 export function IconDelivery(props: IconProps) {
   return (
     <svg {...base} {...props}>

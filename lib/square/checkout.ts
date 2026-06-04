@@ -2,10 +2,9 @@ import { randomUUID } from "crypto"
 import type { Square } from "square"
 import {
   calculateSubtotalCentsFromCatalog,
-  getDeliveryFeeCents,
+  getDeliveryFeeQuote,
 } from "@/lib/order/cart-totals"
 import { getWeeklyCatalog } from "@/lib/order/catalog"
-import { fulfillmentPolicy } from "@/lib/content/fulfillment"
 import { formatPhoneForSquare } from "@/lib/phone"
 import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
 import { buildPaymentNote } from "@/lib/square/payment-note"
@@ -34,6 +33,7 @@ export interface WeeklyCheckoutInput {
   fulfillment: "pickup" | "delivery"
   deliveryCity?: string
   deliveryAddress?: string
+  deliveryZip?: string
   dietary?: string
   message?: string
 }
@@ -85,19 +85,17 @@ export async function createWeeklyCheckout(
     input.lineItems,
     catalog
   )
-  const deliveryFeeCents = getDeliveryFeeCents(
-    subtotalCents,
-    input.fulfillment,
-    fulfillmentPolicy.freeDeliveryMinimumCents,
-    fulfillmentPolicy.deliveryFeeCents
-  )
+  const deliveryQuote = getDeliveryFeeQuote(subtotalCents, input.fulfillment, {
+    deliveryCity: input.deliveryCity,
+    deliveryZip: input.deliveryZip,
+  })
 
-  if (deliveryFeeCents > 0) {
+  if (deliveryQuote.feeCents > 0) {
     orderLineItems.push({
-      name: fulfillmentPolicy.deliveryLineItemName,
+      name: deliveryQuote.lineItemName,
       quantity: "1",
       basePriceMoney: {
-        amount: BigInt(deliveryFeeCents),
+        amount: BigInt(deliveryQuote.feeCents),
         currency: "USD",
       },
       metadata: buildDeliveryFeeLineItemMetadata(batch),
@@ -111,6 +109,7 @@ export async function createWeeklyCheckout(
     fulfillment: input.fulfillment,
     deliveryCity: input.deliveryCity,
     deliveryAddress: input.deliveryAddress,
+    deliveryZip: input.deliveryZip,
     dietary: input.dietary,
     message: input.message,
     batch,
@@ -123,7 +122,12 @@ export async function createWeeklyCheckout(
       locationId,
       referenceId: batch.internalRef,
       lineItems: orderLineItems,
-      metadata: buildOrderMetadata(batch, input.fulfillment, input.deliveryCity),
+      metadata: buildOrderMetadata(
+        batch,
+        input.fulfillment,
+        input.deliveryCity,
+        input.deliveryZip
+      ),
     },
     checkoutOptions: {
       redirectUrl: `${appUrl}/order/success`,

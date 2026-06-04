@@ -67,13 +67,33 @@ function mapLineItems(order?: Square.Order | null): {
 function splitDeliveryLine(line?: string): {
   deliveryCity?: string
   deliveryAddress?: string
+  deliveryZip?: string
 } {
   if (!line) return {}
-  const comma = line.indexOf(",")
-  if (comma === -1) return { deliveryCity: line.trim() }
+  const parts = line.split(",").map((part) => part.trim()).filter(Boolean)
+  if (parts.length === 0) return {}
+  if (parts.length === 1) return { deliveryCity: parts[0] }
+
+  const last = parts[parts.length - 1] ?? ""
+  const zipMatch = last.match(/^(\d{5})(?:-\d{4})?$/)
+  if (zipMatch && parts.length >= 3) {
+    return {
+      deliveryCity: parts[0],
+      deliveryAddress: parts.slice(1, -1).join(", "),
+      deliveryZip: zipMatch[1],
+    }
+  }
+
+  if (parts.length === 2) {
+    return {
+      deliveryCity: parts[0],
+      deliveryAddress: parts[1],
+    }
+  }
+
   return {
-    deliveryCity: line.slice(0, comma).trim(),
-    deliveryAddress: line.slice(comma + 1).trim(),
+    deliveryCity: parts[0],
+    deliveryAddress: parts.slice(1).join(", "),
   }
 }
 
@@ -130,6 +150,7 @@ export async function resolvePaidOrderDetails(
     lineItems,
     deliveryCity: orderMeta.delivery_city ?? deliveryFromNote.deliveryCity,
     deliveryAddress: deliveryFromNote.deliveryAddress,
+    deliveryZip: orderMeta.delivery_zip ?? deliveryFromNote.deliveryZip,
     dietary: parsedNote.dietary,
     message: parsedNote.message,
     subtotalCents: lineItems.length > 0 ? subtotalCents : undefined,

@@ -5,7 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import AdminMenuCard, {
   type AdminMenuItemSaveStatus,
 } from "@/components/admin/AdminMenuCard"
-import { adminBtnPrimary, adminBtnSecondary } from "@/components/admin/ui/admin-button"
+import AdminMenuToolbar from "@/components/admin/AdminMenuToolbar"
+import AdminCollapsibleSection from "@/components/admin/ui/AdminCollapsibleSection"
 import AdminMenuEditDrawer from "@/components/admin/AdminMenuEditDrawer"
 import AdminHomepageDropPreview from "@/components/admin/AdminHomepageDropPreview"
 import AdminMenuPreview from "@/components/admin/AdminMenuPreview"
@@ -13,6 +14,10 @@ import {
   adminMenuItemFromForm,
   patchAdminMenuItem,
 } from "@/lib/admin/menu-client"
+import {
+  menuItemMatchesSearch,
+  type MenuSearchScope,
+} from "@/lib/admin/menu-search"
 import {
   applyFeaturedToItems,
   buildPreviewMenuFromAdminItems,
@@ -52,7 +57,12 @@ export default function AdminMenuManager({
   const [editItem, setEditItem] = useState<AdminMenuItemView | null>(null)
   const [drawerMode, setDrawerMode] = useState<"create" | "edit">("edit")
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [inactiveOpen, setInactiveOpen] = useState(false)
+  const [homepageOpen, setHomepageOpen] = useState(true)
+  const [menuPreviewOpen, setMenuPreviewOpen] = useState(true)
+  const [onWebsiteOpen, setOnWebsiteOpen] = useState(true)
+  const [hiddenOpen, setHiddenOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [searchScope, setSearchScope] = useState<MenuSearchScope>("all")
   const [refreshing, setRefreshing] = useState(false)
   const [itemStatus, setItemStatus] = useState<
     Record<string, AdminMenuItemSaveStatus>
@@ -92,6 +102,52 @@ export default function AdminMenuManager({
       inactive: sorted.filter((i) => !i.active),
     }
   }, [items])
+
+  const trimmedSearch = searchQuery.trim()
+
+  const { filteredActive, filteredInactive, searchMatchCount } = useMemo(() => {
+    const matches = (item: AdminMenuItemView) =>
+      menuItemMatchesSearch(item, trimmedSearch)
+
+    let filteredActive = active.filter(matches)
+    let filteredInactive = inactive.filter(matches)
+
+    if (searchScope === "active") filteredInactive = []
+    if (searchScope === "hidden") filteredActive = []
+
+    return {
+      filteredActive,
+      filteredInactive,
+      searchMatchCount: filteredActive.length + filteredInactive.length,
+    }
+  }, [active, inactive, trimmedSearch, searchScope])
+
+  const hasSearch = trimmedSearch.length > 0
+
+  useEffect(() => {
+    if (hasSearch && filteredInactive.length > 0) {
+      setHiddenOpen(true)
+    }
+  }, [hasSearch, filteredInactive.length])
+
+  const collapseAllSections = useCallback(() => {
+    setHomepageOpen(false)
+    setMenuPreviewOpen(false)
+    setOnWebsiteOpen(false)
+    setHiddenOpen(false)
+  }, [])
+
+  const expandAllSections = useCallback(() => {
+    setHomepageOpen(true)
+    setMenuPreviewOpen(true)
+    setOnWebsiteOpen(true)
+    if (inactive.length > 0) setHiddenOpen(true)
+  }, [inactive.length])
+
+  function clearSearch() {
+    setSearchQuery("")
+    setSearchScope("all")
+  }
 
   const setStatus = useCallback((slug: string, status: AdminMenuItemSaveStatus) => {
     setItemStatus((prev) => ({ ...prev, [slug]: status }))
@@ -200,87 +256,68 @@ export default function AdminMenuManager({
 
   return (
     <>
-      <section className="rounded-softer bg-warm-white border border-oatmeal/50 shadow-gentle px-4 py-4 sm:px-5 mb-8 text-sm font-body">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <p>
-            <span className="text-caption text-xs uppercase tracking-wide block">
-              Active on site
-            </span>
-            <span className="font-heading text-xl text-charcoal mt-1 inline-block">
-              {active.length}
-            </span>
-          </p>
-          <p>
-            <span className="text-caption text-xs uppercase tracking-wide block">
-              Featured item
-            </span>
-            <span className="font-medium text-charcoal mt-1 inline-block line-clamp-1">
-              {featuredName}
-            </span>
-          </p>
-          <p>
-            <span className="text-caption text-xs uppercase tracking-wide block">
-              Last refreshed
-            </span>
-            <span className="font-medium text-charcoal mt-1 inline-block">
-              {formatLoadedAt(lastLoadedAt)}
-            </span>
-          </p>
-          <p>
-            <span className="text-caption text-xs uppercase tracking-wide block">
-              Source
-            </span>
-            <span className="font-medium text-charcoal mt-1 inline-block">
-              Google Sheet
-            </span>
-            <span className="text-caption block text-xs mt-0.5">{tabName} tab</span>
-          </p>
-        </div>
-        <div className="mt-4 pt-4 border-t border-oatmeal/40 flex flex-wrap gap-2">
-          <button type="button" onClick={openCreate} className={adminBtnPrimary}>
-            Add menu item
-          </button>
-          <button
-            type="button"
-            onClick={handleRefreshFromSheet}
-            disabled={refreshing}
-            className={adminBtnSecondary}
-          >
-            {refreshing ? "Refreshing…" : "Refresh from sheet"}
-          </button>
-          <p className="text-caption text-xs mt-2">
-            Use if you edited the sheet directly. Saves update the homepage
-            weekly drop, menu page, and checkout without refreshing this page.
-          </p>
-        </div>
-      </section>
+      <AdminMenuToolbar
+        activeCount={active.length}
+        featuredName={featuredName}
+        lastRefreshedLabel={formatLoadedAt(lastLoadedAt)}
+        tabName={tabName}
+        totalCount={items.length}
+        matchCount={searchMatchCount}
+        searchQuery={searchQuery}
+        searchScope={searchScope}
+        refreshing={refreshing}
+        onAddItem={openCreate}
+        onRefresh={handleRefreshFromSheet}
+        onSearchChange={setSearchQuery}
+        onScopeChange={setSearchScope}
+        onClearSearch={clearSearch}
+        onCollapseAll={collapseAllSections}
+        onExpandAll={expandAllSections}
+      />
 
-      <section className="mb-10">
-        <h2 className="font-heading text-xl text-charcoal mb-4">
-          Homepage — The weekly drop
-        </h2>
+      <AdminCollapsibleSection
+        title="Homepage — The weekly drop"
+        subtitle="How the featured item and weekly drop appear on the homepage."
+        open={homepageOpen}
+        onOpenChange={setHomepageOpen}
+      >
         <AdminHomepageDropPreview menu={previewMenu} />
-      </section>
+      </AdminCollapsibleSection>
 
-      <section className="mb-10">
-        <h2 className="font-heading text-xl text-charcoal mb-4">
-          Menu page preview
-        </h2>
+      <AdminCollapsibleSection
+        title="Menu page preview"
+        subtitle="How customers see the full weekly menu."
+        open={menuPreviewOpen}
+        onOpenChange={setMenuPreviewOpen}
+      >
         <AdminMenuPreview menu={previewMenu} />
-      </section>
+      </AdminCollapsibleSection>
 
-      <section className="mb-10">
-        <h2 className="font-heading text-xl text-charcoal mb-4">
-          On the website ({active.length})
-        </h2>
+      <AdminCollapsibleSection
+        title="On the website"
+        titleSuffix={
+          hasSearch
+            ? `(${filteredActive.length} shown)`
+            : `(${active.length})`
+        }
+        subtitle="Items currently visible on the homepage and menu."
+        open={onWebsiteOpen}
+        onOpenChange={setOnWebsiteOpen}
+      >
         {active.length === 0 ? (
           <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
             No items are visible on the site right now. Show an item from the
             hidden list below, or add a new menu item.
           </p>
+        ) : filteredActive.length === 0 ? (
+          <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
+            {hasSearch
+              ? "No active items match this search. Try another term or check hidden items."
+              : "No active items to show."}
+          </p>
         ) : (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {active.map((item) => (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredActive.map((item) => (
               <li key={item.slug}>
                 <AdminMenuCard
                   item={item}
@@ -310,24 +347,26 @@ export default function AdminMenuManager({
             ))}
           </ul>
         )}
-      </section>
+      </AdminCollapsibleSection>
 
       {inactive.length > 0 ? (
-        <section>
-          <button
-            type="button"
-            onClick={() => setInactiveOpen((o) => !o)}
-            className="w-full flex items-center justify-between font-heading text-xl text-espresso mb-4 text-left"
-            aria-expanded={inactiveOpen}
-          >
-            Hidden from website ({inactive.length})
-            <span className="text-caption text-sm font-body">
-              {inactiveOpen ? "Collapse" : "Expand"}
-            </span>
-          </button>
-          {inactiveOpen ? (
+        <AdminCollapsibleSection
+          title="Hidden from website"
+          titleSuffix={
+            hasSearch
+              ? `(${filteredInactive.length} shown)`
+              : `(${inactive.length})`
+          }
+          open={hiddenOpen}
+          onOpenChange={setHiddenOpen}
+        >
+          {filteredInactive.length === 0 && hasSearch ? (
+            <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
+              No hidden items match this search.
+            </p>
+          ) : (
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {inactive.map((item) => (
+              {filteredInactive.map((item) => (
                 <li key={item.slug}>
                   <AdminMenuCard
                     item={item}
@@ -348,8 +387,13 @@ export default function AdminMenuManager({
                 </li>
               ))}
             </ul>
-          ) : null}
-        </section>
+          )}
+        </AdminCollapsibleSection>
+      ) : hasSearch && searchScope !== "active" && searchMatchCount === 0 ? (
+        <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
+          No menu items match &ldquo;{trimmedSearch}&rdquo;. Try the item ID,
+          category, or an allergen name.
+        </p>
       ) : null}
 
       <AdminMenuEditDrawer

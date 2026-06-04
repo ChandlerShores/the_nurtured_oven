@@ -1,4 +1,8 @@
 import type { AdminOrderLineRow, AdminOrderRow } from "@/lib/google-sheets/orders"
+import {
+  isActiveDeliveryStop,
+  isPaidDeliveryOrder,
+} from "@/lib/delivery/delivery-orders"
 
 export interface ItemQuantity {
   name: string
@@ -122,4 +126,31 @@ export function buildProductionList(
 
 export function totalBakeQuantity(productionList: ItemQuantity[]): number {
   return productionList.reduce((sum, item) => sum + item.qty, 0)
+}
+
+/** Paid delivery stops still on the route (not yet delivered). */
+export function filterDeliveryPackingOrders(
+  orders: AdminOrderRow[]
+): AdminOrderRow[] {
+  return orders.filter(
+    (order) =>
+      isPaidDeliveryOrder(order) &&
+      isActiveDeliveryStop(order.orderStatus) &&
+      order.fulfillmentMethod.trim().toLowerCase() === "delivery"
+  )
+}
+
+/** Item totals to pack for active paid delivery stops this week. */
+export function buildDeliveryPackingList(
+  orders: AdminOrderRow[],
+  lineItems: AdminOrderLineRow[]
+): ItemQuantity[] {
+  const packingOrders = filterDeliveryPackingOrders(orders)
+  const refs = new Set(
+    packingOrders.map((order) => order.internalRef).filter(Boolean)
+  )
+  const packingLines = lineItems.filter(
+    (line) => line.internalRef && refs.has(line.internalRef)
+  )
+  return buildProductionList(packingOrders, packingLines)
 }

@@ -22,6 +22,7 @@ const sample: PaidOrderDetails = {
   ],
   deliveryCity: "Georgetown",
   deliveryAddress: "123 Main St",
+  deliveryZip: "40324",
   dietary: "No nuts",
   amountCents: 4000,
   deliveryFeeCents: 700,
@@ -51,7 +52,7 @@ describe("paid order emails", () => {
     const body = formatCustomerPaidOrderBody(sample, "thenurturedoven@gmail.com")
     assert.match(body, /Hi Jane/)
     assert.match(body, /Friday 5\/29/)
-    assert.match(body, /Delivery fee: \$7\.00/)
+    assert.match(body, /Delivery fee: \$7 \(Georgetown area\)/)
     assert.match(body, /Reply to this email/)
     assert.match(body, /receipt/i)
     assert.ok(formatCustomerPaidOrderSubject(sample).includes("confirmed"))

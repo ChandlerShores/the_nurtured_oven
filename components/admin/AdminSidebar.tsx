@@ -8,6 +8,7 @@ import {
   IconFinancials,
   IconMenu,
   IconOrders,
+  IconPickup,
   IconProduction,
   IconSettings,
 } from "@/components/admin/icons"
@@ -22,10 +23,11 @@ const NAV: {
   { href: "/admin", label: "Dashboard", icon: IconDashboard, exact: true },
   { href: "/admin/orders", label: "Orders", icon: IconOrders },
   { href: "/admin/production", label: "Production", icon: IconProduction },
+  { href: "/admin/pickup", label: "Pickup", icon: IconPickup },
   { href: "/admin/deliveries", label: "Deliveries", icon: IconDelivery },
   { href: "/admin/menu", label: "Menu", icon: IconMenu },
   { href: "/admin/financials", label: "Financials", icon: IconFinancials },
-  { href: "/admin/settings", label: "Settings", icon: IconSettings },
+  { href: "/admin/settings", label: "Admin notes", icon: IconSettings },
 ]
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -46,13 +48,13 @@ export default function AdminSidebar({
 
   return (
     <aside
-      className={`flex flex-col h-full bg-warm-white border-r border-oatmeal/50 ${className}`}
+      className={`flex flex-col h-full bg-warm-white border-r border-espresso/15 ${className}`}
     >
-      <div className="px-5 pt-6 pb-5 border-b border-oatmeal/40">
+      <div className="px-5 pt-6 pb-5 border-b border-espresso/15">
         <p className="font-accent text-2xl text-blush leading-tight">
           The Nurtured Oven
         </p>
-        <p className="text-caption text-xs mt-1 uppercase tracking-widest text-olive/80">
+        <p className="text-caption text-xs mt-1 uppercase tracking-widest">
           Baker portal
         </p>
       </div>
@@ -65,10 +67,10 @@ export default function AdminSidebar({
               key={href}
               href={href}
               onClick={onNavigate}
-              className={`flex items-center gap-3 rounded-soft px-3 py-2.5 text-sm font-body transition-colors ${
+              className={`flex items-center gap-3 rounded-soft px-3 py-3 min-h-[44px] text-sm font-body transition-colors touch-manipulation ${
                 active
-                  ? "bg-sage-deep text-cream shadow-gentle"
-                  : "text-charcoal hover:bg-linen/80"
+                  ? "bg-espresso text-cream shadow-gentle"
+                  : "text-espresso hover:bg-linen"
               }`}
             >
               <Icon className="shrink-0 opacity-90" />
@@ -78,7 +80,7 @@ export default function AdminSidebar({
         })}
       </nav>
 
-      <div className="px-5 py-4 border-t border-oatmeal/40">
+      <div className="px-5 py-4 border-t border-espresso/15">
         <AdminLogoutButton />
       </div>
     </aside>

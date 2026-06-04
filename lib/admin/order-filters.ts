@@ -17,12 +17,16 @@ export interface OrderSlicerOption {
   count: number
 }
 
+export function adminOrderKey(order: AdminOrderRow): string {
+  return order.internalRef || `row-${order.sheetRow}`
+}
+
 export function getOrderDisplayStatus(
   order: AdminOrderRow,
   statusByRef: Record<string, OrderStatus>
 ): string {
   const status =
-    statusByRef[order.internalRef] ??
+    statusByRef[adminOrderKey(order)] ??
     (order.orderStatus.trim() || "New")
   return status
 }

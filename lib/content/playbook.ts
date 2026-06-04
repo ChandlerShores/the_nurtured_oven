@@ -70,7 +70,7 @@ export const playbook = {
     "They get an automatic email with order summary",
     "They pay via Square at checkout on the website. Order confirmed once paid.",
     "You see it in your weekly tracker",
-    "Friday: free pickup or Georgetown/Lexington delivery ($7, free $40+)",
+    "Friday: free pickup or Georgetown/Lexington delivery (fee varies by area; shown at checkout)",
   ],
 
   tools: [
@@ -98,7 +98,7 @@ export const playbook = {
   ],
 
   coreCta:
-    "Order by Wednesday at noon for free Friday pickup or Georgetown/Lexington delivery ($7, free $40+).",
+    "Order by Wednesday at noon for free Friday pickup or Georgetown/Lexington delivery (fee shown at checkout).",
 
   phases: [
     { phase: "Phase 1", title: "Launch", items: "Homepage, weekly menu, order form, emails, Square, tracker, gift inquiry, Little Extras page" },

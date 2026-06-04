@@ -3,6 +3,7 @@ import assert from "node:assert/strict"
 import {
   aggregateProductionFromLineItems,
   aggregateProductionFromOrderHeaders,
+  buildDeliveryPackingList,
   buildProductionList,
   totalBakeQuantity,
 } from "@/lib/admin/production-aggregate"
@@ -65,6 +66,7 @@ describe("buildProductionList", () => {
         fulfillmentMethod: "pickup",
         deliveryAddress: "",
         deliveryCity: "",
+        deliveryZip: "",
         dietary: "",
         message: "",
         paymentStatus: "Paid",
@@ -73,6 +75,8 @@ describe("buildProductionList", () => {
         receiptUrl: "",
         amount: "10",
         orderStatus: "New",
+        routeOrder: null,
+        routeBatchId: "",
       },
     ]
     const lineItems = [
@@ -97,6 +101,7 @@ describe("buildProductionList", () => {
         fulfillmentMethod: "pickup",
         deliveryAddress: "",
         deliveryCity: "",
+        deliveryZip: "",
         dietary: "",
         message: "",
         paymentStatus: "Paid",
@@ -105,6 +110,8 @@ describe("buildProductionList", () => {
         receiptUrl: "",
         amount: "15",
         orderStatus: "New",
+        routeOrder: null,
+        routeBatchId: "",
       },
     ]
     const list = buildProductionList(orders, [])
@@ -128,6 +135,7 @@ describe("aggregateProductionFromOrderHeaders", () => {
         fulfillmentMethod: "",
         deliveryAddress: "",
         deliveryCity: "",
+        deliveryZip: "",
         dietary: "",
         message: "",
         paymentStatus: "",
@@ -136,9 +144,99 @@ describe("aggregateProductionFromOrderHeaders", () => {
         receiptUrl: "",
         amount: "",
         orderStatus: "New",
+        routeOrder: null,
+        routeBatchId: "",
       },
     ])
     assert.ok(result.some((i) => i.name === "Loaf" && i.qty === 1))
     assert.ok(result.some((i) => i.name === "Roll" && i.qty === 2))
+  })
+})
+
+describe("buildDeliveryPackingList", () => {
+  it("totals items for active paid delivery stops only", () => {
+    const orders: AdminOrderRow[] = [
+      {
+        sheetRow: 2,
+        orderedAt: "",
+        customerName: "Delivery A",
+        customerEmail: "",
+        customerPhone: "",
+        fulfillmentLabel: "Friday",
+        itemsSummary: "",
+        totalQuantity: "2",
+        fulfillmentMethod: "delivery",
+        deliveryAddress: "1 Main",
+        deliveryCity: "Lexington",
+        deliveryZip: "40503",
+        dietary: "",
+        message: "",
+        paymentStatus: "Paid",
+        internalRef: "del-1",
+        squareOrderId: "",
+        receiptUrl: "",
+        amount: "20",
+        orderStatus: "New",
+        routeOrder: null,
+        routeBatchId: "",
+      },
+      {
+        sheetRow: 3,
+        orderedAt: "",
+        customerName: "Pickup",
+        customerEmail: "",
+        customerPhone: "",
+        fulfillmentLabel: "Friday",
+        itemsSummary: "",
+        totalQuantity: "9",
+        fulfillmentMethod: "pickup",
+        deliveryAddress: "",
+        deliveryCity: "",
+        deliveryZip: "",
+        dietary: "",
+        message: "",
+        paymentStatus: "Paid",
+        internalRef: "pick-1",
+        squareOrderId: "",
+        receiptUrl: "",
+        amount: "20",
+        orderStatus: "New",
+        routeOrder: null,
+        routeBatchId: "",
+      },
+      {
+        sheetRow: 4,
+        orderedAt: "",
+        customerName: "Delivered",
+        customerEmail: "",
+        customerPhone: "",
+        fulfillmentLabel: "Friday",
+        itemsSummary: "",
+        totalQuantity: "5",
+        fulfillmentMethod: "delivery",
+        deliveryAddress: "2 Main",
+        deliveryCity: "Georgetown",
+        deliveryZip: "40324",
+        dietary: "",
+        message: "",
+        paymentStatus: "Paid",
+        internalRef: "done-1",
+        squareOrderId: "",
+        receiptUrl: "",
+        amount: "20",
+        orderStatus: "Delivered / Picked Up",
+        routeOrder: null,
+        routeBatchId: "",
+      },
+    ]
+    const lineItems = [
+      line({ internalRef: "del-1", slug: "cookie", name: "Cookie", quantity: 2 }),
+      line({ internalRef: "pick-1", slug: "roll", name: "Roll", quantity: 9 }),
+      line({ internalRef: "done-1", slug: "bar", name: "Bar", quantity: 5 }),
+    ]
+
+    const list = buildDeliveryPackingList(orders, lineItems)
+    assert.deepEqual(list, [{ name: "Cookie", qty: 2 }])
+    assert.equal(totalBakeQuantity(list), 2)
   })
 })

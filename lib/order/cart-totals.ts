@@ -1,8 +1,14 @@
 import type { CatalogItem } from "@/lib/order/catalog-types"
+import { quoteDeliveryFee } from "@/lib/delivery/delivery-fee-policy"
 
 export interface CartLineItem {
   slug: string
   quantity: number
+}
+
+export interface DeliveryFeeOptions {
+  deliveryCity?: string
+  deliveryZip?: string
 }
 
 export function calculateSubtotalCentsFromCatalog(
@@ -17,37 +23,49 @@ export function calculateSubtotalCentsFromCatalog(
   }, 0)
 }
 
-/** Delivery fee in cents; $0 for pickup or orders at/above free-delivery minimum. */
 export function getDeliveryFeeCents(
   subtotalCents: number,
   fulfillment: "pickup" | "delivery",
-  freeDeliveryMinimumCents: number,
-  deliveryFeeCents: number
+  options: DeliveryFeeOptions = {}
 ): number {
-  if (fulfillment !== "delivery") return 0
-  if (subtotalCents >= freeDeliveryMinimumCents) return 0
-  return deliveryFeeCents
+  return quoteDeliveryFee({
+    subtotalCents,
+    fulfillment,
+    deliveryCity: options.deliveryCity,
+    deliveryZip: options.deliveryZip,
+  }).feeCents
+}
+
+export function getDeliveryFeeQuote(
+  subtotalCents: number,
+  fulfillment: "pickup" | "delivery",
+  options: DeliveryFeeOptions = {}
+) {
+  return quoteDeliveryFee({
+    subtotalCents,
+    fulfillment,
+    deliveryCity: options.deliveryCity,
+    deliveryZip: options.deliveryZip,
+  })
 }
 
 export function calculateOrderTotalCentsFromCatalog(
   lineItems: CartLineItem[],
   fulfillment: "pickup" | "delivery",
   catalog: CatalogItem[],
-  options: {
-    freeDeliveryMinimumCents: number
-    deliveryFeeCents: number
-  }
-): { subtotalCents: number; deliveryFeeCents: number; totalCents: number } {
+  options: DeliveryFeeOptions = {}
+): {
+  subtotalCents: number
+  deliveryFeeCents: number
+  totalCents: number
+  deliveryLineItemName: string
+} {
   const subtotalCents = calculateSubtotalCentsFromCatalog(lineItems, catalog)
-  const deliveryFee = getDeliveryFeeCents(
-    subtotalCents,
-    fulfillment,
-    options.freeDeliveryMinimumCents,
-    options.deliveryFeeCents
-  )
+  const quote = getDeliveryFeeQuote(subtotalCents, fulfillment, options)
   return {
     subtotalCents,
-    deliveryFeeCents: deliveryFee,
-    totalCents: subtotalCents + deliveryFee,
+    deliveryFeeCents: quote.feeCents,
+    totalCents: subtotalCents + quote.feeCents,
+    deliveryLineItemName: quote.lineItemName,
   }
 }

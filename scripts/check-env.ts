@@ -57,11 +57,11 @@ console.log(
   "  Orders range:",
   process.env.GOOGLE_SHEETS_ORDERS_RANGE ??
     process.env.GOOGLE_SHEETS_RANGE ??
-    "Orders!A:R (default)"
+    "Orders!A:U (default)"
 )
 console.log(
   "  Menu range:",
-  process.env.GOOGLE_SHEETS_MENU_RANGE ?? "Menu!A:L (default)"
+  process.env.GOOGLE_SHEETS_MENU_RANGE ?? "Menu!A:M (default)"
 )
 console.log(
   "  Line items range:",
@@ -110,6 +110,13 @@ if (tier === "production" && !isRedisConfigured()) {
 } else {
   console.log("  Production Redis requirement:", tier === "production" ? "enforced" : "n/a")
 }
+console.log("")
+console.log("Delivery routes")
+console.log(
+  "  OPENROUTESERVICE_API_KEY:",
+  mask(process.env.OPENROUTESERVICE_API_KEY)
+)
+console.log("  Home base: 549 Hopewell Park, Lexington, KY 40511 (fixed)")
 console.log("")
 console.log("Ordering")
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())

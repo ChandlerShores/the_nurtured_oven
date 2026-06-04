@@ -5,20 +5,21 @@ import type {
   FinancialWeekDashboard,
   FinancialWeekSnapshot,
   FinancialWeekTrendPoint,
-  FulfillmentWeekOption,
   ProductProfitRow,
 } from "@/lib/admin/financial-stats-types"
 import type { ProductCostRow } from "@/lib/google-sheets/product-costs"
 import type { WeeklyExpenseRow } from "@/lib/google-sheets/weekly-expenses"
 import {
+  listFulfillmentWeekOptions,
+  orderInFulfillmentWeek,
+  resolveSelectedFulfillmentWeek,
+} from "@/lib/admin/fulfillment-weeks"
+import {
   matchesFulfillmentWeek,
   type AdminOrderLineRow,
   type AdminOrderRow,
 } from "@/lib/google-sheets/orders"
-import {
-  formatBatchLabel,
-  getWeeklyFulfillmentContext,
-} from "@/lib/order/weekly-fulfillment"
+import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
 
 const EXCLUDED_REVENUE_STATUSES = new Set(["Refunded", "Cancelled"])
 
@@ -88,62 +89,7 @@ function unitCostCents(cost: ProductCostRow): number {
   )
 }
 
-function weekMetaFromLabel(label: string): {
-  fulfillmentDate: string
-  batchLabel: string
-} {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(label)) {
-    const parts = label.split("-").map(Number)
-    return {
-      fulfillmentDate: label,
-      batchLabel: formatBatchLabel(parts[0], parts[1], parts[2]),
-    }
-  }
-  return { fulfillmentDate: label, batchLabel: label }
-}
-
-function orderInSelectedWeek(
-  fulfillmentLabel: string,
-  week: FulfillmentWeekOption
-): boolean {
-  const label = fulfillmentLabel.trim()
-  if (!label) return false
-  if (label === week.weekKey) return true
-  return matchesFulfillmentWeek(
-    label,
-    week.fulfillmentDate,
-    week.batchLabel
-  )
-}
-
-export function listFulfillmentWeekOptions(
-  orders: AdminOrderRow[]
-): FulfillmentWeekOption[] {
-  const map = new Map<string, FulfillmentWeekOption>()
-
-  for (const order of orders) {
-    if (!countsForRevenue(order)) continue
-    const weekKey = order.fulfillmentLabel.trim()
-    if (!weekKey) continue
-
-    const { fulfillmentDate, batchLabel } = weekMetaFromLabel(weekKey)
-    const existing = map.get(weekKey)
-    if (existing) {
-      existing.paidOrderCount += 1
-    } else {
-      map.set(weekKey, {
-        weekKey,
-        fulfillmentDate,
-        batchLabel,
-        paidOrderCount: 1,
-      })
-    }
-  }
-
-  return Array.from(map.values()).sort((a, b) =>
-    b.weekKey.localeCompare(a.weekKey)
-  )
-}
+export { listFulfillmentWeekOptions } from "@/lib/admin/fulfillment-weeks"
 
 export function buildFinancialDashboard(
   orders: AdminOrderRow[],
@@ -152,27 +98,15 @@ export function buildFinancialDashboard(
   expenses: WeeklyExpenseRow[],
   weekKey?: string
 ): FinancialWeekDashboard {
-  const ctx = getWeeklyFulfillmentContext()
-  const weekOptions = listFulfillmentWeekOptions(orders)
-
-  const selected =
-    weekOptions.find((w) => w.weekKey === weekKey) ??
-    weekOptions.find((w) =>
-      matchesFulfillmentWeek(
-        w.weekKey,
-        ctx.fulfillmentDate,
-        ctx.batchLabel
-      )
-    ) ??
-    weekOptions[0] ?? {
-      weekKey: ctx.batchLabel,
-      fulfillmentDate: ctx.fulfillmentDate,
-      batchLabel: ctx.batchLabel,
-      paidOrderCount: 0,
-    }
+  const weekOptions = listFulfillmentWeekOptions(orders, {
+    includeOrder: countsForRevenue,
+  })
+  const selected = resolveSelectedFulfillmentWeek(weekOptions, weekKey)
 
   const revenueOrders = orders.filter(
-    (o) => countsForRevenue(o) && orderInSelectedWeek(o.fulfillmentLabel, selected)
+    (o) =>
+      countsForRevenue(o) &&
+      orderInFulfillmentWeek(o.fulfillmentLabel, selected)
   )
 
   const revenueRefs = new Set(revenueOrders.map((o) => o.internalRef))
@@ -180,7 +114,7 @@ export function buildFinancialDashboard(
   const weekLines = lineItems.filter(
     (line) =>
       revenueRefs.has(line.internalRef) &&
-      orderInSelectedWeek(line.fulfillmentLabel, selected)
+      orderInFulfillmentWeek(line.fulfillmentLabel, selected)
   )
 
   let grossRevenueCents = 0
@@ -281,7 +215,7 @@ export function buildFinancialDashboard(
     : null
 
   const weekExpenses = expenses.filter((e) =>
-    orderInSelectedWeek(e.fulfillmentDate, selected)
+    orderInFulfillmentWeek(e.fulfillmentDate, selected)
   )
   const weeklyExpensesCents = weekExpenses.reduce(
     (sum, e) => sum + e.amountCents,
@@ -328,7 +262,9 @@ export function buildFinancialDashboardPayload(
   expenses: WeeklyExpenseRow[],
   weekKey?: string
 ): FinancialDashboardData {
-  const weekOptions = listFulfillmentWeekOptions(orders)
+  const weekOptions = listFulfillmentWeekOptions(orders, {
+    includeOrder: countsForRevenue,
+  })
   const ctx = getWeeklyFulfillmentContext()
   const weekSnapshots: Record<string, FinancialWeekSnapshot> = {}
   const weekTrend: FinancialWeekTrendPoint[] = []

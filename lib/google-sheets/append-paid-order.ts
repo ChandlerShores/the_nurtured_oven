@@ -119,6 +119,7 @@ function buildOrdersRow(
     details.fulfillmentMethod,
     details.deliveryAddress ?? "",
     details.deliveryCity ?? "",
+    details.deliveryZip ?? "",
     details.dietary ?? "",
     details.message ?? "",
     "Paid",
@@ -127,6 +128,8 @@ function buildOrdersRow(
     details.receiptUrl ?? "",
     formatMoney(details.amountCents),
     details.orderStatus ?? "New",
+    "",
+    "",
   ]
 }
 

@@ -7,7 +7,7 @@ import {
   type MenuSheetRow,
 } from "@/lib/google-sheets/menu-parse"
 
-export const DEFAULT_MENU_RANGE = "Menu!A:L"
+export const DEFAULT_MENU_RANGE = "Menu!A:M"
 
 export type { MenuSheetRow } from "@/lib/google-sheets/menu-parse"
 export { parseMenuPrice, parseMenuSheetRows } from "@/lib/google-sheets/menu-parse"
@@ -31,7 +31,7 @@ export async function fetchMenuRowsFromSheet(): Promise<MenuSheetRow[]> {
 
   const res = await client.sheets.spreadsheets.values.get({
     spreadsheetId: client.spreadsheetId,
-    range: menuRange.includes("!") ? menuRange : `${tab}!A:L`,
+    range: menuRange.includes("!") ? menuRange : `${tab}!A:M`,
   })
 
   const rows = parseMenuSheetRows((res.data.values as string[][]) ?? [])

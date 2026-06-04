@@ -26,8 +26,10 @@ function getMenuRangeConfig(): { menuRange: string; tab: string } {
   return { menuRange, tab }
 }
 
+const MENU_LAST_COL = "M"
+
 function dataRange(menuRange: string, tab: string): string {
-  return menuRange.includes("!") ? menuRange : `${tab}!A:L`
+  return menuRange.includes("!") ? menuRange : `${tab}!A:${MENU_LAST_COL}`
 }
 
 export async function fetchAllMenuRowsFromSheet(): Promise<{
@@ -75,6 +77,24 @@ export async function fetchAllMenuRowsFromSheet(): Promise<{
 
 export type MenuItemSheetUpdate = Omit<MenuSheetRow, "slug">
 
+export async function updateMenuSoldOutInSheet(
+  sheetRow: number,
+  soldOut: boolean
+): Promise<void> {
+  const client = getSheetsClient()
+  if (!client) {
+    throw new Error("Google Sheets is not configured.")
+  }
+
+  const { tab } = getMenuRangeConfig()
+  await client.sheets.spreadsheets.values.update({
+    spreadsheetId: client.spreadsheetId,
+    range: `${tab}!M${sheetRow}`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: { values: [[formatBooleanForSheet(soldOut)]] },
+  })
+}
+
 export async function updateMenuRowInSheet(
   sheetRow: number,
   slug: string,
@@ -90,7 +110,7 @@ export async function updateMenuRowInSheet(
 
   await client.sheets.spreadsheets.values.update({
     spreadsheetId: client.spreadsheetId,
-    range: `${tab}!A${sheetRow}:L${sheetRow}`,
+    range: `${tab}!A${sheetRow}:${MENU_LAST_COL}${sheetRow}`,
     valueInputOption: "USER_ENTERED",
     requestBody: { values: [menuRowToSheetValues(row)] },
   })
