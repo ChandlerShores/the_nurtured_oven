@@ -6,7 +6,7 @@ import AdminMenuCard, {
   type AdminMenuItemSaveStatus,
 } from "@/components/admin/AdminMenuCard"
 import AdminMenuToolbar from "@/components/admin/AdminMenuToolbar"
-import AdminCollapsibleSection from "@/components/admin/ui/AdminCollapsibleSection"
+import AdminPortalSection from "@/components/admin/ui/AdminPortalSection"
 import AdminMenuEditDrawer from "@/components/admin/AdminMenuEditDrawer"
 import AdminHomepageDropPreview from "@/components/admin/AdminHomepageDropPreview"
 import AdminMenuPreview from "@/components/admin/AdminMenuPreview"
@@ -92,7 +92,7 @@ export default function AdminMenuManager({
 
   const featuredName = useMemo(() => {
     const featured = items.find((i) => i.featured && i.active)
-    return featured?.name ?? "None set"
+    return featured?.name ?? "—"
   }, [items])
 
   const { active, inactive } = useMemo(() => {
@@ -254,66 +254,63 @@ export default function AdminMenuManager({
     return itemStatus[slug] ?? "idle"
   }
 
-  return (
-    <>
-      <AdminMenuToolbar
-        activeCount={active.length}
-        featuredName={featuredName}
-        lastRefreshedLabel={formatLoadedAt(lastLoadedAt)}
-        tabName={tabName}
-        totalCount={items.length}
-        matchCount={searchMatchCount}
-        searchQuery={searchQuery}
-        searchScope={searchScope}
-        refreshing={refreshing}
-        onAddItem={openCreate}
-        onRefresh={handleRefreshFromSheet}
-        onSearchChange={setSearchQuery}
-        onScopeChange={setSearchScope}
-        onClearSearch={clearSearch}
-        onCollapseAll={collapseAllSections}
-        onExpandAll={expandAllSections}
-      />
+  const onWebsiteSuffix = hasSearch
+    ? `(${filteredActive.length} shown)`
+    : `(${active.length})`
 
-      <AdminCollapsibleSection
-        title="Homepage — The weekly drop"
-        subtitle="How the featured item and weekly drop appear on the homepage."
+  return (
+    <div className="pb-4">
+      <div className="mb-6 sm:mb-8">
+        <AdminMenuToolbar
+          activeCount={active.length}
+          featuredName={featuredName}
+          lastRefreshedLabel={formatLoadedAt(lastLoadedAt)}
+          tabName={tabName}
+          totalCount={items.length}
+          matchCount={searchMatchCount}
+          searchQuery={searchQuery}
+          searchScope={searchScope}
+          refreshing={refreshing}
+          onAddItem={openCreate}
+          onRefresh={handleRefreshFromSheet}
+          onSearchChange={setSearchQuery}
+          onScopeChange={setSearchScope}
+          onClearSearch={clearSearch}
+          onCollapseAll={collapseAllSections}
+          onExpandAll={expandAllSections}
+        />
+      </div>
+
+      <AdminPortalSection
+        first
+        title="Homepage"
         open={homepageOpen}
         onOpenChange={setHomepageOpen}
       >
         <AdminHomepageDropPreview menu={previewMenu} />
-      </AdminCollapsibleSection>
+      </AdminPortalSection>
 
-      <AdminCollapsibleSection
-        title="Menu page preview"
-        subtitle="How customers see the full weekly menu."
+      <AdminPortalSection
+        title="Menu preview"
         open={menuPreviewOpen}
         onOpenChange={setMenuPreviewOpen}
       >
         <AdminMenuPreview menu={previewMenu} />
-      </AdminCollapsibleSection>
+      </AdminPortalSection>
 
-      <AdminCollapsibleSection
-        title="On the website"
-        titleSuffix={
-          hasSearch
-            ? `(${filteredActive.length} shown)`
-            : `(${active.length})`
-        }
-        subtitle="Items currently visible on the homepage and menu."
+      <AdminPortalSection
+        title="Live"
+        titleSuffix={onWebsiteSuffix}
         open={onWebsiteOpen}
         onOpenChange={setOnWebsiteOpen}
       >
         {active.length === 0 ? (
           <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
-            No items are visible on the site right now. Show an item from the
-            hidden list below, or add a new menu item.
+            Nothing live. Show a hidden item or add one.
           </p>
         ) : filteredActive.length === 0 ? (
           <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
-            {hasSearch
-              ? "No active items match this search. Try another term or check hidden items."
-              : "No active items to show."}
+            {hasSearch ? "No matches in Live." : "Nothing to show."}
           </p>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -347,11 +344,11 @@ export default function AdminMenuManager({
             ))}
           </ul>
         )}
-      </AdminCollapsibleSection>
+      </AdminPortalSection>
 
       {inactive.length > 0 ? (
-        <AdminCollapsibleSection
-          title="Hidden from website"
+        <AdminPortalSection
+          title="Hidden"
           titleSuffix={
             hasSearch
               ? `(${filteredInactive.length} shown)`
@@ -362,7 +359,7 @@ export default function AdminMenuManager({
         >
           {filteredInactive.length === 0 && hasSearch ? (
             <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
-              No hidden items match this search.
+              No matches in Hidden.
             </p>
           ) : (
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -388,11 +385,10 @@ export default function AdminMenuManager({
               ))}
             </ul>
           )}
-        </AdminCollapsibleSection>
+        </AdminPortalSection>
       ) : hasSearch && searchScope !== "active" && searchMatchCount === 0 ? (
         <p className="text-caption rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
-          No menu items match &ldquo;{trimmedSearch}&rdquo;. Try the item ID,
-          category, or an allergen name.
+          No match for &ldquo;{trimmedSearch}&rdquo;.
         </p>
       ) : null}
 
@@ -409,6 +405,6 @@ export default function AdminMenuManager({
         onSaved={handleDrawerSaved}
         onCreated={handleItemCreated}
       />
-    </>
+    </div>
   )
 }

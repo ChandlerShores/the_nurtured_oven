@@ -57,7 +57,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        <main className="flex-1 w-full min-w-0 px-4 py-5 sm:px-6 sm:py-8 lg:px-8 max-w-7xl mx-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+        <main className="w-full min-w-0 px-4 py-5 sm:px-6 sm:py-8 lg:px-8 max-w-7xl mx-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {children}
         </main>
       </div>

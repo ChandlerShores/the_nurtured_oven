@@ -84,13 +84,6 @@ export const fallbackCurrentMenu: CurrentMenu = {
     openButtonText: "Place My Order",
     squareCheckoutUrl: "",
   },
-
-  littleExtrasCallout: {
-    enabled: false,
-    text: "Sometimes we have leftover batches on Fridays. First paid, first claimed.",
-    buttonText: "See Little Extras",
-    href: "/little-extras",
-  },
 }
 
 /** @deprecated Use `getCurrentMenu()` for the live menu. Kept for scripts and sync fallbacks. */

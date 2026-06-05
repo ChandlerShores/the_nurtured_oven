@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server"
 import { isCustomerEmailType } from "@/lib/admin/customer-email-types"
-import {
-  parseAdminInternalRef,
-  readAdminJsonBody,
-} from "@/lib/admin/api-input"
+import { parseAdminOrderRef, readAdminJsonBody } from "@/lib/admin/api-input"
 import { requireAdminApi } from "@/lib/admin/require-admin"
 import { sendCustomerOrderEmail } from "@/lib/admin/send-customer-order-email"
 import { fetchCustomerEmailsForOrder } from "@/lib/google-sheets/customer-emails"
@@ -13,12 +10,12 @@ export async function GET(request: Request) {
   const unauthorized = await requireAdminApi()
   if (unauthorized) return unauthorized
 
-  const internalRef = parseAdminInternalRef(
+  const internalRef = parseAdminOrderRef(
     new URL(request.url).searchParams.get("internalRef")
   )
   if (!internalRef) {
     return NextResponse.json(
-      { error: "Valid internalRef is required." },
+      { error: "Valid order reference is required." },
       { status: 400 }
     )
   }
@@ -42,12 +39,12 @@ export async function POST(request: Request) {
   const parsed = await readAdminJsonBody(request)
   if (!parsed.ok) return parsed.response
 
-  const internalRef = parseAdminInternalRef(parsed.body.internalRef)
+  const internalRef = parseAdminOrderRef(parsed.body.internalRef)
   const type = clampString(parsed.body.type, 32)
 
   if (!internalRef) {
     return NextResponse.json(
-      { error: "Valid internalRef is required." },
+      { error: "Valid order reference is required." },
       { status: 400 }
     )
   }

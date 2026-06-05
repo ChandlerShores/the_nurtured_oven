@@ -9,7 +9,7 @@ Use this document for routine admin work in `/admin`. Technical setup lives in [
 | Phase | Timing | Operator Focus |
 |---|---|---|
 | Ordering open | Friday 9:00 AM to Wednesday noon ET | Confirm menu is live, monitor new orders |
-| Ordering closed | Wednesday noon to Friday morning | Review production, prep, pack, resolve issues |
+| Ordering closed | Wednesday noon to Friday morning | Review orders, prep, pack, resolve issues |
 | Fulfillment | Friday | Pickups, deliveries, customer updates |
 | Emergency close | Any time | Set `WEEKLY_ORDERING_DISABLED=true` in Vercel |
 
@@ -17,14 +17,24 @@ Use this document for routine admin work in `/admin`. Technical setup lives in [
 
 | Area | Route | Use |
 |---|---|---|
-| Dashboard | `/admin` | Current bake-week overview |
-| Orders | `/admin/orders` | Status updates and order detail |
-| Production | `/admin/production` | Bake quantities by item |
-| Deliveries | `/admin/deliveries` | Friday delivery route |
-| Pickup | `/admin/pickup` | Friday pickup queue and handoff |
+| Dashboard | `/admin` | Bake-week overview; ordering-window pace when menu is open; week goals |
+| Orders | `/admin/orders` | Status updates and order detail (`?status=Issue` for follow-ups) |
+| Deliveries | `/admin/deliveries` | Friday route; bulk out-for-delivery emails |
+| Pickup | `/admin/pickup` | Pickup queue; bulk ready-for-pickup emails |
 | Menu | `/admin/menu` | Public menu rows, prices, images |
 | Financials | `/admin/financials` | Revenue, costs, expenses, margin estimates |
-| Settings | `/admin/settings` | Ordering kill switches, sold-out toggles, sync status |
+| Settings | `/admin/settings` | Default goal backup, ordering kill switches, sold-out toggles, sync status |
+
+## Weekly goals
+
+When the menu opens (Friday morning):
+
+1. **Financials** (`/admin/financials`) — select the bake week, scroll to the bottom, and set revenue ($) and order count for that week.
+2. **Admin notes** (`/admin/settings`) — optional **default backup** row (`fulfillment_date` = `default`) used when a week has no saved targets.
+
+Progress appears on the dashboard and at the top of financials. You can also edit the **Weekly Goals** tab directly in Google Sheets.
+
+Env vars (`WEEKLY_REVENUE_GOAL_CENTS`, `WEEKLY_ORDER_GOAL_COUNT`) are only a fallback if the sheet has no value.
 
 ## Login
 
@@ -41,19 +51,17 @@ Use the admin status dropdown instead of editing order status directly in Sheets
 Status flow:
 
 ```text
-New -> Baking -> Packed -> Ready -> Delivered / Picked Up or Complete
+New -> In progress -> Ready -> Delivered / Picked Up
                          -> Issue or Refunded when needed
 ```
 
-Use `Issue` for orders needing manual follow-up. Use `Refunded` only after verifying the refund/payment state in Square.
+Legacy sheet values `Baking`, `Packed`, and `Complete` still display correctly but map to **In progress** or **Delivered / Picked Up** in filters and bulk actions.
+
+Use `Issue` for orders needing manual follow-up. The dashboard **Needs attention** queue links to `/admin/orders?status=Issue`. Use `Refunded` only after verifying the refund/payment state in Square.
+
+On `/admin/orders`, use **All → In progress** (New orders only) at the start of bake day, then **All → Ready** when packed. Both use a confirmation dialog and skip finished or downstream statuses.
 
 Never change `internalRef`; it ties together Square, Sheets, customer emails, and admin links.
-
-## Production
-
-Open `/admin/production` after ordering closes Wednesday. Use the bake quantities as the weekly production list.
-
-The production page prefers the `Order Line Items` tab. If line items are missing, it may fall back to parsing order summaries. If quantities look wrong, compare Orders and Order Line Items in Sheets before baking.
 
 ## Deliveries
 
@@ -61,13 +69,17 @@ Use `/admin/deliveries` Thursday or Friday morning.
 
 1. Fix any missing addresses before route planning.
 2. Use map links for each stop.
-3. Send an "Out for delivery" email from order detail when appropriate.
-4. Mark delivered after drop-off.
-5. Confirm "Still out" is zero when the route is done.
+4. **Bulk out-for-delivery emails:** preview counts and already-sent warnings, then send to eligible delivery orders (Ready or In progress).
+5. Mark delivered after drop-off.
+6. Confirm "Still out" is zero when the route is done.
 
-Use `/admin/pickup` on Friday for the pickup queue (status, mark picked up, customer emails via order detail). Deliveries stay on `/admin/deliveries`.
+Use `/admin/pickup` on Friday for the queue. **Preview** then **Send** on the Notify section for Ready orders. Single-order emails are on order detail or Messages.
 
-Orders and Production include a **Bake week** dropdown to review prior fulfillment weeks.
+## Messages
+
+Use `/admin/messages` to review every customer email logged for the selected bake week and to **send** the same per-order updates as the order detail page (Ready for Pickup, Out for Delivery, or Custom). Pick a paid order from the dropdown, preview, and confirm. Use Pickup or Deliveries for bulk sends to many customers at once.
+
+Orders and Pickup include a **Bake week** dropdown to review prior fulfillment weeks.
 
 ## Menu Updates
 
@@ -105,7 +117,8 @@ Routine steps:
 2. Review revenue, order count, estimated profit, and margin.
 3. Update Product Costs if ingredient or packaging costs changed.
 4. Add Weekly Expenses for that fulfillment Friday.
-5. Treat figures as estimates unless reconciled against Square and real costs.
+5. Set or adjust **goals for this bake week** at the bottom of the page.
+6. Treat figures as estimates unless reconciled against Square and real costs.
 
 Financials exclude refunded/cancelled orders from revenue.
 

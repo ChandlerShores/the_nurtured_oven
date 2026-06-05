@@ -4,10 +4,10 @@ import {
   sheetTabFromRange,
 } from "@/lib/google-sheets/client"
 import { parseMoneyToCents } from "@/lib/admin/money"
-import {
-  formatBatchLabel,
-  getWeeklyFulfillmentContext,
-} from "@/lib/order/weekly-fulfillment"
+import { matchesFulfillmentWeek } from "@/lib/admin/fulfillment-label-match"
+import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
+
+export { matchesFulfillmentWeek } from "@/lib/admin/fulfillment-label-match"
 
 export interface AdminOrderRow {
   /** 1-based row number in the Orders tab (includes header row). */
@@ -81,26 +81,6 @@ function parseOrdersDataRows(values: string[][]): AdminOrderRow[] {
   }
 
   return rows
-}
-
-export function matchesFulfillmentWeek(
-  fulfillmentLabel: string,
-  fulfillmentDate: string,
-  batchLabel: string
-): boolean {
-  const label = fulfillmentLabel.trim()
-  if (!label) return false
-  if (label === fulfillmentDate || label === batchLabel) return true
-  if (label.includes(fulfillmentDate)) return true
-
-  const fridayParts = fulfillmentDate.split("-").map(Number)
-  if (fridayParts.length === 3) {
-    const [, month, day] = fridayParts
-    const short = formatBatchLabel(fridayParts[0], month, day)
-    if (label === short || label.includes(`${month}/${day}`)) return true
-  }
-
-  return false
 }
 
 export async function fetchAllOrdersFromSheet(): Promise<AdminOrderRow[]> {

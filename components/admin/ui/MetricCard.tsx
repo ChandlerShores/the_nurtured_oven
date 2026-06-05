@@ -1,26 +1,24 @@
-import type { ReactNode } from "react"
-
-interface MetricCardProps {
+export interface MetricDefinition {
   label: string
   value: string | number
   hint?: string
-  icon?: ReactNode
 }
 
-export default function MetricCard({ label, value, hint, icon }: MetricCardProps) {
+interface MetricCardProps extends MetricDefinition {}
+
+export default function MetricCard({ label, value, hint }: MetricCardProps) {
   return (
-    <div className="rounded-lg bg-warm-white border border-espresso/15 shadow-gentle px-4 py-4 sm:px-5 sm:py-5">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs uppercase tracking-wide text-espresso/70 font-semibold font-body">
-          {label}
-        </p>
-        {icon ? (
-          <span className="text-sage-deep shrink-0">{icon}</span>
-        ) : null}
-      </div>
-      <p className="font-heading text-2xl sm:text-3xl text-espresso mt-2">{value}</p>
+    <div className="flex h-full min-h-[5.25rem] flex-col items-center justify-center rounded-xl border border-oatmeal/80 bg-warm-white px-4 py-5 text-center shadow-[0_1px_2px_rgba(58,47,42,0.05),0_4px_14px_rgba(58,47,42,0.04)] sm:min-h-[5.75rem] sm:px-5 sm:py-6">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-espresso/50 font-body leading-tight">
+        {label}
+      </p>
+      <p className="font-heading text-2xl sm:text-[1.75rem] text-espresso tabular-nums mt-2 leading-none break-words max-w-full">
+        {value}
+      </p>
       {hint ? (
-        <p className="text-caption text-xs mt-1.5 text-olive/80">{hint}</p>
+        <p className="text-xs text-espresso/55 mt-2 leading-snug max-w-full">
+          {hint}
+        </p>
       ) : null}
     </div>
   )

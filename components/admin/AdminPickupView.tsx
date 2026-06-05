@@ -4,13 +4,15 @@ import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
+import AdminPortalSection from "@/components/admin/ui/AdminPortalSection"
 import EmptyState from "@/components/admin/ui/EmptyState"
-import MetricCard from "@/components/admin/ui/MetricCard"
+import MetricStrip from "@/components/admin/ui/MetricStrip"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import { adminBtnSecondary } from "@/components/admin/ui/admin-button"
 import { statusControlClass } from "@/components/admin/ui/StatusPill"
 import { adminOrderKey } from "@/lib/admin/order-filters"
 import {
+  normalizeOrderStatus,
   ORDER_STATUS_OPTIONS,
   type OrderStatus,
 } from "@/lib/admin/order-status"
@@ -20,11 +22,13 @@ import {
   isPickupOrder,
   isReadyForPickupStatus,
 } from "@/lib/pickup/pickup-orders"
+import AdminBulkCustomerEmail from "@/components/admin/AdminBulkCustomerEmail"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
 
 interface AdminPickupViewProps {
   orders: AdminOrderRow[]
   batchLabel: string
+  weekKey: string
 }
 
 function formatItemsSummary(summary: string): string {
@@ -36,6 +40,7 @@ function formatItemsSummary(summary: string): string {
 export default function AdminPickupView({
   orders,
   batchLabel,
+  weekKey,
 }: AdminPickupViewProps) {
   const router = useRouter()
   const pickupOrders = useMemo(
@@ -62,7 +67,10 @@ export default function AdminPickupView({
   const [statusByRef, setStatusByRef] = useState<Record<string, OrderStatus>>(
     () =>
       Object.fromEntries(
-        paidPickups.map((o) => [adminOrderKey(o), o.orderStatus as OrderStatus])
+        paidPickups.map((o) => [
+          adminOrderKey(o),
+          normalizeOrderStatus(o.orderStatus) as OrderStatus,
+        ])
       )
   )
   const [savingRef, setSavingRef] = useState<string | null>(null)
@@ -104,28 +112,41 @@ export default function AdminPickupView({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="pb-4">
       {error ? (
-        <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3">
+        <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
           {error}
         </p>
       ) : null}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <MetricCard label="Pickup orders" value={pickupOrders.length} />
-        <MetricCard label="Paid" value={paidPickups.length} />
-        <MetricCard label="Ready / packed" value={ready.length} />
-        <MetricCard label="Still waiting" value={active.length} />
-      </div>
+      <AdminPortalSection first collapsible={false} title="Overview">
+        <MetricStrip
+          metrics={[
+            { label: "Orders", value: pickupOrders.length },
+            { label: "Ready", value: ready.length },
+            { label: "Waiting", value: active.length },
+          ]}
+        />
+      </AdminPortalSection>
 
-      <DashboardCard
-        title="Friday pickup queue"
-        subtitle={`${batchLabel} · Mark picked up when the customer leaves`}
+      <AdminPortalSection title="Notify" collapsible={false}>
+        <AdminBulkCustomerEmail
+          emailType="ready_pickup"
+          weekKey={weekKey}
+          emptyHint="Mark Ready first. Missing emails are skipped."
+        />
+      </AdminPortalSection>
+
+      <AdminPortalSection
+        collapsible={false}
+        title="Queue"
+        titleSuffix={batchLabel || undefined}
       >
+        <DashboardCard>
         {paidPickups.length === 0 ? (
           <EmptyState
-            title="No pickup orders"
-            message="Pickup customers will appear here when they choose free Friday pickup at checkout."
+            title="No pickups"
+            message="None this week."
           />
         ) : (
           <ul className="space-y-3">
@@ -181,13 +202,13 @@ export default function AdminPickupView({
                       onClick={() => void markPickedUp(order)}
                       className={`${adminBtnSecondary} w-full sm:w-auto`}
                     >
-                      {busy ? "Saving…" : "Mark picked up"}
+                      {busy ? "Saving…" : "Picked up"}
                     </button>
                     <Link
                       href={`/admin/orders/${encodeURIComponent(order.internalRef)}`}
                       className="text-sm font-semibold text-sage-deep hover:underline"
                     >
-                      Email & details →
+                      Open
                     </Link>
                   </div>
                 </li>
@@ -195,13 +216,12 @@ export default function AdminPickupView({
             })}
           </ul>
         )}
-      </DashboardCard>
+        </DashboardCard>
+      </AdminPortalSection>
 
       {completed.length > 0 ? (
-        <DashboardCard
-          title="Completed pickups"
-          subtitle="Finished for this bake week"
-        >
+        <AdminPortalSection title="Done" collapsible={false}>
+          <DashboardCard>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {completed.map((order) => (
               <li
@@ -212,12 +232,15 @@ export default function AdminPickupView({
                   <p className="font-semibold text-espresso">
                     {order.customerName || order.customerEmail || "Customer"}
                   </p>
-                  <StatusPill status={order.orderStatus || "Complete"} />
+                  <StatusPill
+                    status={order.orderStatus || "Delivered / Picked Up"}
+                  />
                 </div>
               </li>
             ))}
           </ul>
-        </DashboardCard>
+          </DashboardCard>
+        </AdminPortalSection>
       ) : null}
     </div>
   )

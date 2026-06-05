@@ -8,7 +8,6 @@ export type {
   FeaturedMenuProduct,
   CurrentMenu,
   MenuOrderCta,
-  LittleExtrasCalloutContent,
 } from "@/lib/content/menu-types"
 
 export { currentMenu } from "@/lib/content/currentMenu"

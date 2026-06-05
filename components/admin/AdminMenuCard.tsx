@@ -62,7 +62,7 @@ export default function AdminMenuCard({
         {imageFailed || !item.image ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-linen text-center px-4">
             <p className="font-heading text-lg text-espresso">No image</p>
-            <p className="text-caption text-xs mt-1">Add upload or image URL</p>
+            <p className="text-caption text-xs mt-1">Upload or URL</p>
           </div>
         ) : (
           <Image
@@ -104,13 +104,12 @@ export default function AdminMenuCard({
           <p className="font-semibold text-espresso mt-2">{item.priceLabel}</p>
           {item.allergens ? (
             <p className="text-caption text-xs mt-2">
-              <span className="text-blush font-medium">Allergens:</span>{" "}
               {item.allergens}
             </p>
           ) : null}
           {item.notes ? (
             <p className="text-caption text-xs mt-1">
-              <span className="text-olive font-medium">Notes:</span> {item.notes}
+              {item.notes}
             </p>
           ) : null}
           <p className="text-caption text-[10px] mt-2 opacity-60" title="Stable ID">
@@ -118,12 +117,16 @@ export default function AdminMenuCard({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-sm">
+        <div
+          className={`grid gap-2 text-sm ${
+            item.active ? "grid-cols-2" : "grid-cols-1"
+          }`}
+        >
           <button
             type="button"
             disabled={busy}
             onClick={() => onToggleActive(!item.active)}
-            className={`${adminBtnSecondary} px-3 py-2 text-sm whitespace-nowrap`}
+            className={`${adminBtnSecondary} w-full px-3 py-2 text-sm whitespace-nowrap`}
           >
             {item.active ? "Hide" : "Show"}
           </button>
@@ -134,14 +137,16 @@ export default function AdminMenuCard({
               onClick={() => onToggleFeatured(true)}
               className="rounded-md border border-blush bg-blush/10 text-espresso px-3 py-2 font-body text-sm font-semibold text-center whitespace-nowrap hover:bg-blush/20 disabled:opacity-50"
             >
-              {item.featured ? "Featured" : "Set featured"}
+              {item.featured ? "Featured" : "Feature"}
             </button>
           ) : null}
           <button
             type="button"
             disabled={busy}
             onClick={onEdit}
-            className={`${adminBtnPrimary} col-span-2 px-3 py-2 text-sm whitespace-nowrap`}
+            className={`${adminBtnPrimary} w-full px-3 py-2 text-sm whitespace-nowrap ${
+              item.active ? "col-span-2" : ""
+            }`}
           >
             Edit
           </button>

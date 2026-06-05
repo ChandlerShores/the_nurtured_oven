@@ -9,9 +9,12 @@ import {
   type GeocodeCandidate,
   pickBestGeocodeCandidate,
 } from "@/lib/delivery/geocode-quality"
-import { getOpenRouteServiceApiKey } from "@/lib/openrouteservice/config"
-
-const ORS_BASE = "https://api.openrouteservice.org"
+import {
+  HEIGIT_API_BASE,
+  HEIGIT_PELIAS_PREFIX,
+  HEIGIT_VROOM_OPTIMIZATION_PATH,
+  getOpenRouteServiceApiKey,
+} from "@/lib/openrouteservice/config"
 const REQUEST_TIMEOUT_MS = 20_000
 
 export class OpenRouteServiceError extends Error {
@@ -39,7 +42,7 @@ async function orsFetch(
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
 
   try {
-    return await fetch(`${ORS_BASE}${path}`, {
+    return await fetch(`${HEIGIT_API_BASE}${path}`, {
       ...init,
       signal: controller.signal,
       headers: {
@@ -150,7 +153,7 @@ export async function geocodeDeliveryAddress(
     )
     collected.push(
       ...(await fetchGeocodeCandidates(
-        `/geocode/search/structured?${structuredParams.toString()}`
+        `${HEIGIT_PELIAS_PREFIX}/search/structured?${structuredParams.toString()}`
       ))
     )
 
@@ -161,7 +164,7 @@ export async function geocodeDeliveryAddress(
     )
     collected.push(
       ...(await fetchGeocodeCandidates(
-        `/geocode/search?${textParams.toString()}`
+        `${HEIGIT_PELIAS_PREFIX}/search?${textParams.toString()}`
       ))
     )
   }
@@ -237,7 +240,7 @@ export async function optimizeDeliveryStops(input: {
     options: { g: true },
   }
 
-  const res = await orsFetch("/optimization", {
+  const res = await orsFetch(HEIGIT_VROOM_OPTIMIZATION_PATH, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

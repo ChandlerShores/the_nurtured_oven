@@ -10,6 +10,7 @@ This folder contains current, maintained documentation for The Nurtured Oven. Hi
 | [PAYMENTS.md](./PAYMENTS.md) | Developer, operator | Square checkout, webhook handling, Sheets writes, paid-order recovery |
 | [SECURITY.md](./SECURITY.md) | Developer, security maintainer | Auth model, rate limits, webhook verification, production risks |
 | [ACCESSIBILITY.md](./ACCESSIBILITY.md) | Frontend maintainer | Manual accessibility checks and contrast conventions |
+| [TODO_GOOGLE_CALENDAR.md](./TODO_GOOGLE_CALENDAR.md) | Developer | **Planned:** Google Calendar API + admin calendar page (not started) |
 | [assets/README.md](./assets/README.md) | Builder | Non-served reference assets |
 | [archive/](./archive/) | Maintainer | Historical notes only |
 

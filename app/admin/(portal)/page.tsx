@@ -1,20 +1,21 @@
 import AdminDashboardView from "@/components/admin/AdminDashboardView"
+import {
+  buildWeekGoalProgress,
+  getBakeryWeekGoalsFromEnv,
+} from "@/lib/admin/bakery-goals"
+import { loadWeeklyGoalsContext } from "@/lib/admin/load-bakery-week-goals"
 import { buildDashboardStats } from "@/lib/admin/dashboard-stats"
+import { getOrderingWindowClosesInLabel } from "@/lib/admin/ordering-pulse"
 import { fetchCurrentWeekAdminData } from "@/lib/google-sheets/orders"
 
 export const dynamic = "force-dynamic"
 
 function dashboardGreeting(): string {
-  const now = new Date()
-  const hour = now.getHours()
-  const day = new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
-  }).format(now)
-  const salutation =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
-  return `${salutation} · ${day}`
+  }).format(new Date())
 }
 
 export default async function AdminDashboardPage() {
@@ -26,6 +27,10 @@ export default async function AdminDashboardPage() {
   let lineItems: Awaited<
     ReturnType<typeof fetchCurrentWeekAdminData>
   >["lineItems"] = []
+  let weekGoalProgress: ReturnType<typeof buildWeekGoalProgress> = null
+  const orderingClosesIn = getOrderingWindowClosesInLabel()
+  let weekGoals = getBakeryWeekGoalsFromEnv()
+  let usingDefaultBackup = false
 
   try {
     const data = await fetchCurrentWeekAdminData()
@@ -33,6 +38,9 @@ export default async function AdminDashboardPage() {
     fulfillmentDate = data.fulfillmentDate
     orders = data.orders
     lineItems = data.lineItems
+    const ctx = await loadWeeklyGoalsContext(fulfillmentDate, batchLabel)
+    weekGoals = ctx.effective
+    usingDefaultBackup = ctx.usingDefaultBackup
   } catch (err) {
     loadError =
       err instanceof Error
@@ -47,11 +55,20 @@ export default async function AdminDashboardPage() {
     lineItems
   )
 
+  weekGoalProgress = buildWeekGoalProgress(
+    stats.revenueCents,
+    stats.paidOrderCount,
+    weekGoals
+  )
+
   return (
     <AdminDashboardView
       stats={stats}
       loadError={loadError}
       greeting={dashboardGreeting()}
+      orderingClosesIn={orderingClosesIn}
+      weekGoalProgress={weekGoalProgress}
+      usingDefaultBackup={usingDefaultBackup}
     />
   )
 }

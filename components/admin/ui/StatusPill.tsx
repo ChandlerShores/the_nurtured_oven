@@ -1,7 +1,8 @@
 const STATUS_STYLES: Record<string, string> = {
   New: "bg-blush/30 text-espresso border-blush",
+  "In progress": "bg-warm-honey/30 text-espresso border-warm-honey",
   Baking: "bg-warm-honey/30 text-espresso border-warm-honey",
-  Packed: "bg-sage/40 text-espresso border-sage-deep/50",
+  Packed: "bg-warm-honey/30 text-espresso border-warm-honey",
   Ready: "bg-sage-deep text-cream border-sage-deep",
   Delivered: "bg-olive text-cream border-olive",
   "Delivered / Picked Up": "bg-olive text-cream border-olive",
@@ -20,8 +21,9 @@ const STATUS_STYLES: Record<string, string> = {
 
 const DOT_STYLES: Record<string, string> = {
   New: "bg-blush",
+  "In progress": "bg-warm-honey",
   Baking: "bg-warm-honey",
-  Packed: "bg-sage",
+  Packed: "bg-warm-honey",
   Ready: "bg-sage-deep",
   Delivered: "bg-olive",
   "Delivered / Picked Up": "bg-olive",
@@ -77,7 +79,13 @@ export function statusControlClass(status: string): string {
   if (label === "Issue" || label === "Missing data" || label === "Unpaid") {
     return "border-terracotta bg-terracotta/10 text-espresso"
   }
-  if (label === "Baking") return "border-warm-honey bg-warm-honey/15 text-espresso"
+  if (
+    label === "In progress" ||
+    label === "Baking" ||
+    label === "Packed"
+  ) {
+    return "border-warm-honey bg-warm-honey/15 text-espresso"
+  }
   if (label === "New") return "border-blush bg-blush/15 text-espresso"
   return "border-espresso/25 bg-warm-white text-espresso"
 }

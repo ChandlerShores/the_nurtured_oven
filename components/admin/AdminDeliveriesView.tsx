@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
+import AdminBulkCustomerEmail from "@/components/admin/AdminBulkCustomerEmail"
 import DeliveryRouteBuilder from "@/components/admin/DeliveryRouteBuilder"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
+import AdminPortalSection from "@/components/admin/ui/AdminPortalSection"
 import EmptyState from "@/components/admin/ui/EmptyState"
-import MetricCard from "@/components/admin/ui/MetricCard"
+import MetricStrip from "@/components/admin/ui/MetricStrip"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import { adminOrderKey } from "@/lib/admin/order-filters"
 import type { OrderStatus } from "@/lib/admin/order-status"
@@ -14,7 +16,7 @@ import {
   isPaidDeliveryOrder,
 } from "@/lib/delivery/delivery-orders"
 import {
-  buildDeliveryPackingList,
+  buildDeliveryItemTotals,
   totalBakeQuantity,
 } from "@/lib/admin/production-aggregate"
 import type { AdminOrderLineRow, AdminOrderRow } from "@/lib/google-sheets/orders"
@@ -24,6 +26,7 @@ interface AdminDeliveriesViewProps {
   lineItems: AdminOrderLineRow[]
   batchLabel: string
   fulfillmentDate: string
+  weekKey: string
 }
 
 function hasAddress(order: AdminOrderRow): boolean {
@@ -35,6 +38,7 @@ export default function AdminDeliveriesView({
   lineItems,
   batchLabel,
   fulfillmentDate,
+  weekKey,
 }: AdminDeliveriesViewProps) {
   const router = useRouter()
   const deliveryOrders = useMemo(
@@ -57,13 +61,13 @@ export default function AdminDeliveriesView({
     return Array.from(groups.entries())
   }, [paidDeliveries])
 
-  const packingList = useMemo(
-    () => buildDeliveryPackingList(orders, lineItems),
+  const deliveryItemTotals = useMemo(
+    () => buildDeliveryItemTotals(orders, lineItems),
     [orders, lineItems]
   )
-  const totalItemsToPack = useMemo(
-    () => totalBakeQuantity(packingList),
-    [packingList]
+  const totalDeliveryItems = useMemo(
+    () => totalBakeQuantity(deliveryItemTotals),
+    [deliveryItemTotals]
   )
 
   const [savingRef, setSavingRef] = useState<string | null>(null)
@@ -96,20 +100,33 @@ export default function AdminDeliveriesView({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="pb-4">
       {error ? (
-        <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3">
+        <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
           {error}
         </p>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
-        <MetricCard label="Deliveries" value={deliveryOrders.length} />
-        <MetricCard label="Still out" value={pending.length} />
-      </div>
+      <AdminPortalSection first title="Delivery overview">
+        <MetricStrip
+          metrics={[
+            { label: "Deliveries", value: deliveryOrders.length },
+            { label: "Delivered", value: completed.length },
+          ]}
+        />
+      </AdminPortalSection>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-5">
-        <DeliveryRouteBuilder
+      <AdminPortalSection title="Notify customers">
+        <AdminBulkCustomerEmail
+          emailType="out_for_delivery"
+          weekKey={weekKey}
+          emptyHint="Use when you leave for the route. Eligible: paid delivery orders in Ready or In progress."
+        />
+      </AdminPortalSection>
+
+      <AdminPortalSection title="Friday route">
+        <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-5">
+          <DeliveryRouteBuilder
           orders={orders}
           batchLabel={batchLabel}
           fulfillmentDate={fulfillmentDate}
@@ -117,7 +134,7 @@ export default function AdminDeliveriesView({
           savingRef={savingRef}
         />
 
-        <DashboardCard title="Route summary" subtitle="Plan before leaving">
+        <DashboardCard title="Route summary">
           <div className="space-y-4">
             {deliveryOrders.length === 0 ? (
               <EmptyState
@@ -142,19 +159,19 @@ export default function AdminDeliveriesView({
             <div className="space-y-2">
               <div className="flex items-end justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide font-semibold text-espresso/70">
-                  Packing list
+                  Items on route
                 </p>
                 <p className="text-xs text-espresso/60 tabular-nums">
-                  {totalItemsToPack} item{totalItemsToPack === 1 ? "" : "s"} total
+                  {totalDeliveryItems} item{totalDeliveryItems === 1 ? "" : "s"} total
                 </p>
               </div>
-              {packingList.length === 0 ? (
+              {deliveryItemTotals.length === 0 ? (
                 <p className="text-sm text-espresso/60 rounded-md border border-espresso/10 bg-warm-white px-3 py-2">
-                  No active delivery stops to pack yet.
+                  No active delivery stops with items yet.
                 </p>
               ) : (
                 <ul className="space-y-1.5">
-                  {packingList.map((item) => (
+                  {deliveryItemTotals.map((item) => (
                     <li
                       key={item.name}
                       className="flex justify-between gap-3 rounded-md border border-espresso/10 bg-warm-white px-3 py-2 text-sm"
@@ -169,11 +186,31 @@ export default function AdminDeliveriesView({
               )}
             </div>
           </div>
-        </DashboardCard>
-      </div>
+          </DashboardCard>
+        </div>
+      </AdminPortalSection>
+
+      {unmapped.length > 0 ? (
+        <AdminPortalSection title="Missing addresses">
+          <DashboardCard>
+            <ul className="space-y-2 text-sm">
+              {unmapped.map((order) => (
+                <li
+                  key={adminOrderKey(order)}
+                  className="flex justify-between gap-3 rounded-soft bg-blush/10 border border-blush/30 px-3 py-2"
+                >
+                  <span>{order.customerName || order.customerEmail || "—"}</span>
+                  <span className="text-caption">{order.customerPhone || "—"}</span>
+                </li>
+              ))}
+            </ul>
+          </DashboardCard>
+        </AdminPortalSection>
+      ) : null}
 
       {completed.length > 0 ? (
-        <DashboardCard title="Completed deliveries" subtitle="Finished stops are separated from the active route">
+        <AdminPortalSection title="Completed">
+          <DashboardCard>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {completed.map((order) => (
               <li
@@ -191,28 +228,15 @@ export default function AdminDeliveriesView({
                         .join(", ") || "—"}
                     </p>
                   </div>
-                  <StatusPill status={order.orderStatus || "Complete"} />
+                  <StatusPill
+                    status={order.orderStatus || "Delivered / Picked Up"}
+                  />
                 </div>
               </li>
             ))}
           </ul>
-        </DashboardCard>
-      ) : null}
-
-      {unmapped.length > 0 ? (
-        <DashboardCard title="Missing addresses" subtitle="Contact customer before Friday">
-          <ul className="space-y-2 text-sm">
-            {unmapped.map((order) => (
-              <li
-                key={adminOrderKey(order)}
-                className="flex justify-between gap-3 rounded-soft bg-blush/10 border border-blush/30 px-3 py-2"
-              >
-                <span>{order.customerName || order.customerEmail || "—"}</span>
-                <span className="text-caption">{order.customerPhone || "—"}</span>
-              </li>
-            ))}
-          </ul>
-        </DashboardCard>
+          </DashboardCard>
+        </AdminPortalSection>
       ) : null}
     </div>
   )

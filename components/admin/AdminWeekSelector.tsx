@@ -3,11 +3,19 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback } from "react"
 import type { FulfillmentWeekOption } from "@/lib/admin/financial-stats-types"
+import {
+  fulfillmentWeekKeysMatch,
+  isViewingPriorBakeWeek,
+} from "@/lib/admin/fulfillment-label-match"
 
 interface AdminWeekSelectorProps {
   weekOptions: FulfillmentWeekOption[]
   activeWeekKey: string
-  basePath: "/admin/orders" | "/admin/production" | "/admin/pickup"
+  basePath:
+    | "/admin/orders"
+    | "/admin/pickup"
+    | "/admin/deliveries"
+    | "/admin/messages"
   currentWeekKey: string
 }
 
@@ -23,7 +31,7 @@ export default function AdminWeekSelector({
   const onChange = useCallback(
     (weekKey: string) => {
       const params = new URLSearchParams(searchParams.toString())
-      if (weekKey === currentWeekKey) {
+      if (fulfillmentWeekKeysMatch(weekKey, currentWeekKey)) {
         params.delete("week")
       } else {
         params.set("week", weekKey)
@@ -40,7 +48,7 @@ export default function AdminWeekSelector({
     return null
   }
 
-  const viewingPrior = activeWeekKey !== currentWeekKey
+  const viewingPrior = isViewingPriorBakeWeek(activeWeekKey, currentWeekKey)
 
   return (
     <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:flex-wrap sm:items-end">

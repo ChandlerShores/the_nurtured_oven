@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, type DragEvent } from "react"
 import { useRouter } from "next/navigation"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
+import MetricStrip from "@/components/admin/ui/MetricStrip"
 import EmptyState from "@/components/admin/ui/EmptyState"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import { adminBtnPrimary, adminBtnSecondary } from "@/components/admin/ui/admin-button"
@@ -267,10 +268,7 @@ export default function DeliveryRouteBuilder({
   }
 
   return (
-    <DashboardCard
-      title="Delivery route builder"
-      subtitle={`${batchLabel || "This week"} · OpenRouteService`}
-    >
+    <DashboardCard title="Delivery route builder">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:flex-wrap">
         <button
           type="button"
@@ -322,24 +320,19 @@ export default function DeliveryRouteBuilder({
       ))}
 
       {summary ? (
-        <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-          <div className="rounded-md border border-espresso/15 bg-linen/40 px-3 py-2">
-            <p className="text-xs uppercase tracking-wide font-semibold text-espresso/70">
-              Drive time
-            </p>
-            <p className="font-heading text-2xl text-espresso">
-              {formatDuration(summary.totalDurationSeconds)}
-            </p>
-          </div>
-          <div className="rounded-md border border-espresso/15 bg-linen/40 px-3 py-2">
-            <p className="text-xs uppercase tracking-wide font-semibold text-espresso/70">
-              Distance
-            </p>
-            <p className="font-heading text-2xl text-espresso">
-              {formatDistance(summary.totalDistanceMeters)}
-            </p>
-          </div>
-        </div>
+        <MetricStrip
+          className="mb-4"
+          metrics={[
+            {
+              label: "Drive time",
+              value: formatDuration(summary.totalDurationSeconds),
+            },
+            {
+              label: "Distance",
+              value: formatDistance(summary.totalDistanceMeters),
+            },
+          ]}
+        />
       ) : null}
 
       {optimized ? (
@@ -467,10 +460,7 @@ export default function DeliveryRouteBuilder({
                       Open in Maps
                     </a>
                   ) : null}
-                  {order &&
-                  stop.orderStatus !== "Delivered / Picked Up" &&
-                  stop.orderStatus !== "Delivered" &&
-                  stop.orderStatus !== "Complete" ? (
+                  {order && isActiveDeliveryStop(stop.orderStatus) ? (
                     <button
                       type="button"
                       disabled={savingRef === adminOrderKey(order)}

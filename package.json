@@ -15,8 +15,9 @@
     "env:check": "tsx scripts/check-env.ts",
     "sheets:seed-month": "tsx scripts/seed-sheets-month.ts",
     "sheets:seed-financials": "tsx scripts/seed-sheets-financials.ts",
+    "sheets:seed-weekly-goals": "tsx scripts/seed-sheets-weekly-goals.ts",
     "sheets:append-menu": "tsx scripts/append-menu-row.ts",
-    "playbook:export": "tsx scripts/export-playbook.ts"
+    "screenshots": "tsx scripts/capture-screenshots.ts"
   },
   "dependencies": {
     "@vercel/blob": "^2.4.0",

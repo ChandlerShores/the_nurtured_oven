@@ -95,10 +95,7 @@ export default function AdminOrderingControls({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <DashboardCard
-        title="Stop all ordering"
-        subtitle="Emergency close for the public menu and checkout"
-      >
+      <DashboardCard title="Stop all ordering">
         <div className="space-y-4 text-sm">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -158,10 +155,7 @@ export default function AdminOrderingControls({
         </div>
       </DashboardCard>
 
-      <DashboardCard
-        title="Item sold-out"
-        subtitle="Hide checkout for one menu item without closing the whole week"
-      >
+      <DashboardCard title="Item sold-out">
         {activeMenuItems.length === 0 ? (
           <p className="text-sm text-caption">
             No active menu items. Add or show items on the Menu page first.

@@ -3,6 +3,7 @@ import assert from "node:assert/strict"
 import {
   parseAdminExpenseBody,
   parseAdminInternalRef,
+  parseAdminOrderRef,
   parseAdminSheetOrderRef,
   parseAdminMoneyAmount,
   parseAdminProductCostRow,
@@ -19,6 +20,24 @@ describe("parseAdminInternalRef", () => {
   it("rejects invalid refs", () => {
     assert.equal(parseAdminInternalRef("not-a-ref"), null)
     assert.equal(parseAdminInternalRef(""), null)
+  })
+})
+
+describe("parseAdminOrderRef", () => {
+  it("accepts canonical and legacy refs", () => {
+    assert.equal(
+      parseAdminOrderRef("TNO-2026-06-06-ABC23"),
+      "TNO-2026-06-06-ABC23"
+    )
+    assert.equal(
+      parseAdminOrderRef("TNO-2026-06-06-SEED10"),
+      "TNO-2026-06-06-SEED10"
+    )
+  })
+
+  it("rejects invalid refs", () => {
+    assert.equal(parseAdminOrderRef("x"), null)
+    assert.equal(parseAdminOrderRef(""), null)
   })
 })
 

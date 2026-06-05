@@ -33,7 +33,7 @@ export default function Hero({ featured }: HeroProps) {
             fresh from the oven
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
-            {featured.name} is open for preorder.
+            {featured.name} are open for preorder.
           </h1>
 
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body mt-5">

@@ -25,10 +25,7 @@ export default async function AdminMenuPage() {
 
   return (
     <>
-      <SectionHeader
-        title="Weekly Menu"
-        subtitle="Manage what customers can order this week"
-      />
+      <SectionHeader title="Menu" />
 
       {loadError ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3">

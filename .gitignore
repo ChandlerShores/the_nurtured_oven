@@ -32,10 +32,8 @@
 /*service-account*.json
 /*the-nurtured-oven-*.json
 
-# Playbook exports for client (pnpm playbook:export)
-/owner-playbook.pdf
-/playbook.pdf
-/playbook-page-*.jpg
+# Full-page captures (pnpm screenshots)
+/SCREENSHOTS/
 
 # debug
 npm-debug.log*

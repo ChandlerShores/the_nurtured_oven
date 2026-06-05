@@ -1,27 +1,26 @@
 import type { FulfillmentWeekOption } from "@/lib/admin/financial-stats-types"
 import {
+  fulfillmentDateFromWeekKey,
+  fulfillmentWeekKeysMatch,
+  isViewingPriorBakeWeek,
   matchesFulfillmentWeek,
-  type AdminOrderLineRow,
-  type AdminOrderRow,
-} from "@/lib/google-sheets/orders"
+  weekMetaFromLabel,
+} from "@/lib/admin/fulfillment-label-match"
+import type { AdminOrderLineRow, AdminOrderRow } from "@/lib/google-sheets/orders"
 import {
-  formatBatchLabel,
+  addCalendarDays,
+  formatYmd,
+  getEasternYmdHm,
+  getFulfillmentFridayYmd,
   getWeeklyFulfillmentContext,
 } from "@/lib/order/weekly-fulfillment"
 
-export function weekMetaFromLabel(label: string): {
-  fulfillmentDate: string
-  batchLabel: string
-} {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(label)) {
-    const parts = label.split("-").map(Number)
-    return {
-      fulfillmentDate: label,
-      batchLabel: formatBatchLabel(parts[0], parts[1], parts[2]),
-    }
-  }
-  return { fulfillmentDate: label, batchLabel: label }
-}
+export {
+  fulfillmentDateFromWeekKey,
+  fulfillmentWeekKeysMatch,
+  isViewingPriorBakeWeek,
+  weekMetaFromLabel,
+} from "@/lib/admin/fulfillment-label-match"
 
 export function orderInFulfillmentWeek(
   fulfillmentLabel: string,
@@ -70,9 +69,11 @@ export function listFulfillmentWeekOptions(
 
 export function resolveSelectedFulfillmentWeek(
   weekOptions: FulfillmentWeekOption[],
-  weekKey?: string
+  weekKey?: string,
+  now?: Date
 ): FulfillmentWeekOption {
-  const ctx = getWeeklyFulfillmentContext()
+  const ctx = getWeeklyFulfillmentContext(now)
+  const operationalDate = operationalFulfillmentWeekKey(now)
   const trimmed = weekKey?.trim()
 
   if (trimmed) {
@@ -80,13 +81,17 @@ export function resolveSelectedFulfillmentWeek(
     if (match) return match
   }
 
-  return (
-    weekOptions.find((w) =>
+  const operationalMatch = weekOptions.find(
+    (w) =>
+      fulfillmentWeekKeysMatch(w.weekKey, operationalDate) ||
       matchesFulfillmentWeek(w.weekKey, ctx.fulfillmentDate, ctx.batchLabel)
-    ) ??
+  )
+
+  return (
+    operationalMatch ??
     weekOptions[0] ?? {
-      weekKey: ctx.fulfillmentDate,
-      fulfillmentDate: ctx.fulfillmentDate,
+      weekKey: operationalDate,
+      fulfillmentDate: operationalDate,
       batchLabel: ctx.batchLabel,
       paidOrderCount: 0,
     }
@@ -111,7 +116,30 @@ export function filterLineItemsForWeek(
   )
 }
 
-export function currentFulfillmentWeekKey(): string {
-  const ctx = getWeeklyFulfillmentContext()
-  return ctx.fulfillmentDate
+/**
+
+ * Live bake week for admin (orders / pickup).
+ * Saturday is wrap-up for the Friday that just finished; the next cycle starts Sunday.
+ */
+export function operationalFulfillmentWeekKey(now: Date = new Date()): string {
+  const eastern = getEasternYmdHm(now)
+  const upcoming = getFulfillmentFridayYmd(now)
+
+  if (eastern.weekday === 6) {
+    const prev = addCalendarDays(
+      upcoming.year,
+      upcoming.month,
+      upcoming.day,
+      -7
+    )
+    return formatYmd(prev.year, prev.month, prev.day)
+  }
+
+  return formatYmd(upcoming.year, upcoming.month, upcoming.day)
 }
+
+/** @deprecated Use operationalFulfillmentWeekKey — kept as alias for callers. */
+export function currentFulfillmentWeekKey(now?: Date): string {
+  return operationalFulfillmentWeekKey(now)
+}
+

@@ -12,7 +12,6 @@ Threat model: a small bakery site with public ordering, Square webhooks, Google 
 | `/api/checkout` | Public, rate-limited | Prices are server-side. Checkout redirects are allowlisted to Square HTTPS hosts. |
 | `/api/inquiry` | Public, rate-limited | Public input is clamped and email HTML escapes user content. |
 | `/api/webhooks/square` | Square HMAC signature | Rejects unsigned or mismatched payloads. |
-| `/playbook` | Public | Do not put secrets or private customer data in playbook content. |
 | Google Sheets | Service account | Service account should have Editor access only to the required spreadsheet. |
 | Square, Resend, Redis, Vercel Blob | Server env secrets | Never expose these as `NEXT_PUBLIC_*`. |
 

@@ -62,11 +62,27 @@ export interface FinancialWeekTrendPoint {
   paidOrderCount: number
 }
 
+export interface FinancialWeekGoalsSnapshot {
+  revenueGoalCents: number | null
+  orderGoalCount: number | null
+  source: "sheet" | "env" | "none"
+  notes: string | null
+}
+
+export interface FinancialWeekGoalsEditorSnapshot {
+  weekTargets: FinancialWeekGoalsSnapshot
+  hasWeekSpecificRow: boolean
+  usingDefaultBackup: boolean
+  weekRowUpdatedAt: string | null
+}
+
 export interface FinancialWeekSnapshot {
   selectedWeek: FulfillmentWeekOption
   summary: FinancialSummary
   productProfit: ProductProfitRow[]
   expenses: FinancialExpenseRow[]
+  weekGoals: FinancialWeekGoalsSnapshot
+  weekGoalsEditor: FinancialWeekGoalsEditorSnapshot
 }
 
 /** Single bake-week dashboard (internal builder output). */

@@ -229,7 +229,7 @@ export default function AdminMenuEditDrawer({
                 id="menu-edit-title"
                 className="font-heading text-xl text-espresso"
               >
-                {isCreate ? "Add menu item" : "Edit menu item"}
+                {isCreate ? "Add item" : "Edit"}
               </h2>
               {!isCreate && item ? (
                 <p className="text-caption text-sm mt-1">{item.name}</p>
@@ -258,7 +258,7 @@ export default function AdminMenuEditDrawer({
                 onChange={(e) => update("active", e.target.checked)}
                 className="rounded border-oatmeal/80"
               />
-              Show on website
+              Live
             </label>
             <label className="flex items-center gap-2 text-sm font-body cursor-pointer">
               <input
@@ -268,7 +268,7 @@ export default function AdminMenuEditDrawer({
                 onChange={(e) => update("featured", e.target.checked)}
                 className="rounded border-oatmeal/80 disabled:opacity-50"
               />
-              This week&apos;s feature
+              Featured
             </label>
           </div>
 
@@ -333,7 +333,7 @@ export default function AdminMenuEditDrawer({
 
           <div>
             <label className="block text-sm font-medium mb-1.5" htmlFor="menu-category">
-              Category label
+              Category
             </label>
             <input
               id="menu-category"
@@ -346,7 +346,7 @@ export default function AdminMenuEditDrawer({
 
           <div>
             <label className="block text-sm font-medium mb-1.5" htmlFor="menu-notes">
-              Pack size / notes
+              Notes
             </label>
             <input
               id="menu-notes"
@@ -381,10 +381,7 @@ export default function AdminMenuEditDrawer({
               onChange={handleImageChange}
               className="w-full text-sm font-body file:mr-3 file:rounded-full file:border-0 file:bg-linen file:px-3 file:py-1.5 file:text-espresso"
             />
-            <p className="text-caption text-xs mt-1">
-              JPEG, PNG, or WebP up to 5 MB. Saved as /images/menu/your-item-id.jpg
-              on this server, or cloud storage on Vercel when configured.
-            </p>
+            <p className="text-caption text-xs mt-1">JPEG, PNG, or WebP · 5 MB max</p>
             {previewSrc ? (
               <div className="relative mt-3 aspect-[4/3] w-full max-w-xs rounded-soft overflow-hidden bg-oatmeal/30">
                 <Image
@@ -401,7 +398,7 @@ export default function AdminMenuEditDrawer({
 
           <div>
             <label className="block text-sm font-medium mb-1.5" htmlFor="menu-image-url">
-              Image URL (optional)
+              Image URL
             </label>
             <input
               id="menu-image-url"
@@ -410,14 +407,11 @@ export default function AdminMenuEditDrawer({
               placeholder="/images/… or https://…"
               className={inputClass}
             />
-            <p className="text-caption text-xs mt-1">
-              Use instead of upload if the image is already hosted elsewhere.
-            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1.5" htmlFor="menu-slug">
-              Item ID (slug) <span className="text-blush">*</span>
+              ID <span className="text-blush">*</span>
             </label>
             <input
               id="menu-slug"
@@ -432,11 +426,9 @@ export default function AdminMenuEditDrawer({
                   : `${inputClass} bg-linen/60 text-caption cursor-not-allowed`
               }
             />
-            <p className="text-caption text-xs mt-1">
-              {isCreate
-                ? "Auto-filled from the name; used in checkout and image file names."
-                : "Stable ID for checkout — cannot be changed after creation."}
-            </p>
+            {!isCreate ? (
+              <p className="text-caption text-xs mt-1">Cannot change after create.</p>
+            ) : null}
           </div>
 
           <button
@@ -444,11 +436,7 @@ export default function AdminMenuEditDrawer({
             disabled={saving}
             className="w-full rounded-soft bg-espresso text-cream py-3 font-medium disabled:opacity-60"
           >
-            {saving
-              ? "Saving…"
-              : isCreate
-                ? "Add to menu"
-                : "Save to menu"}
+            {saving ? "Saving…" : isCreate ? "Add" : "Save"}
           </button>
         </form>
       </div>

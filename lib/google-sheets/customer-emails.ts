@@ -97,9 +97,7 @@ export async function appendCustomerEmailLog(entry: {
   })
 }
 
-export async function fetchCustomerEmailsForOrder(
-  internalRef: string
-): Promise<CustomerEmailLogRow[]> {
+export async function fetchAllCustomerEmailLogs(): Promise<CustomerEmailLogRow[]> {
   const client = getSheetsClient()
   if (!client) return []
 
@@ -109,8 +107,14 @@ export async function fetchCustomerEmailsForOrder(
     range: `${tab}!A2:J`,
   })
 
-  const ref = internalRef.trim()
   return parseCustomerEmailRows((res.data.values as string[][]) ?? [])
+}
+
+export async function fetchCustomerEmailsForOrder(
+  internalRef: string
+): Promise<CustomerEmailLogRow[]> {
+  const ref = internalRef.trim()
+  return (await fetchAllCustomerEmailLogs())
     .filter((row) => row.internalRef === ref)
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
 }

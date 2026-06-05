@@ -130,11 +130,11 @@ function fridaysGoingBack(weeks: number): { ymd: string; label: string }[] {
 
 function orderStatusForWeek(weekIndex: number, weekCount: number, rng: () => number): string {
   const weeksAgo = weekCount - 1 - weekIndex
-  if (weeksAgo >= 4) return pick(rng, ["Complete", "Delivered / Picked Up"])
-  if (weeksAgo === 3) return pick(rng, ["Delivered / Picked Up", "Packed", "Complete"])
-  if (weeksAgo === 2) return pick(rng, ["Packed", "Baking", "Delivered / Picked Up"])
-  if (weeksAgo === 1) return pick(rng, ["Baking", "Packed", "New"])
-  return pick(rng, ["New", "New", "Baking", "Cancelled"])
+  if (weeksAgo >= 4) return pick(rng, ["Delivered / Picked Up"])
+  if (weeksAgo === 3) return pick(rng, ["Delivered / Picked Up", "In progress"])
+  if (weeksAgo === 2) return pick(rng, ["In progress", "Delivered / Picked Up"])
+  if (weeksAgo === 1) return pick(rng, ["In progress", "New"])
+  return pick(rng, ["New", "New", "In progress", "Cancelled"])
 }
 
 function randomOrderedAt(fulfillmentYmd: string, rng: () => number): Date {

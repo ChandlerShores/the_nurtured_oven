@@ -1,3 +1,4 @@
+import { isTerminalOrderStatus } from "@/lib/admin/order-status"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
 import { hasDeliveryStreetAddress } from "@/lib/delivery/address"
 
@@ -7,12 +8,7 @@ export function isPaidOrder(paymentStatus: string): boolean {
 }
 
 export function isActiveDeliveryStop(orderStatus: string): boolean {
-  const status = orderStatus.trim()
-  return (
-    status !== "Delivered / Picked Up" &&
-    status !== "Delivered" &&
-    status !== "Complete"
-  )
+  return !isTerminalOrderStatus(orderStatus)
 }
 
 export function isDeliveryOrder(order: AdminOrderRow): boolean {

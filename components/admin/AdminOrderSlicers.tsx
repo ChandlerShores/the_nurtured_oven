@@ -1,5 +1,6 @@
 "use client"
 
+import AdminCollapsibleFilters from "@/components/admin/ui/AdminCollapsibleFilters"
 import {
   shouldShowSlicerGroup,
   type AdminOrderSlicerFilters,
@@ -14,6 +15,7 @@ interface AdminOrderSlicerGroupProps {
   selected: Set<string>
   onToggle: (value: string) => void
   onClear: () => void
+  inline?: boolean
 }
 
 const chipBase =
@@ -28,12 +30,21 @@ function AdminOrderSlicerGroup({
   selected,
   onToggle,
   onClear,
+  inline = false,
 }: AdminOrderSlicerGroupProps) {
   const hasFilter = selected.size > 0
 
   return (
-    <div>
-      <p className="text-caption text-xs uppercase tracking-wide mb-2">{label}</p>
+    <div className={inline ? "flex flex-wrap items-center gap-x-2 gap-y-2" : ""}>
+      <p
+        className={
+          inline
+            ? "text-caption text-xs uppercase tracking-wide shrink-0"
+            : "text-caption text-xs uppercase tracking-wide mb-2"
+        }
+      >
+        {label}
+      </p>
       <div className="flex flex-wrap gap-2" role="group" aria-label={label}>
         <button
           type="button"
@@ -72,8 +83,8 @@ interface AdminOrderSlicersProps {
   onClearStatus: () => void
   onClearFulfillment: () => void
   onClearAll: () => void
-  filteredCount: number
-  totalCount: number
+  searchQuery: string
+  onSearchChange: (value: string) => void
 }
 
 export default function AdminOrderSlicers({
@@ -85,72 +96,73 @@ export default function AdminOrderSlicers({
   onClearStatus,
   onClearFulfillment,
   onClearAll,
-  filteredCount,
-  totalCount,
+  searchQuery,
+  onSearchChange,
 }: AdminOrderSlicersProps) {
-  const hasAnyFilter =
+  const hasSlicerFilter =
     filters.status.size > 0 || filters.fulfillment.size > 0
+  const hasSearch = searchQuery.trim().length > 0
+  const hasAnyFilter = hasSlicerFilter || hasSearch
 
   const showStatus = shouldShowSlicerGroup(statusOptions, filters.status)
   const showFulfillment = shouldShowSlicerGroup(
     fulfillmentOptions,
     filters.fulfillment
   )
+  const showSlicerRow = showStatus || showFulfillment
 
-  if (!showStatus && !showFulfillment) {
-    return (
-      <div className="rounded-soft border border-oatmeal/60 bg-linen/30 px-4 py-3 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-caption text-sm font-body">
-          All {totalCount} orders shown — nothing to filter this week.
-        </p>
-        {hasAnyFilter ? (
-          <button
-            type="button"
-            onClick={onClearAll}
-            className="text-sm text-caption underline-offset-2 hover:underline font-body"
-          >
-            Clear filters
-          </button>
-        ) : null}
-      </div>
-    )
-  }
+  const filterSummary = (() => {
+    const parts: string[] = []
+    if (hasSearch) parts.push("Search")
+    const chipCount = filters.status.size + filters.fulfillment.size
+    if (chipCount > 0) {
+      parts.push(`${chipCount} filter${chipCount === 1 ? "" : "s"}`)
+    }
+    return parts.length > 0 ? parts.join(" · ") : undefined
+  })()
 
   return (
-    <div className="rounded-soft border border-oatmeal/60 bg-linen/30 px-4 py-4 space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="font-medium text-espresso text-sm">Filter orders</p>
-        <p className="text-caption text-sm">
-          Showing {filteredCount} of {totalCount}
-        </p>
-      </div>
+    <AdminCollapsibleFilters
+      defaultOpen={hasAnyFilter}
+      hasActiveFilters={hasAnyFilter}
+      summary={filterSummary}
+      className="mb-4"
+    >
+      <label className="block text-sm">
+        <span className="sr-only">Search orders</span>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Search…"
+          className="w-full rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2.5 min-h-[44px] text-base text-charcoal"
+        />
+      </label>
 
-      <div
-        className={`grid gap-4 ${
-          showStatus && showFulfillment
-            ? "grid-cols-1 sm:grid-cols-2"
-            : "grid-cols-1"
-        }`}
-      >
-        {showStatus ? (
-          <AdminOrderSlicerGroup
-            label="Status"
-            options={statusOptions}
-            selected={filters.status}
-            onToggle={onToggleStatus}
-            onClear={onClearStatus}
-          />
-        ) : null}
-        {showFulfillment ? (
-          <AdminOrderSlicerGroup
-            label="Fulfillment"
-            options={fulfillmentOptions}
-            selected={filters.fulfillment}
-            onToggle={onToggleFulfillment}
-            onClear={onClearFulfillment}
-          />
-        ) : null}
-      </div>
+      {showSlicerRow ? (
+        <div className="flex flex-col gap-3">
+          {showStatus ? (
+            <AdminOrderSlicerGroup
+              label="Status"
+              options={statusOptions}
+              selected={filters.status}
+              onToggle={onToggleStatus}
+              onClear={onClearStatus}
+              inline
+            />
+          ) : null}
+          {showFulfillment ? (
+            <AdminOrderSlicerGroup
+              label="Fulfillment"
+              options={fulfillmentOptions}
+              selected={filters.fulfillment}
+              onToggle={onToggleFulfillment}
+              onClear={onClearFulfillment}
+              inline
+            />
+          ) : null}
+        </div>
+      ) : null}
 
       {hasAnyFilter ? (
         <button
@@ -158,10 +170,10 @@ export default function AdminOrderSlicers({
           onClick={onClearAll}
           className="text-sm text-caption underline-offset-2 hover:underline font-body"
         >
-          Clear all filters
+          Clear all
         </button>
       ) : null}
-    </div>
+    </AdminCollapsibleFilters>
   )
 }
 

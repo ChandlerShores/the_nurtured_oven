@@ -33,13 +33,6 @@ export interface MenuOrderCta {
   squareCheckoutUrl?: string
 }
 
-export interface LittleExtrasCalloutContent {
-  enabled: boolean
-  text: string
-  buttonText: string
-  href: string
-}
-
 export interface CurrentMenu {
   weekLabel: string
   /**
@@ -54,5 +47,4 @@ export interface CurrentMenu {
   featured: FeaturedMenuProduct
   items: MenuProduct[]
   orderCta: MenuOrderCta
-  littleExtrasCallout?: LittleExtrasCalloutContent
 }

@@ -7,7 +7,7 @@ import { loadAdminWeekData } from "@/lib/admin/load-admin-week"
 export const dynamic = "force-dynamic"
 
 interface PageProps {
-  searchParams?: { week?: string }
+  searchParams?: { week?: string; status?: string; attention?: string }
 }
 
 export default async function AdminOrdersPage({ searchParams }: PageProps) {
@@ -35,14 +35,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <SectionHeader
-        title="Orders"
-        subtitle={
-          batchLabel
-            ? `Manage batch · ${batchLabel}`
-            : "Manage customer orders for the selected bake week"
-        }
-      />
+      <SectionHeader title="Orders" />
 
       {loadError ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
@@ -61,7 +54,15 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
         </Suspense>
       ) : null}
 
-      <AdminOrdersTable orders={orders} batchLabel={batchLabel || "this week"} />
+      <Suspense fallback={null}>
+        <AdminOrdersTable
+          orders={orders}
+          batchLabel={batchLabel || "this week"}
+          weekKey={activeWeekKey}
+          initialStatus={searchParams?.status}
+          initialAttention={searchParams?.attention}
+        />
+      </Suspense>
     </>
   )
 }

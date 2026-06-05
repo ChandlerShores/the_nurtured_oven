@@ -5,10 +5,13 @@ import {
   type AttentionPriority,
   type DashboardAttentionItem,
 } from "@/lib/admin/dashboard-attention"
+import type { DashboardWeekPhase } from "@/lib/admin/dashboard-week-context"
 import type { DashboardStats } from "@/lib/admin/dashboard-stats"
 
 interface DashboardNeedsAttentionProps {
   stats: DashboardStats
+  orderingClosesIn?: string | null
+  weekPhase?: DashboardWeekPhase
 }
 
 const priorityStyles: Record<
@@ -84,19 +87,34 @@ function AttentionCard({
 
 export default function DashboardNeedsAttention({
   stats,
+  orderingClosesIn,
+  weekPhase,
 }: DashboardNeedsAttentionProps) {
-  const { featured, active, allClear } = buildDashboardAttention(stats)
+  const { items, calmMessage, allClear } = buildDashboardAttention(stats, {
+    orderingClosesIn,
+    weekPhase,
+  })
+
+  const featured = items[0]
+  const active = items.slice(1)
+  const hasActions = items.length > 0
 
   return (
     <DashboardCard
       title="Needs attention"
-      subtitle="Action required today"
+      subtitle={hasActions ? "Tap a card to fix it" : "Nothing blocking you right now"}
       className="border-espresso/25"
     >
       <div className="space-y-4">
-        <div className="rounded-lg border-2 border-amber-400/55 bg-gradient-to-br from-amber-50/95 via-warm-white to-linen/40 shadow-sm">
-          <AttentionCard item={featured} variant="featured" />
-        </div>
+        {hasActions && featured ? (
+          <div className="rounded-lg border-2 border-amber-400/55 bg-gradient-to-br from-amber-50/95 via-warm-white to-linen/40 shadow-sm">
+            <AttentionCard item={featured} variant="featured" />
+          </div>
+        ) : calmMessage ? (
+          <p className="text-sm text-charcoal/85 font-body leading-relaxed px-1">
+            {calmMessage}
+          </p>
+        ) : null}
 
         {active.length > 0 ? (
           <ul

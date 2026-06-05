@@ -117,7 +117,7 @@ On a completed matched payment, the webhook writes:
 - One row to `Orders`
 - One or more rows to `Order Line Items`
 
-Google Sheets is the operational source of truth for admin order views, production, deliveries, and financials.
+Google Sheets is the operational source of truth for admin order views, deliveries, pickup, and financials.
 
 Do not manually create website orders in Sheets during normal operation. If a webhook fails, recover using Square/Vercel logs and then decide whether a manual row is needed.
 

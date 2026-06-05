@@ -40,19 +40,9 @@ export const faqEntries: FaqEntry[] = [
       "Your fee is based on your delivery area and how much you're ordering. Most Lexington addresses: $7, free on orders $40+. Georgetown area: $10 under $40, then a small adjustment until $55+. Some extended Lexington zips (40509, 40515, 40516): $12 until $55+. Pick your city, enter your zip at checkout, and the cart shows your fee before payment.",
   },
   {
-    question: "What are the Comfort Box gift tiers?",
-    answer:
-      "We offer three sizes: Mini Comfort Box ($16\u201322), Classic Comfort Box ($32\u201342), and Gathering Box ($55\u201375+). Each is filled with an assortment of this week\u2019s bakes, beautifully packaged. You can include a personal gift message.",
-  },
-  {
-    question: "What are Little Extras?",
-    answer:
-      "Sometimes there are leftover batches, test flavors, or beautifully imperfect pieces after a bake day. When available, we box them up at a friendly price ($8\u201315) and post them on Fridays. They\u2019re first-paid, first-claimed. Once they\u2019re gone, they\u2019re gone.",
-  },
-  {
     question: "What if ordering is closed when I visit the site?",
     answer:
-      "You can sign up for menu reminders so you\u2019ll know the moment the next menu drops. You can also request a future gift box, ask about a custom order, or check if Little Extras are available on Friday.",
+      "You can sign up for menu reminders so you\u2019ll know the moment the next menu drops. You can also ask about a custom order through the contact form.",
   },
   {
     question: "Do you take custom orders?",

@@ -19,6 +19,9 @@ import {
   type AdminOrderLineRow,
   type AdminOrderRow,
 } from "@/lib/google-sheets/orders"
+import type { BakeryWeekGoals } from "@/lib/admin/bakery-goals"
+import { resolveWeeklyGoalsContext } from "@/lib/admin/weekly-goals-context"
+import type { WeeklyGoalRow } from "@/lib/google-sheets/weekly-goals-data"
 import { getWeeklyFulfillmentContext } from "@/lib/order/weekly-fulfillment"
 
 const EXCLUDED_REVENUE_STATUSES = new Set(["Refunded", "Cancelled"])
@@ -260,7 +263,8 @@ export function buildFinancialDashboardPayload(
   lineItems: AdminOrderLineRow[],
   productCosts: ProductCostRow[],
   expenses: WeeklyExpenseRow[],
-  weekKey?: string
+  weekKey?: string,
+  weeklyGoalRows: WeeklyGoalRow[] = []
 ): FinancialDashboardData {
   const weekOptions = listFulfillmentWeekOptions(orders, {
     includeOrder: countsForRevenue,
@@ -277,11 +281,29 @@ export function buildFinancialDashboardPayload(
       expenses,
       w.weekKey
     )
+    const goalsCtx = resolveWeeklyGoalsContext(
+      weeklyGoalRows,
+      w.fulfillmentDate,
+      w.batchLabel
+    )
+    const toSnapshot = (g: BakeryWeekGoals) => ({
+      revenueGoalCents: g.revenueGoalCents,
+      orderGoalCount: g.orderGoalCount,
+      source: g.source,
+      notes: g.notes,
+    })
     weekSnapshots[w.weekKey] = {
       selectedWeek: dash.selectedWeek,
       summary: dash.summary,
       productProfit: dash.productProfit,
       expenses: dash.expenses,
+      weekGoals: toSnapshot(goalsCtx.effective),
+      weekGoalsEditor: {
+        weekTargets: toSnapshot(goalsCtx.weekTargets),
+        hasWeekSpecificRow: goalsCtx.hasWeekSpecificRow,
+        usingDefaultBackup: goalsCtx.usingDefaultBackup,
+        weekRowUpdatedAt: goalsCtx.weekRowUpdatedAt,
+      },
     }
     weekTrend.push({
       weekKey: w.weekKey,

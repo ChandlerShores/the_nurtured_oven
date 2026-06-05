@@ -6,6 +6,9 @@ export interface PrepDeadlineDisplay {
   relativeLine: string | null
 }
 
+export type PrepUrgency = "passed" | "today" | "soon" | "later"
+export type FulfillmentDayPhase = "before" | "today" | "after"
+
 function easternYmd(date: Date): { year: number; month: number; day: number } {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: WEEKLY_FULFILLMENT_TIMEZONE,
@@ -27,9 +30,10 @@ function calendarDayIndex(year: number, month: number, day: number): number {
 function relativePrepLine(
   prepYear: number,
   prepMonth: number,
-  prepDay: number
+  prepDay: number,
+  now: Date = new Date()
 ): string | null {
-  const today = easternYmd(new Date())
+  const today = easternYmd(now)
   const diff =
     calendarDayIndex(prepYear, prepMonth, prepDay) -
     calendarDayIndex(today.year, today.month, today.day)
@@ -43,13 +47,14 @@ function relativePrepLine(
 
 /** Prep is the Wednesday before fulfillment Friday (fulfillmentDate = Friday YYYY-MM-DD). */
 export function formatPrepDeadlineDisplay(
-  fulfillmentDate: string
+  fulfillmentDate: string,
+  now: Date = new Date()
 ): PrepDeadlineDisplay {
   const parts = fulfillmentDate.split("-").map(Number)
   if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) {
     return {
-      headline: "Prep deadline this week",
-      context: "Confirm fulfillment date in orders",
+      headline: "Prep this week",
+      context: "Check orders for bake date",
       relativeLine: null,
     }
   }
@@ -79,17 +84,49 @@ export function formatPrepDeadlineDisplay(
   })
 
   return {
-    headline: `Prep due ${prepLabel}, at noon`,
-    context: `For ${fulfillmentLabel} fulfillment`,
+    headline: `Prep ${prepLabel}, noon`,
+    context: fulfillmentLabel,
     relativeLine: relativePrepLine(
       prepParts.year,
       prepParts.month,
-      prepParts.day
+      prepParts.day,
+      now
     ),
   }
 }
 
-/** Short label for production card subtitles. */
+/** How close we are to Wednesday noon prep for this bake week. */
+export function getPrepUrgency(
+  fulfillmentDate: string,
+  now: Date = new Date()
+): PrepUrgency {
+  const rel = formatPrepDeadlineDisplay(fulfillmentDate, now).relativeLine
+  if (rel === "Prep deadline passed") return "passed"
+  if (rel === "Prep due today") return "today"
+  if (rel === "Prep due in 1 day") return "soon"
+  return "later"
+}
+
+/** Bake Friday relative to today (Eastern). */
+export function getFulfillmentDayPhase(
+  fulfillmentDate: string,
+  now: Date = new Date()
+): FulfillmentDayPhase {
+  const parts = fulfillmentDate.split("-").map(Number)
+  if (parts.length !== 3 || parts.some((n) => !Number.isFinite(n))) {
+    return "before"
+  }
+  const [year, month, day] = parts
+  const today = easternYmd(now)
+  const diff =
+    calendarDayIndex(year!, month!, day!) -
+    calendarDayIndex(today.year, today.month, today.day)
+  if (diff < 0) return "after"
+  if (diff === 0) return "today"
+  return "before"
+}
+
+/** Short label for prep deadline display. */
 export function formatPrepDayLabel(fulfillmentDate: string): string {
   const display = formatPrepDeadlineDisplay(fulfillmentDate)
   if (display.relativeLine) {

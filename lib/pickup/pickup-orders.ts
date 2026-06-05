@@ -1,13 +1,6 @@
+import { isTerminalOrderStatus } from "@/lib/admin/order-status"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
 import { isPaidOrder } from "@/lib/delivery/delivery-orders"
-
-const CLOSED_PICKUP_STATUSES = new Set([
-  "Delivered / Picked Up",
-  "Delivered",
-  "Complete",
-  "Cancelled",
-  "Refunded",
-])
 
 export function isPickupOrder(order: AdminOrderRow): boolean {
   return order.fulfillmentMethod.trim().toLowerCase() === "pickup"
@@ -18,11 +11,9 @@ export function isPaidPickupOrder(order: AdminOrderRow): boolean {
 }
 
 export function isActivePickupStop(orderStatus: string): boolean {
-  const status = orderStatus.trim()
-  return !CLOSED_PICKUP_STATUSES.has(status)
+  return !isTerminalOrderStatus(orderStatus)
 }
 
 export function isReadyForPickupStatus(orderStatus: string): boolean {
-  const status = orderStatus.trim()
-  return status === "Ready" || status === "Packed"
+  return orderStatus.trim() === "Ready"
 }

@@ -33,10 +33,7 @@ export default async function AdminPickupPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <SectionHeader
-        title="Pickup"
-        subtitle="Friday pickup queue and handoff status for the selected bake week"
-      />
+      <SectionHeader title="Pickup" />
 
       {loadError ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
@@ -56,7 +53,11 @@ export default async function AdminPickupPage({ searchParams }: PageProps) {
       ) : null}
 
       {!loadError ? (
-        <AdminPickupView orders={orders} batchLabel={batchLabel} />
+        <AdminPickupView
+          orders={orders}
+          batchLabel={batchLabel}
+          weekKey={activeWeekKey}
+        />
       ) : null}
     </>
   )

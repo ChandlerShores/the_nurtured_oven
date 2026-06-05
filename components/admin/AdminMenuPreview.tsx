@@ -11,8 +11,7 @@ export default function AdminMenuPreview({ menu }: AdminMenuPreviewProps) {
   if (!menu) {
     return (
       <p className="text-caption text-sm font-body rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
-        No active items to preview. Turn on &quot;Show on website&quot; for at least
-        one item.
+        Nothing live to preview.
       </p>
     )
   }
@@ -20,9 +19,7 @@ export default function AdminMenuPreview({ menu }: AdminMenuPreviewProps) {
   return (
     <div className="rounded-softer border border-oatmeal/60 bg-warm-white shadow-gentle overflow-hidden">
       <div className="bg-linen/50 px-4 py-2 border-b border-oatmeal/40">
-        <p className="text-caption text-xs font-body">
-          Customer preview — how the live menu will look
-        </p>
+        <p className="text-caption text-xs font-body">Preview</p>
       </div>
       <div className="p-4 sm:p-6 space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">

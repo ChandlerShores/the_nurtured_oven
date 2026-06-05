@@ -10,6 +10,15 @@ import {
   ProductMixChart,
   WeekRevenueTrendChart,
 } from "@/components/admin/financials/FinancialsVisuals"
+import FinancialsReviewAlert from "@/components/admin/financials/FinancialsReviewAlert"
+import FinancialsSection, {
+  FINANCIALS_WEEKLY_GOALS_SECTION_ID,
+} from "@/components/admin/financials/FinancialsSection"
+import ThisWeekGoalsEditor from "@/components/admin/ThisWeekGoalsEditor"
+import WeekGoalProgressCard from "@/components/admin/WeekGoalProgress"
+import { buildWeekGoalProgress } from "@/lib/admin/bakery-goals"
+import type { BakeryWeekGoals } from "@/lib/admin/bakery-goals"
+import type { FinancialWeekGoalsSnapshot } from "@/lib/admin/financial-stats-types"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
 import EmptyState from "@/components/admin/ui/EmptyState"
 import { adminBtnPrimary } from "@/components/admin/ui/admin-button"
@@ -32,6 +41,17 @@ interface CostDraft {
   laborMinutes: string
   active: boolean
   notes: string
+}
+
+function snapshotGoalsToBakery(
+  g: FinancialWeekGoalsSnapshot
+): BakeryWeekGoals {
+  return {
+    revenueGoalCents: g.revenueGoalCents,
+    orderGoalCount: g.orderGoalCount,
+    source: g.source,
+    notes: g.notes,
+  }
 }
 
 function costsToDrafts(costs: FinancialProductCostRow[]): CostDraft[] {
@@ -88,6 +108,14 @@ export default function AdminFinancialsView({
   }, [activeWeekKey, weekSnapshots, initialData.initialWeekKey])
 
   const summary = snapshot?.summary
+  const weekGoalProgress = useMemo(() => {
+    if (!summary || !snapshot?.weekGoals) return null
+    return buildWeekGoalProgress(
+      summary.grossRevenueCents,
+      summary.paidOrderCount,
+      snapshot.weekGoals
+    )
+  }, [summary, snapshot?.weekGoals])
   const productProfit = snapshot?.productProfit ?? []
   const expenses = snapshot?.expenses ?? []
   const selectedWeek = snapshot?.selectedWeek
@@ -128,6 +156,29 @@ export default function AdminFinancialsView({
   const [expenseError, setExpenseError] = useState<string | null>(null)
 
   const fulfillmentForExpense = selectedWeek?.fulfillmentDate ?? ""
+  const goalsSectionReady = Boolean(
+    snapshot?.weekGoalsEditor && selectedWeek
+  )
+
+  useEffect(() => {
+    if (!goalsSectionReady) return
+    const hash = window.location.hash.replace(/^#/, "")
+    if (hash !== FINANCIALS_WEEKLY_GOALS_SECTION_ID) return
+
+    const scrollToGoals = () => {
+      document
+        .getElementById(FINANCIALS_WEEKLY_GOALS_SECTION_ID)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
+    const timeoutId = window.setTimeout(scrollToGoals, 50)
+    window.addEventListener("hashchange", scrollToGoals)
+    return () => {
+      window.clearTimeout(timeoutId)
+      window.removeEventListener("hashchange", scrollToGoals)
+    }
+  }, [goalsSectionReady, activeWeekKey])
+
   const incompleteCosts = costDrafts.filter(
     (c) => c.active && !c.ingredient && !c.packaging && !c.laborMinutes
   )
@@ -217,66 +268,72 @@ export default function AdminFinancialsView({
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
-        <label className="text-sm font-body w-full sm:w-auto sm:min-w-[12rem]">
-          <span className="text-caption text-xs uppercase tracking-wide block mb-1">
-            Bake week
-          </span>
-          <select
-            value={activeWeekKey}
-            onChange={(e) => selectWeek(e.target.value)}
-            className="w-full rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2.5 min-h-[44px] text-base text-charcoal"
-          >
-            {weekOptions.length === 0 ? (
-              <option value="">No paid orders yet</option>
-            ) : (
-              weekOptions.map((w) => (
-                <option key={w.weekKey} value={w.weekKey}>
-                  {w.batchLabel} ({w.paidOrderCount} orders)
-                </option>
-              ))
-            )}
-          </select>
-        </label>
-        <p className="text-caption text-sm pb-2">
-          {selectedWeek.batchLabel} · paid orders only
-        </p>
-      </div>
-
-      <FinancialHero summary={summary} />
-      {!summary.hasProductCosts || incompleteCosts.length > 0 || expenses.length === 0 ? (
-        <div className="rounded-lg border border-terracotta/35 bg-terracotta/10 px-4 py-3 text-sm text-espresso">
-          <p className="font-semibold">Financial data needs review</p>
-          <ul className="mt-2 list-disc list-inside space-y-1 text-caption">
-            {!summary.hasProductCosts ? <li>Add product costs before trusting profit.</li> : null}
-            {incompleteCosts.length > 0 ? (
-              <li>{incompleteCosts.length} active items have no cost assumptions.</li>
-            ) : null}
-            {expenses.length === 0 ? <li>No weekly expenses logged for this bake week.</li> : null}
-          </ul>
+    <div className="pb-4">
+      <FinancialsSection first title="Bake week overview">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+          <label className="text-sm font-body w-full sm:w-auto sm:min-w-[12rem]">
+            <span className="text-caption text-xs uppercase tracking-wide block mb-1">
+              Bake week
+            </span>
+            <select
+              value={activeWeekKey}
+              onChange={(e) => selectWeek(e.target.value)}
+              className="w-full rounded-soft border border-oatmeal/80 bg-warm-white px-3 py-2.5 min-h-[44px] text-base text-charcoal"
+            >
+              {weekOptions.length === 0 ? (
+                <option value="">No paid orders yet</option>
+              ) : (
+                weekOptions.map((w) => (
+                  <option key={w.weekKey} value={w.weekKey}>
+                    {w.batchLabel} ({w.paidOrderCount} orders)
+                  </option>
+                ))
+              )}
+            </select>
+          </label>
         </div>
-      ) : null}
-      <FinancialDetailsStrip summary={summary} estimateNotes={estimateNotes} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
-        <MoneyFlowChart summary={summary} />
-        <WeekRevenueTrendChart
-          trend={weekTrend}
-          activeWeekKey={activeWeekKey}
-          onSelectWeek={selectWeek}
-        />
-      </div>
+        <FinancialHero summary={summary} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
-        <ProductMixChart rows={productProfit} />
-        <ExpenseCategoryChart expenses={expenses} />
-      </div>
+        {weekGoalProgress ? (
+          <WeekGoalProgressCard
+            progress={weekGoalProgress}
+            batchLabel={selectedWeek.batchLabel}
+            usingDefaultBackup={
+              snapshot.weekGoalsEditor?.usingDefaultBackup ?? false
+            }
+            showSubtitle={false}
+          />
+        ) : null}
+        <FinancialDetailsStrip summary={summary} estimateNotes={estimateNotes} />
+      </FinancialsSection>
 
-      <DashboardCard
-        title="Product profitability"
-        subtitle="Full detail for this bake week"
-      >
+      <FinancialsSection title="Charts & trends">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
+          <MoneyFlowChart summary={summary} />
+          <WeekRevenueTrendChart
+            trend={weekTrend}
+            activeWeekKey={activeWeekKey}
+            onSelectWeek={selectWeek}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
+          <ProductMixChart rows={productProfit} />
+          <ExpenseCategoryChart expenses={expenses} />
+        </div>
+      </FinancialsSection>
+
+      <FinancialsSection title="Item breakdown">
+        {!summary.hasProductCosts ? (
+          <FinancialsReviewAlert title="Profit columns incomplete">
+            <p>
+              Add product costs in <strong>Costs &amp; expenses</strong> below
+              before trusting estimated cost, profit, and margin in this table.
+            </p>
+          </FinancialsReviewAlert>
+        ) : null}
+        <DashboardCard>
         {productProfit.length === 0 ? (
           <EmptyState
             title="No item sales"
@@ -331,17 +388,19 @@ export default function AdminFinancialsView({
             </table>
           </div>
         )}
-      </DashboardCard>
+        </DashboardCard>
+      </FinancialsSection>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        <DashboardCard title="Weekly expenses" subtitle="Add this week's expenses before closing the batch">
+      <FinancialsSection title="Costs & expenses">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6">
+          <DashboardCard title="Weekly expenses">
           {expenses.length === 0 ? (
-            <div className="rounded-lg border border-terracotta/35 bg-terracotta/10 px-4 py-3 mb-4">
-              <p className="font-semibold text-espresso">No expenses logged</p>
-              <p className="text-caption mt-1">
-                Add ingredients, packaging, delivery supplies, or other costs in the form below.
+            <FinancialsReviewAlert title="No expenses logged">
+              <p>
+                Add ingredients, packaging, delivery supplies, or other costs for
+                this bake week using the form below.
               </p>
-            </div>
+            </FinancialsReviewAlert>
           ) : (
             <div className="overflow-x-auto mb-6">
               <table className="w-full text-left text-sm">
@@ -380,7 +439,6 @@ export default function AdminFinancialsView({
             onSubmit={submitExpense}
             className="space-y-3 border-t border-espresso/15 pt-4"
           >
-            <p className="font-semibold text-espresso text-base">Add this week&apos;s expenses</p>
             {expenseError ? (
               <p className="text-sm text-red-800">{expenseError}</p>
             ) : null}
@@ -450,10 +508,23 @@ export default function AdminFinancialsView({
           </form>
         </DashboardCard>
 
-        <DashboardCard
-          title="Product costs"
-          subtitle="Ingredient, packaging, and labor per item"
-        >
+        <DashboardCard title="Product costs">
+          {!summary.hasProductCosts ? (
+            <FinancialsReviewAlert title="Product costs missing">
+              <p>
+                Enter unit costs here and save — overview profit and item margins
+                stay blank until you do.
+              </p>
+            </FinancialsReviewAlert>
+          ) : incompleteCosts.length > 0 ? (
+            <FinancialsReviewAlert title="Incomplete cost assumptions">
+              <p>
+                {incompleteCosts.length} active menu item
+                {incompleteCosts.length === 1 ? "" : "s"} still need ingredient,
+                packaging, or labor minutes (highlighted below).
+              </p>
+            </FinancialsReviewAlert>
+          ) : null}
           <div className="space-y-3 max-h-[28rem] overflow-y-auto">
             {costDrafts.map((row, index) => (
               <div
@@ -523,7 +594,35 @@ export default function AdminFinancialsView({
             ) : null}
           </div>
         </DashboardCard>
-      </div>
+        </div>
+      </FinancialsSection>
+
+      {snapshot.weekGoalsEditor && selectedWeek ? (
+        <FinancialsSection
+          anchorId={FINANCIALS_WEEKLY_GOALS_SECTION_ID}
+          title="Weekly goals"
+        >
+          <ThisWeekGoalsEditor
+            key={activeWeekKey}
+            fulfillmentDate={selectedWeek.fulfillmentDate}
+            batchLabel={selectedWeek.batchLabel}
+            showCardHeader={false}
+            weekTargets={snapshotGoalsToBakery(
+              snapshot.weekGoalsEditor.weekTargets
+            )}
+            defaultBackup={{
+              revenueGoalCents: null,
+              orderGoalCount: null,
+              source: "none",
+              notes: null,
+            }}
+            hasWeekSpecificRow={snapshot.weekGoalsEditor.hasWeekSpecificRow}
+            usingDefaultBackup={snapshot.weekGoalsEditor.usingDefaultBackup}
+            updatedAt={snapshot.weekGoalsEditor.weekRowUpdatedAt}
+            showDefaultBackup={false}
+          />
+        </FinancialsSection>
+      ) : null}
     </div>
   )
 }

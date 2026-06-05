@@ -1,8 +1,8 @@
 import {
-  currentFulfillmentWeekKey,
   filterLineItemsForWeek,
   filterOrdersForWeek,
   listFulfillmentWeekOptions,
+  operationalFulfillmentWeekKey,
   resolveSelectedFulfillmentWeek,
 } from "@/lib/admin/fulfillment-weeks"
 import type { FulfillmentWeekOption } from "@/lib/admin/financial-stats-types"
@@ -28,7 +28,7 @@ export async function loadAdminWeekData(
   const { orders: allOrders, lineItems: allLineItems } =
     await fetchAllAdminData()
   const weekOptions = listFulfillmentWeekOptions(allOrders)
-  const currentWeekKey = currentFulfillmentWeekKey()
+  const currentWeekKey = operationalFulfillmentWeekKey()
   const selectedWeek = resolveSelectedFulfillmentWeek(weekOptions, weekKey)
 
   return {

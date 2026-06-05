@@ -11,7 +11,9 @@ import {
 } from "@/lib/email/customer-order-update"
 import { sendEmail } from "@/lib/email/send"
 import { appendCustomerEmailLog } from "@/lib/google-sheets/customer-emails"
+import { isDeliveryOrder } from "@/lib/delivery/delivery-orders"
 import { findOrderByInternalRef } from "@/lib/google-sheets/orders"
+import { isPickupOrder } from "@/lib/pickup/pickup-orders"
 
 function buildEmailContent(
   type: CustomerEmailType,
@@ -65,17 +67,14 @@ export async function sendCustomerOrderEmail(
     return { ok: false, error: validationError }
   }
 
-  if (input.type === "ready_pickup" && order.fulfillmentMethod !== "pickup") {
+  if (input.type === "ready_pickup" && !isPickupOrder(order)) {
     return {
       ok: false,
       error: "Ready for Pickup is only for pickup orders.",
     }
   }
 
-  if (
-    input.type === "out_for_delivery" &&
-    order.fulfillmentMethod !== "delivery"
-  ) {
+  if (input.type === "out_for_delivery" && !isDeliveryOrder(order)) {
     return {
       ok: false,
       error: "Out for Delivery is only for delivery orders.",

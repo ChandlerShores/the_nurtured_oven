@@ -4,6 +4,7 @@ import AdminOrderCustomerEmail from "@/components/admin/AdminOrderCustomerEmail"
 import StatusPill from "@/components/admin/ui/StatusPill"
 import SectionHeader from "@/components/admin/ui/SectionHeader"
 import DashboardCard from "@/components/admin/ui/DashboardCard"
+import AdminPortalSection from "@/components/admin/ui/AdminPortalSection"
 import { adminBtnSecondary } from "@/components/admin/ui/admin-button"
 import { fetchCustomerEmailsForOrder } from "@/lib/google-sheets/customer-emails"
 import { findOrderByInternalRef } from "@/lib/google-sheets/orders"
@@ -44,14 +45,16 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
             href="/admin/orders"
             className={adminBtnSecondary}
           >
-            ← All orders
+            ← Orders
           </Link>
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
-        <DashboardCard title="Order details">
-          <dl className="space-y-3 text-sm">
+      <div className="pb-4">
+        <AdminPortalSection first collapsible={false} title="Summary">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <DashboardCard title="Details">
+              <dl className="space-y-3 text-sm">
             <div>
               <dt className="text-caption text-xs uppercase tracking-wide">Email</dt>
               <dd className="text-charcoal mt-0.5">{order.customerEmail || "—"}</dd>
@@ -87,14 +90,24 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
                 <dd className="text-charcoal mt-0.5">{order.dietary}</dd>
               </div>
             ) : null}
-          </dl>
-        </DashboardCard>
-      </div>
+            {order.message.trim() ? (
+              <div>
+                <dt className="text-caption text-xs uppercase tracking-wide">Note</dt>
+                <dd className="text-charcoal mt-0.5">{order.message.trim()}</dd>
+              </div>
+            ) : null}
+              </dl>
+            </DashboardCard>
+          </div>
+        </AdminPortalSection>
 
-      <AdminOrderCustomerEmail
-        order={order}
-        initialHistory={emailHistory}
-      />
+        <AdminPortalSection title="Email" collapsible={false}>
+          <AdminOrderCustomerEmail
+            order={order}
+            initialHistory={emailHistory}
+          />
+        </AdminPortalSection>
+      </div>
     </>
   )
 }

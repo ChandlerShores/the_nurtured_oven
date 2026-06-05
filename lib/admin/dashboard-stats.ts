@@ -1,4 +1,8 @@
-import { ORDER_STATUS_OPTIONS } from "@/lib/admin/order-status"
+import {
+  isTerminalOrderStatus,
+  normalizeOrderStatus,
+  ORDER_STATUS_OPTIONS,
+} from "@/lib/admin/order-status"
 import { getOrderDisplayStatus } from "@/lib/admin/order-filters"
 import type { OrderStatus } from "@/lib/admin/order-status"
 import { parseMoneyToCents } from "@/lib/admin/money"
@@ -11,14 +15,6 @@ import type { AdminOrderLineRow, AdminOrderRow } from "@/lib/google-sheets/order
 import { formatPrepDayLabel } from "@/lib/admin/prep-deadline"
 
 export type { ItemQuantity } from "@/lib/admin/production-aggregate"
-
-const CLOSED_STATUSES = new Set([
-  "Complete",
-  "Delivered / Picked Up",
-  "Delivered",
-  "Refunded",
-  "Cancelled",
-])
 
 const EXCLUDED_REVENUE_STATUSES = new Set(["Refunded", "Cancelled"])
 
@@ -33,12 +29,6 @@ function countsForRevenue(order: AdminOrderRow): boolean {
   return !EXCLUDED_REVENUE_STATUSES.has(status)
 }
 
-export interface CustomerDietaryNote {
-  customerName: string
-  note: string
-  fulfillmentMethod: "pickup" | "delivery" | "other"
-}
-
 export interface DashboardStats {
   batchLabel: string
   fulfillmentDate: string
@@ -50,14 +40,17 @@ export interface DashboardStats {
   deliveryCount: number
   openCount: number
   statusCounts: Record<string, number>
-  topItems: ItemQuantity[]
-  productionList: ItemQuantity[]
   recentOrders: AdminOrderRow[]
   newOrders: number
-  deliveriesStillOut: number
+  /** Paid delivery orders not yet Delivered / Picked Up. */
+  deliveriesNotDelivered: number
+  readyPickupCount: number
+  readyDeliveryCount: number
   missingAddressCount: number
   unpaidCount: number
-  customerDietaryNotes: CustomerDietaryNote[]
+  issueCount: number
+  revenueCents: number
+  paidOrderCount: number
 }
 
 function formatRevenue(cents: number): string {
@@ -67,31 +60,6 @@ function formatRevenue(cents: number): string {
 
 function prepDayFromFulfillmentDate(fulfillmentDate: string): string {
   return formatPrepDayLabel(fulfillmentDate)
-}
-
-function normalizeFulfillmentMethod(
-  method: string
-): CustomerDietaryNote["fulfillmentMethod"] {
-  const value = method.trim().toLowerCase()
-  if (value === "pickup") return "pickup"
-  if (value === "delivery") return "delivery"
-  return "other"
-}
-
-export function buildCustomerDietaryNotes(
-  orders: AdminOrderRow[]
-): CustomerDietaryNote[] {
-  return orders
-    .filter((order) => isPaidPayment(order) && order.dietary.trim())
-    .map((order) => ({
-      customerName:
-        order.customerName.trim() ||
-        order.customerEmail.trim() ||
-        "Customer",
-      note: order.dietary.trim(),
-      fulfillmentMethod: normalizeFulfillmentMethod(order.fulfillmentMethod),
-    }))
-    .sort((a, b) => a.customerName.localeCompare(b.customerName))
 }
 
 export function buildDashboardStats(
@@ -105,9 +73,13 @@ export function buildDashboardStats(
   let deliveryCount = 0
   let openCount = 0
   let newOrders = 0
-  let deliveriesStillOut = 0
+  let deliveriesNotDelivered = 0
+  let readyPickupCount = 0
+  let readyDeliveryCount = 0
   let missingAddressCount = 0
   let unpaidCount = 0
+  let issueCount = 0
+  let paidOrderCount = 0
   const statusCounts: Record<string, number> = {}
 
   for (const status of ORDER_STATUS_OPTIONS) {
@@ -117,6 +89,7 @@ export function buildDashboardStats(
   for (const order of orders) {
     if (countsForRevenue(order)) {
       revenueCents += parseMoneyToCents(order.amount)
+      paidOrderCount += 1
     }
 
     const method = order.fulfillmentMethod.trim().toLowerCase()
@@ -128,30 +101,24 @@ export function buildDashboardStats(
       }
     }
 
-    const status = order.orderStatus.trim() || "New"
+    const status = normalizeOrderStatus(order.orderStatus)
     statusCounts[status] = (statusCounts[status] ?? 0) + 1
-    if (!CLOSED_STATUSES.has(status)) openCount += 1
+    if (!isTerminalOrderStatus(status)) openCount += 1
     if (status === "New") newOrders += 1
-    if (
-      method === "delivery" &&
-      status !== "Delivered / Picked Up" &&
-      status !== "Delivered" &&
-      status !== "Complete"
-    ) {
-      deliveriesStillOut += 1
+    if (status === "Issue") issueCount += 1
+    if (method === "pickup" && status === "Ready") readyPickupCount += 1
+    if (method === "delivery") {
+      if (status === "Ready") readyDeliveryCount += 1
+      if (!isTerminalOrderStatus(status)) deliveriesNotDelivered += 1
     }
     if (!isPaidPayment(order)) unpaidCount += 1
   }
 
-  const productionList = buildProductionList(orders, lineItems)
-  const itemsToBake = totalBakeQuantity(productionList)
-  const topItems = productionList.slice(0, 6)
+  const itemsToBake = totalBakeQuantity(buildProductionList(orders, lineItems))
 
   const recentOrders = [...orders]
     .sort((a, b) => (b.orderedAt ?? "").localeCompare(a.orderedAt ?? ""))
-    .slice(0, 8)
-
-  const customerDietaryNotes = buildCustomerDietaryNotes(orders)
+    .slice(0, 5)
 
   return {
     batchLabel,
@@ -164,14 +131,16 @@ export function buildDashboardStats(
     deliveryCount,
     openCount,
     statusCounts,
-    topItems,
-    productionList,
     recentOrders,
     newOrders,
-    deliveriesStillOut,
+    deliveriesNotDelivered,
+    readyPickupCount,
+    readyDeliveryCount,
     missingAddressCount,
     unpaidCount,
-    customerDietaryNotes,
+    issueCount,
+    revenueCents,
+    paidOrderCount,
   }
 }
 

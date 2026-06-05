@@ -129,7 +129,7 @@ export function totalBakeQuantity(productionList: ItemQuantity[]): number {
 }
 
 /** Paid delivery stops still on the route (not yet delivered). */
-export function filterDeliveryPackingOrders(
+export function filterActiveDeliveryOrders(
   orders: AdminOrderRow[]
 ): AdminOrderRow[] {
   return orders.filter(
@@ -140,17 +140,17 @@ export function filterDeliveryPackingOrders(
   )
 }
 
-/** Item totals to pack for active paid delivery stops this week. */
-export function buildDeliveryPackingList(
+/** Item totals for active paid delivery stops this week. */
+export function buildDeliveryItemTotals(
   orders: AdminOrderRow[],
   lineItems: AdminOrderLineRow[]
 ): ItemQuantity[] {
-  const packingOrders = filterDeliveryPackingOrders(orders)
+  const activeOrders = filterActiveDeliveryOrders(orders)
   const refs = new Set(
-    packingOrders.map((order) => order.internalRef).filter(Boolean)
+    activeOrders.map((order) => order.internalRef).filter(Boolean)
   )
-  const packingLines = lineItems.filter(
+  const activeLines = lineItems.filter(
     (line) => line.internalRef && refs.has(line.internalRef)
   )
-  return buildProductionList(packingOrders, packingLines)
+  return buildProductionList(activeOrders, activeLines)
 }

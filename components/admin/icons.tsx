@@ -64,6 +64,15 @@ export function IconDelivery(props: IconProps) {
   )
 }
 
+export function IconMessages(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M4 6h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3v-3H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
+      <path d="M8 11h8M8 14h5" />
+    </svg>
+  )
+}
+
 export function IconMenu(props: IconProps) {
   return (
     <svg {...base} {...props}>

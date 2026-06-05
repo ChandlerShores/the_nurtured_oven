@@ -3,7 +3,7 @@ import assert from "node:assert/strict"
 import {
   aggregateProductionFromLineItems,
   aggregateProductionFromOrderHeaders,
-  buildDeliveryPackingList,
+  buildDeliveryItemTotals,
   buildProductionList,
   totalBakeQuantity,
 } from "@/lib/admin/production-aggregate"
@@ -153,7 +153,7 @@ describe("aggregateProductionFromOrderHeaders", () => {
   })
 })
 
-describe("buildDeliveryPackingList", () => {
+describe("buildDeliveryItemTotals", () => {
   it("totals items for active paid delivery stops only", () => {
     const orders: AdminOrderRow[] = [
       {
@@ -235,7 +235,7 @@ describe("buildDeliveryPackingList", () => {
       line({ internalRef: "done-1", slug: "bar", name: "Bar", quantity: 5 }),
     ]
 
-    const list = buildDeliveryPackingList(orders, lineItems)
+    const list = buildDeliveryItemTotals(orders, lineItems)
     assert.deepEqual(list, [{ name: "Cookie", qty: 2 }])
     assert.equal(totalBakeQuantity(list), 2)
   })

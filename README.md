@@ -1,6 +1,6 @@
 # The Nurtured Oven
 
-Next.js 14 bakery site for weekly preorder sales, Square checkout, gift/general inquiries, and a password-protected admin portal for orders, production, deliveries, menu editing, customer emails, and financials.
+Next.js 14 bakery site for weekly preorder sales, Square checkout, gift/general inquiries, and a password-protected admin portal for orders, deliveries, menu editing, customer emails, and financials.
 
 The app uses Google Sheets as the system of record, Square for payment, Resend for email, and Redis for production-grade idempotency/rate limiting. There is no database in this repo.
 
@@ -37,7 +37,7 @@ pnpm env:check
 | `pnpm sheets:seed-financials` | Seed Product Costs and Weekly Expenses tabs |
 | `pnpm sheets:append-menu` | Append one Menu row |
 | `pnpm email:preview` | Preview transactional email HTML |
-| `pnpm playbook:export` | Export playbook content |
+| `pnpm screenshots` | Full-page PNGs into `SCREENSHOTS/` |
 
 On OneDrive, if `pnpm build` fails with an `.next` `EINVAL readlink` error, delete `.next` and rebuild.
 
@@ -82,7 +82,7 @@ Checkout prices come from the same server-side catalog built from the current me
 - Requires `ADMIN_PASSWORD`
 - Strongly recommended: `ADMIN_SESSION_SECRET`
 
-The admin portal manages weekly orders, status updates, customer emails, production quantities, deliveries, menu rows/images, financial costs, weekly expenses, and settings reminders.
+The admin portal manages weekly orders, status updates, customer emails, deliveries, menu rows/images, financial costs, weekly expenses, and admin notes.
 
 ## Documentation
 

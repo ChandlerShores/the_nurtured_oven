@@ -9,6 +9,7 @@ import {
   type ProductCostRow,
 } from "@/lib/google-sheets/product-costs"
 import { fetchAllWeeklyExpensesFromSheet } from "@/lib/google-sheets/weekly-expenses"
+import { fetchAllWeeklyGoalsFromSheet } from "@/lib/google-sheets/weekly-goals"
 
 function mergeMenuWithProductCosts(
   costs: ProductCostRow[],
@@ -45,9 +46,10 @@ export default async function AdminFinancialsPage({ searchParams }: PageProps) {
   let data: ReturnType<typeof buildFinancialDashboardPayload> | null = null
 
   try {
-    const [orders, lineItems] = await Promise.all([
+    const [orders, lineItems, weeklyGoalRows] = await Promise.all([
       fetchAllOrdersFromSheet(),
       fetchAllOrderLineItemsFromSheet(),
+      fetchAllWeeklyGoalsFromSheet(),
     ])
 
     let productCosts: ProductCostRow[] = []
@@ -80,7 +82,8 @@ export default async function AdminFinancialsPage({ searchParams }: PageProps) {
       lineItems,
       mergedCosts,
       expenses,
-      weekKey || undefined
+      weekKey || undefined,
+      weeklyGoalRows
     )
   } catch (err) {
     loadError =
@@ -91,10 +94,7 @@ export default async function AdminFinancialsPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <SectionHeader
-        title="Financials"
-        subtitle="How did this bake week perform? Estimates from paid orders, product costs, and weekly expenses."
-      />
+      <SectionHeader title="Financials" />
 
       {loadWarnings.length > 0 ? (
         <ul className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-soft px-4 py-3 mb-4 list-disc list-inside space-y-1">

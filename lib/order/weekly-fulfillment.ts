@@ -32,7 +32,7 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0")
 }
 
-function formatYmd(year: number, month: number, day: number): string {
+export function formatYmd(year: number, month: number, day: number): string {
   return `${year}-${pad2(month)}-${pad2(day)}`
 }
 

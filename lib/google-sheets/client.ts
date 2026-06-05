@@ -7,6 +7,7 @@ export const DEFAULT_LINE_ITEMS_RANGE = "Order Line Items!A:M"
 export const DEFAULT_CUSTOMER_EMAILS_RANGE = "Customer Emails!A:J"
 export const DEFAULT_PRODUCT_COSTS_RANGE = "Product Costs!A:G"
 export const DEFAULT_WEEKLY_EXPENSES_RANGE = "Weekly Expenses!A:J"
+export const DEFAULT_WEEKLY_GOALS_RANGE = "Weekly Goals!A:E"
 
 function parseEnv(name: string): string | undefined {
   const value = process.env[name]?.trim()
@@ -30,6 +31,7 @@ export interface GoogleSheetsClient {
   customerEmailsRange: string
   productCostsRange: string
   weeklyExpensesRange: string
+  weeklyGoalsRange: string
 }
 
 export function getSheetsClient(): GoogleSheetsClient | null {
@@ -58,6 +60,9 @@ export function getSheetsClient(): GoogleSheetsClient | null {
   const weeklyExpensesRange =
     parseEnv("GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE") ??
     DEFAULT_WEEKLY_EXPENSES_RANGE
+  const weeklyGoalsRange =
+    parseEnv("GOOGLE_SHEETS_WEEKLY_GOALS_RANGE") ??
+    DEFAULT_WEEKLY_GOALS_RANGE
 
   const auth = new google.auth.JWT({
     email: clientEmail,
@@ -73,6 +78,7 @@ export function getSheetsClient(): GoogleSheetsClient | null {
     customerEmailsRange,
     productCostsRange,
     weeklyExpensesRange,
+    weeklyGoalsRange,
   }
 }
 

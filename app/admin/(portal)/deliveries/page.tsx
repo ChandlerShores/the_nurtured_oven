@@ -26,10 +26,7 @@ export default async function AdminDeliveriesPage() {
 
   return (
     <>
-      <SectionHeader
-        title="Deliveries"
-        subtitle="Friday routes and drop-off status for this week's batch"
-      />
+      <SectionHeader title="Deliveries" />
 
       {loadError ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
@@ -41,6 +38,9 @@ export default async function AdminDeliveriesPage() {
           lineItems={lineItems}
           batchLabel={batchLabel}
           fulfillmentDate={fulfillmentDate}
+          weekKey={
+            orders[0]?.fulfillmentLabel.trim() || fulfillmentDate || batchLabel
+          }
         />
       )}
     </>

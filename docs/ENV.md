@@ -29,6 +29,8 @@ pnpm env:check
 | `REDIS_URL` | Required in production for shared rate limits, webhook idempotency, and checkout/order matching across server instances. |
 | `ADMIN_PASSWORD` | Shared admin login password. Use at least 12 characters. |
 | `ADMIN_SESSION_SECRET` | Separate random session signing secret. Use at least 32 characters. |
+| `WEEKLY_REVENUE_GOAL_CENTS` | Optional fallback if the Weekly Goals sheet has no row for a bake week (e.g. `40000` for $400). |
+| `WEEKLY_ORDER_GOAL_COUNT` | Optional fallback for order-count goals (e.g. `15`). Prefer setting goals in `/admin/settings` → **Weekly goals** (writes to Sheets). |
 | `GOOGLE_SHEET_ID` | Spreadsheet ID for orders, menu, financials, and email logs. |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Google service account email. |
 | `GOOGLE_PRIVATE_KEY` | Google service account private key. |
@@ -99,6 +101,7 @@ Required setup:
 | `GOOGLE_SHEETS_CUSTOMER_EMAILS_RANGE` | `Customer Emails!A:J` | Admin customer email log |
 | `GOOGLE_SHEETS_PRODUCT_COSTS_RANGE` | `Product Costs!A:G` | Product cost estimates |
 | `GOOGLE_SHEETS_WEEKLY_EXPENSES_RANGE` | `Weekly Expenses!A:J` | Weekly expenses |
+| `GOOGLE_SHEETS_WEEKLY_GOALS_RANGE` | `Weekly Goals!A:E` | Bake-week revenue/order targets |
 | `GOOGLE_SHEETS_RANGE` | none | Legacy alias for orders range only |
 
 Important: include a `sold_out` column (column M) in the Menu tab header row, or admin saves that toggle sold-out will fail. Override with `GOOGLE_SHEETS_MENU_RANGE=Menu!A:L` only if you intentionally omit `sold_out` and do not use sold-out toggles in admin.
@@ -116,6 +119,24 @@ Optional column M:
 `sold_out`
 
 Only active rows appear publicly. Rows are sorted by `sort_order`. If Sheets is unavailable or has no active rows, the app uses `lib/content/currentMenu.ts`.
+
+### Weekly Goals
+
+Used by `/admin/settings` (Weekly goals) and goal progress on the dashboard and financials. One row per bake week (or a `default` row for any week without its own targets).
+
+| Column | Header | Example |
+|--------|--------|---------|
+| A | `fulfillment_date` | `2026-06-06` or `Friday 6/6` (or `default`) |
+| B | `revenue_goal` | `400` or `$400` |
+| C | `order_goal` | `15` |
+| D | `notes` | Optional baker note |
+| E | `updated_at` | Filled automatically when saved from admin |
+
+Seed headers (and an optional `default` starter row) with:
+
+```bash
+pnpm sheets:seed-weekly-goals
+```
 
 ### Orders
 
@@ -141,7 +162,7 @@ Server-only variables for `/admin/deliveries`:
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
-| `OPENROUTESERVICE_API_KEY` | For optimization | [openrouteservice.org](https://openrouteservice.org/dev/#/signup) — never expose client-side |
+| `OPENROUTESERVICE_API_KEY` | Delivery geocode + route optimization | [HeiGIT / openrouteservice](https://openrouteservice.org/dev/#/signup) — same key works on `api.heigit.org` ([migration](https://ask.openrouteservice.org/t/deprecating-api-openrouteservice-org-in-favour-of-api-heigit-org/7912)); never expose client-side |
 
 Routes always start and end at **549 Hopewell Park, Lexington, KY 40511** (hardcoded; no env override).
 

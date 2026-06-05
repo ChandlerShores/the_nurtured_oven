@@ -15,11 +15,18 @@ import {
 } from "@/lib/email/customer-order-update"
 import { previewCustomerOrderEmail } from "@/lib/admin/customer-order-email-preview"
 import type { CustomerEmailLogRow } from "@/lib/google-sheets/customer-emails"
+import { isDeliveryOrder } from "@/lib/delivery/delivery-orders"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
+import { isPickupOrder } from "@/lib/pickup/pickup-orders"
 
 interface AdminOrderCustomerEmailProps {
   order: AdminOrderRow
   initialHistory: CustomerEmailLogRow[]
+  /** When false, hide per-order history (e.g. Messages page shows a unified log). */
+  showHistory?: boolean
+  /** Tighter layout without card chrome (Messages page). */
+  embedded?: boolean
+  onEmailSent?: () => void
 }
 
 type SendPhase = "idle" | "sending" | "sent" | "error"
@@ -35,6 +42,9 @@ interface PreviewState {
 export default function AdminOrderCustomerEmail({
   order,
   initialHistory,
+  showHistory = true,
+  embedded = false,
+  onEmailSent,
 }: AdminOrderCustomerEmailProps) {
   const [history, setHistory] = useState(initialHistory)
   const [preview, setPreview] = useState<PreviewState | null>(null)
@@ -49,16 +59,19 @@ export default function AdminOrderCustomerEmail({
   )
   const [customOpen, setCustomOpen] = useState(false)
 
-  const isPickup = order.fulfillmentMethod === "pickup"
-  const isDelivery = order.fulfillmentMethod === "delivery"
+  const isPickup = isPickupOrder(order)
+  const isDelivery = isDeliveryOrder(order)
   const hasEmail = Boolean(order.customerEmail?.trim())
 
   const validationHint = useMemo(() => {
-    if (!hasEmail) return "Add a customer email on this order before sending."
-    const previewResult = previewCustomerOrderEmail(order, "ready_pickup")
+    if (!hasEmail) return "Add a customer email first."
+    const previewType: CustomerEmailType = isDelivery
+      ? "out_for_delivery"
+      : "ready_pickup"
+    const previewResult = previewCustomerOrderEmail(order, previewType)
     if ("error" in previewResult) return previewResult.error
     return null
-  }, [order, hasEmail])
+  }, [order, hasEmail, isDelivery])
 
   const openPreview = useCallback(
     (type: CustomerEmailType) => {
@@ -121,6 +134,7 @@ export default function AdminOrderCustomerEmail({
         )
       }
 
+      onEmailSent?.()
       setTimeout(() => setPhase("idle"), 2500)
     } catch (err) {
       setPhase("error")
@@ -128,12 +142,8 @@ export default function AdminOrderCustomerEmail({
     }
   }
 
-  return (
-    <div className="space-y-6">
-      <DashboardCard
-        title="Send customer update"
-        subtitle="Transactional emails for this paid order only"
-      >
+  const sendBody = (
+    <>
         {validationHint && phase !== "sent" ? (
           <p className="text-sm text-terracotta bg-blush/10 border border-blush/30 rounded-soft px-3 py-2 mb-4">
             {validationHint}
@@ -153,29 +163,33 @@ export default function AdminOrderCustomerEmail({
         ) : null}
 
         <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            disabled={!isPickup || !!validationHint || phase === "sending"}
-            onClick={() => openPreview("ready_pickup")}
-            className={adminBtnPrimary}
-          >
-            Ready for Pickup
-          </button>
-          <button
-            type="button"
-            disabled={!isDelivery || !!validationHint || phase === "sending"}
-            onClick={() => openPreview("out_for_delivery")}
-            className={adminBtnPrimary}
-          >
-            Out for Delivery
-          </button>
+          {isPickup ? (
+            <button
+              type="button"
+              disabled={!!validationHint || phase === "sending"}
+              onClick={() => openPreview("ready_pickup")}
+              className={adminBtnPrimary}
+            >
+              Ready for Pickup
+            </button>
+          ) : null}
+          {isDelivery ? (
+            <button
+              type="button"
+              disabled={!!validationHint || phase === "sending"}
+              onClick={() => openPreview("out_for_delivery")}
+              className={adminBtnPrimary}
+            >
+              Out for Delivery
+            </button>
+          ) : null}
           <button
             type="button"
             disabled={!!validationHint || phase === "sending"}
             onClick={() => setCustomOpen((o) => !o)}
             className={adminBtnSecondary}
           >
-            Custom Message
+            {embedded ? "Custom" : "Custom Message"}
           </button>
         </div>
 
@@ -209,48 +223,68 @@ export default function AdminOrderCustomerEmail({
               onClick={() => openPreview("custom")}
               className={adminBtnPrimary}
             >
-              Preview custom email
+              {embedded ? "Preview" : "Preview custom email"}
             </button>
           </div>
         ) : null}
 
-        <p className="text-caption text-xs mt-4">
-          Sends to {order.customerEmail || "—"} via your bakery email. Not for
-          marketing blasts.
-        </p>
-      </DashboardCard>
+        {!embedded ? (
+          <p className="text-caption text-xs mt-4">
+            To {order.customerEmail || "—"}
+          </p>
+        ) : null}
+    </>
+  )
 
-      <DashboardCard title="Email history" subtitle="Logged in Customer Emails sheet">
-        {history.length === 0 ? (
-          <EmptyState
-            title="No emails sent yet"
-            message="Updates you send from here will appear in this list."
-          />
-        ) : (
-          <ul className="space-y-3">
-            {history.map((row, index) => (
-              <li
-                key={`${row.timestamp}-${index}`}
-                className="rounded-soft border border-oatmeal/50 bg-linen/25 px-4 py-3 text-sm"
-              >
-                <div className="flex flex-wrap justify-between gap-2">
-                  <span className="font-medium text-charcoal">{row.subject}</span>
-                  <span className="text-caption text-xs">{row.timestamp}</span>
-                </div>
-                <p className="text-caption text-xs mt-1">
-                  {row.emailType} · {row.sentStatus}
-                  {row.resendMessageId ? ` · ${row.resendMessageId}` : ""}
-                </p>
-                {row.message ? (
-                  <p className="text-charcoal/80 mt-2 whitespace-pre-wrap line-clamp-4">
-                    {row.message}
+  return (
+    <div className={embedded ? "space-y-4" : "space-y-6"}>
+      {embedded ? (
+        sendBody
+      ) : (
+        <DashboardCard
+          title="Send customer update"
+          subtitle="Transactional emails for this paid order only"
+        >
+          {sendBody}
+        </DashboardCard>
+      )}
+
+      {showHistory ? (
+        <DashboardCard
+          title="Email history"
+          subtitle="Logged in Customer Emails sheet"
+        >
+          {history.length === 0 ? (
+            <EmptyState
+              title="No emails sent yet"
+              message="Updates you send from here will appear in this list."
+            />
+          ) : (
+            <ul className="space-y-3">
+              {history.map((row, index) => (
+                <li
+                  key={`${row.timestamp}-${index}`}
+                  className="rounded-soft border border-oatmeal/50 bg-linen/25 px-4 py-3 text-sm"
+                >
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <span className="font-medium text-charcoal">{row.subject}</span>
+                    <span className="text-caption text-xs">{row.timestamp}</span>
+                  </div>
+                  <p className="text-caption text-xs mt-1">
+                    {row.emailType} · {row.sentStatus}
+                    {row.resendMessageId ? ` · ${row.resendMessageId}` : ""}
                   </p>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
-      </DashboardCard>
+                  {row.message ? (
+                    <p className="text-charcoal/80 mt-2 whitespace-pre-wrap line-clamp-4">
+                      {row.message}
+                    </p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </DashboardCard>
+      ) : null}
 
       {preview ? (
         <div
@@ -264,7 +298,7 @@ export default function AdminOrderCustomerEmail({
               id="email-preview-title"
               className="font-heading text-xl text-charcoal"
             >
-              Preview email
+              {embedded ? "Preview" : "Preview email"}
             </h2>
             <p className="text-caption text-sm mt-1">
               {customerEmailTypeLabel(preview.type)} → {order.customerEmail}
@@ -280,9 +314,11 @@ export default function AdminOrderCustomerEmail({
               </pre>
             </div>
 
-            <p className="text-caption text-xs mt-4">
-              Confirm to send this one-time update for order {order.internalRef}.
-            </p>
+            {!embedded ? (
+              <p className="text-caption text-xs mt-4">
+                Sends once for {order.internalRef}.
+              </p>
+            ) : null}
 
             <div className="flex flex-col gap-2 mt-5 sm:flex-row sm:flex-wrap">
               <button
@@ -291,7 +327,7 @@ export default function AdminOrderCustomerEmail({
                 onClick={confirmSend}
                 className={`${adminBtnPrimary} w-full sm:w-auto`}
               >
-                {phase === "sending" ? "Sending…" : "Send email"}
+                {phase === "sending" ? "Sending…" : "Send"}
               </button>
               <button
                 type="button"

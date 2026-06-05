@@ -8,7 +8,6 @@ import OrderingStrip from "@/components/menu/OrderingStrip"
 import SupportingMenuItems from "@/components/menu/SupportingMenuItems"
 import OrderCTA from "@/components/menu/OrderCTA"
 import ClosedMenuCTA from "@/components/menu/ClosedMenuCTA"
-import LittleExtrasCallout from "@/components/menu/LittleExtrasCallout"
 
 export async function generateMetadata(): Promise<Metadata> {
   const menu = await getCurrentMenu()
@@ -32,9 +31,6 @@ export default async function MenuPage() {
       />
       {orderingOpen && <OrderingStrip menu={menu} />}
       <SupportingMenuItems menu={menu} orderingOpen={orderingOpen} />
-      {menu.littleExtrasCallout && (
-        <LittleExtrasCallout callout={menu.littleExtrasCallout} />
-      )}
       {orderingOpen ? (
         <OrderCTA menu={menu} />
       ) : (

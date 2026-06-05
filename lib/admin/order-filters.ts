@@ -1,5 +1,6 @@
 import {
   ORDER_STATUS_OPTIONS,
+  normalizeOrderStatus,
   type OrderStatus,
 } from "@/lib/admin/order-status"
 import type { AdminOrderRow } from "@/lib/google-sheets/orders"
@@ -25,10 +26,9 @@ export function getOrderDisplayStatus(
   order: AdminOrderRow,
   statusByRef: Record<string, OrderStatus>
 ): string {
-  const status =
-    statusByRef[adminOrderKey(order)] ??
-    (order.orderStatus.trim() || "New")
-  return status
+  const raw =
+    statusByRef[adminOrderKey(order)] ?? (order.orderStatus.trim() || "New")
+  return normalizeOrderStatus(raw)
 }
 
 export function orderPassesFilters(
@@ -133,6 +133,35 @@ export function slicerFiltersChanged(
     if (!b.fulfillment.has(v)) return true
   }
   return false
+}
+
+function orderSearchHaystack(order: AdminOrderRow): string {
+  return [
+    order.customerName,
+    order.customerEmail,
+    order.customerPhone,
+    order.itemsSummary,
+    order.internalRef,
+    order.fulfillmentMethod,
+    order.fulfillmentLabel,
+    order.deliveryAddress,
+    order.deliveryCity,
+    order.deliveryZip,
+    order.dietary,
+    order.message,
+    order.paymentStatus,
+    order.orderStatus,
+  ]
+    .join(" ")
+    .toLowerCase()
+}
+
+export function orderMatchesSearch(order: AdminOrderRow, query: string): boolean {
+  const trimmed = query.trim().toLowerCase()
+  if (!trimmed) return true
+  const haystack = orderSearchHaystack(order)
+  const tokens = trimmed.split(/\s+/).filter(Boolean)
+  return tokens.every((token) => haystack.includes(token))
 }
 
 /** Hide slicer when there is nothing meaningful to choose (0–1 distinct values). */

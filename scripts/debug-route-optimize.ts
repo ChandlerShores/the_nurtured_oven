@@ -143,7 +143,10 @@ async function main() {
     ],
   }
 
-  const res = await fetch("https://api.openrouteservice.org/optimization", {
+  const { HEIGIT_API_BASE, HEIGIT_VROOM_OPTIMIZATION_PATH } = await import(
+    "../lib/openrouteservice/heigit-api"
+  )
+  const res = await fetch(`${HEIGIT_API_BASE}${HEIGIT_VROOM_OPTIMIZATION_PATH}`, {
     method: "POST",
     headers: {
       Accept: "application/json",

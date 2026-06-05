@@ -54,6 +54,11 @@ export function parseAdminSheetOrderRef(value: unknown): string | null {
   return ref
 }
 
+/** Canonical TNO refs and legacy/manual sheet refs (e.g. seed rows). */
+export function parseAdminOrderRef(value: unknown): string | null {
+  return parseAdminInternalRef(value) ?? parseAdminSheetOrderRef(value)
+}
+
 export function parseAdminSheetRow(value: unknown): number | undefined {
   const n = typeof value === "number" ? value : Number(value)
   if (!Number.isFinite(n) || n < 2 || n > 50_000) return undefined

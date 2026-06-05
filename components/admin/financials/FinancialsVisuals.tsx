@@ -2,6 +2,7 @@
 
 import DashboardCard from "@/components/admin/ui/DashboardCard"
 import EmptyState from "@/components/admin/ui/EmptyState"
+import MetricStrip from "@/components/admin/ui/MetricStrip"
 import { formatCentsDisplay } from "@/lib/admin/money"
 import {
   expenseTotalsByCategory,
@@ -35,41 +36,35 @@ export function FinancialHero({ summary }: { summary: FinancialSummary }) {
       : null
 
   return (
-    <section className="rounded-lg border border-sage-deep/35 bg-warm-white shadow-warm p-5 sm:p-8">
-      <div className="flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-6">
-        <div className="min-w-0 flex-1">
-          <p className="text-caption text-xs uppercase tracking-wide font-semibold">
-            Estimated profit · {summary.batchLabel}
+    <div className="flex flex-col items-center gap-4 sm:gap-5 w-full pb-1 border-b border-espresso/10">
+      <div className="w-full max-w-md text-center rounded-xl border border-oatmeal/80 bg-warm-white px-6 py-6 shadow-[0_1px_2px_rgba(58,47,42,0.05),0_4px_14px_rgba(58,47,42,0.04)]">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-espresso/50">
+          Estimated profit · {summary.batchLabel}
+        </p>
+        <p className="font-heading text-3xl sm:text-4xl text-espresso tabular-nums mt-2 leading-tight">
+          {profitDisplay ?? "—"}
+        </p>
+        {!summary.hasProductCosts ? (
+          <p className="text-sm text-espresso/65 mt-3 leading-relaxed">
+            Add product costs below to see profit. Until then, use gross revenue
+            and the breakdown chart.
           </p>
-          <p className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso mt-2 tabular-nums break-words">
-            {profitDisplay ?? "—"}
-          </p>
-          {!summary.hasProductCosts ? (
-            <p className="text-sm text-espresso/80 mt-2 max-w-md">
-              Add product costs below to see profit. Until then, use gross revenue
-              and the breakdown chart.
-            </p>
-          ) : null}
-        </div>
-        <div className="grid grid-cols-2 gap-4 w-full sm:w-auto sm:gap-6 shrink-0">
-          <div>
-            <p className="text-caption text-xs uppercase tracking-wide font-semibold">Gross revenue</p>
-            <p className="font-heading text-2xl sm:text-3xl text-espresso tabular-nums mt-1">
-              {formatCentsDisplay(summary.grossRevenueCents)}
-            </p>
-          </div>
-          <div>
-            <p className="text-caption text-xs uppercase tracking-wide font-semibold">Paid orders</p>
-            <p className="font-heading text-2xl sm:text-3xl text-espresso tabular-nums mt-1">
-              {summary.paidOrderCount}
-            </p>
-            <p className="text-xs text-espresso/75 mt-1">
-              {formatCentsDisplay(summary.averageOrderValueCents)} avg
-            </p>
-          </div>
-        </div>
+        ) : null}
       </div>
-    </section>
+      <MetricStrip
+        metrics={[
+          {
+            label: "Gross revenue",
+            value: formatCentsDisplay(summary.grossRevenueCents),
+          },
+          { label: "Paid orders", value: summary.paidOrderCount },
+          {
+            label: "Avg order",
+            value: formatCentsDisplay(summary.averageOrderValueCents),
+          },
+        ]}
+      />
+    </div>
   )
 }
 
@@ -91,24 +86,22 @@ export function FinancialDetailsStrip({
     { label: "Weekly expenses", value: summary.weeklyExpensesCents },
   ]
 
+  const metrics = items.map((item) => ({
+    label: item.label,
+    value:
+      item.value != null && item.value > 0
+        ? formatCentsDisplay(item.value)
+        : item.value === 0
+          ? "$0.00"
+          : "—",
+  }))
+
   return (
-    <div className="rounded-lg border border-espresso/15 bg-warm-white px-4 py-3 text-sm text-espresso/85">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        {items.map((item) => (
-        <span key={item.label} className="block">
-          <span className="text-caption text-xs block">{item.label}</span>
-          <span className="font-semibold text-espresso tabular-nums">
-            {item.value != null && item.value > 0
-              ? formatCentsDisplay(item.value)
-              : item.value === 0
-                ? "$0.00"
-                : "—"}
-          </span>
-        </span>
-        ))}
-      </div>
-      <p className="text-caption text-xs mt-3 border-t border-espresso/10 pt-3">
-        Estimate assumptions: Square {estimateNotes.squareFeeLabel}; labor {estimateNotes.laborRateLabel}.
+    <div className="space-y-3">
+      <MetricStrip metrics={metrics} />
+      <p className="text-caption text-xs text-espresso/55 px-1">
+        Estimate assumptions: Square {estimateNotes.squareFeeLabel}; labor{" "}
+        {estimateNotes.laborRateLabel}.
       </p>
     </div>
   )
@@ -162,10 +155,7 @@ export function MoneyFlowChart({ summary }: { summary: FinancialSummary }) {
   const gross = summary.grossRevenueCents
 
   return (
-    <DashboardCard
-      title="Where the money went"
-      subtitle="Approximate share of gross revenue (profit slice may differ from hero when costs are incomplete)"
-    >
+    <DashboardCard title="Where the money went">
       {gross <= 0 ? (
         <EmptyState
           title="No revenue this week"
@@ -213,10 +203,7 @@ export function WeekRevenueTrendChart({
   const max = maxTrendRevenue(trend)
 
   return (
-    <DashboardCard
-      title="Revenue by bake week"
-      subtitle="Gross from paid orders · click a bar to switch weeks"
-    >
+    <DashboardCard title="Revenue by bake week">
       {trend.length === 0 ? (
         <EmptyState title="No history yet" message="Trend appears as you take orders." />
       ) : (
@@ -340,7 +327,7 @@ export function ProductMixChart({ rows }: { rows: ProductProfitRow[] }) {
   }))
 
   return (
-    <DashboardCard title="Sales mix" subtitle="Revenue by item this week">
+    <DashboardCard title="Sales mix">
       {top.length === 0 ? (
         <EmptyState title="No item sales" message="Line items show up on paid orders." />
       ) : (
@@ -397,7 +384,7 @@ export function ExpenseCategoryChart({
   const total = categories.reduce((s, c) => s + c.cents, 0)
 
   return (
-    <DashboardCard title="Expenses by category" subtitle="This bake week only">
+    <DashboardCard title="Expenses by category">
       {categories.length === 0 ? (
         <EmptyState
           title="No expenses logged"
