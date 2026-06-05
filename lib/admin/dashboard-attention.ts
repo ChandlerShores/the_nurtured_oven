@@ -80,7 +80,7 @@ function newOrdersPriority(
 function calmMessageForPhase(
   stats: DashboardStats,
   phase: DashboardWeekPhase
-): string {
+): string | null {
   switch (phase) {
     case "ordering_open":
       if (stats.newOrders > 0) {

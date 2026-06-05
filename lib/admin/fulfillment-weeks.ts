@@ -1,8 +1,6 @@
 import type { FulfillmentWeekOption } from "@/lib/admin/financial-stats-types"
 import {
-  fulfillmentDateFromWeekKey,
   fulfillmentWeekKeysMatch,
-  isViewingPriorBakeWeek,
   matchesFulfillmentWeek,
   weekMetaFromLabel,
 } from "@/lib/admin/fulfillment-label-match"

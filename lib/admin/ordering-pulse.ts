@@ -10,7 +10,6 @@ import {
   easternNoonToIso,
   formatBatchLabel,
   getCutoffWednesdayYmd,
-  getEasternYmdHm,
   getFulfillmentFridayYmd,
   getWeeklyFulfillmentContext,
 } from "@/lib/order/weekly-fulfillment"
@@ -194,7 +193,6 @@ export function buildOrderingPulseStats(
 }
 
 export function orderingPulseHeadline(pulse: OrderingPulseStats): string {
-  const eastern = getEasternYmdHm()
   const compare =
     pulse.ordersPriorWindowSameElapsed != null
       ? ` · ${pulse.ordersThisWindow} now vs ${pulse.ordersPriorWindowSameElapsed} last week`

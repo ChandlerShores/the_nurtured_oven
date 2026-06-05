@@ -4,7 +4,7 @@ export interface MetricDefinition {
   hint?: string
 }
 
-interface MetricCardProps extends MetricDefinition {}
+type MetricCardProps = MetricDefinition
 
 export default function MetricCard({ label, value, hint }: MetricCardProps) {
   return (

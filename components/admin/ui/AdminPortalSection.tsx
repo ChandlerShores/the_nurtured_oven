@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useId, useState, type ReactNode } from "react"
 
 /** In-page anchor for Financials weekly goals editor. */
 export const FINANCIALS_WEEKLY_GOALS_SECTION_ID = "weekly-goals"
@@ -63,10 +63,13 @@ export default function AdminPortalSection({
   const isControlled = controlledOpen !== undefined
   const open = isControlled ? controlledOpen : uncontrolledOpen
 
-  function setOpen(next: boolean) {
-    if (!isControlled) setUncontrolledOpen(next)
-    onOpenChange?.(next)
-  }
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (!isControlled) setUncontrolledOpen(next)
+      onOpenChange?.(next)
+    },
+    [isControlled, onOpenChange]
+  )
 
   useEffect(() => {
     if (!collapsible || typeof window === "undefined") return
@@ -79,7 +82,7 @@ export default function AdminPortalSection({
     expandIfHashMatches()
     window.addEventListener("hashchange", expandIfHashMatches)
     return () => window.removeEventListener("hashchange", expandIfHashMatches)
-  }, [collapsible, sectionId])
+  }, [collapsible, sectionId, setOpen])
 
   const sectionClass = `scroll-mt-24 ${
     first

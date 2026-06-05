@@ -137,7 +137,11 @@ export default function AdminMessagesComposer({
             className="absolute z-20 left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-soft border border-espresso/15 bg-warm-white shadow-warm divide-y divide-espresso/10"
           >
             {suggestions.map((order) => (
-              <li key={order.internalRef} role="option">
+              <li
+                key={order.internalRef}
+                role="option"
+                aria-selected={selectedRef === order.internalRef}
+              >
                 <button
                   type="button"
                   className={`w-full text-left px-4 py-3 text-sm font-body hover:bg-linen transition-colors ${

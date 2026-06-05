@@ -6,7 +6,6 @@ import type { DashboardStats } from "@/lib/admin/dashboard-stats"
 import {
   formatPrepDeadlineDisplay,
   getFulfillmentDayPhase,
-  getPrepUrgency,
 } from "@/lib/admin/prep-deadline"
 
 function baseStats(overrides: Partial<DashboardStats> = {}): DashboardStats {
