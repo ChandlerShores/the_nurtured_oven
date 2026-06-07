@@ -43,7 +43,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/pickup", label: "Pickup", icon: IconPickup },
       { href: "/admin/deliveries", label: "Deliveries", icon: IconDelivery },
       { href: "/admin/messages", label: "Messages", icon: IconMessages },
-      { href: "/admin/docs", label: "Docs", icon: IconDocs },
     ],
   },
   {
@@ -56,6 +55,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Admin",
     items: [
+      { href: "/admin/docs", label: "Docs", icon: IconDocs },
       { href: "/admin/settings", label: "Admin", icon: IconSettings },
     ],
   },
