@@ -7,9 +7,13 @@ import { siteConfig } from "@/lib/content/site"
 
 interface ThisWeekMenuSpotlightProps {
   menu: CurrentMenu
+  orderingOpen: boolean
 }
 
-export default function ThisWeekMenuSpotlight({ menu }: ThisWeekMenuSpotlightProps) {
+export default function ThisWeekMenuSpotlight({
+  menu,
+  orderingOpen,
+}: ThisWeekMenuSpotlightProps) {
   const { cutoffText } = menu
   const homepageItems = getHomepageDropItems(menu)
 
@@ -30,9 +34,15 @@ export default function ThisWeekMenuSpotlight({ menu }: ThisWeekMenuSpotlightPro
         <WeeklyDropCards items={homepageItems} />
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button href="/contact?intent=weekly-order" size="lg">
-            {siteConfig.orderCta}
-          </Button>
+          {orderingOpen ? (
+            <Button href="/contact?intent=weekly-order" size="lg">
+              {siteConfig.orderCta}
+            </Button>
+          ) : (
+            <Button href="/contact?intent=reminder" size="lg">
+              Get next menu reminder
+            </Button>
+          )}
           <Button href="/menu" variant="outline" size="lg">
             See the full menu
           </Button>

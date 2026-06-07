@@ -1,11 +1,20 @@
 import Image from "next/image"
+import { buildHeroCopy } from "@/lib/content/hero-copy"
 import type { FeaturedMenuProduct } from "@/lib/content/menu-types"
 
 interface HeroProps {
   featured: FeaturedMenuProduct
+  orderingOpen: boolean
+  closedMessage: string
 }
 
-export default function Hero({ featured }: HeroProps) {
+export default function Hero({
+  featured,
+  orderingOpen,
+  closedMessage,
+}: HeroProps) {
+  const copy = buildHeroCopy(featured, orderingOpen, closedMessage)
+
   return (
     <section className="relative min-h-[70vh] sm:min-h-[64vh] flex items-center">
       <div className="absolute inset-0 overflow-hidden">
@@ -30,15 +39,14 @@ export default function Hero({ featured }: HeroProps) {
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 w-full py-16 sm:py-20">
         <div className="max-w-xl">
           <p className="font-accent text-cream/95 text-lg sm:text-xl mb-3">
-            fresh from the oven
+            {copy.eyebrow}
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-cream leading-snug tracking-wide">
-            {featured.name} are open for preorder.
+            {copy.headline}
           </h1>
 
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body mt-5">
-            Order by Wednesday at noon for Friday pickup or delivery.{" "}
-            {featured.description}
+            {copy.body}
           </p>
         </div>
       </div>
