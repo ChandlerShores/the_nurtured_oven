@@ -55,8 +55,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: "Admin",
     items: [
-      { href: "/admin/docs", label: "Docs", icon: IconDocs },
       { href: "/admin/settings", label: "Admin", icon: IconSettings },
+      { href: "/admin/docs", label: "Docs", icon: IconDocs },
     ],
   },
 ]
