@@ -5,17 +5,13 @@ import WildFlowerFundBanner from "@/components/home/WildFlowerFundBanner"
 import FounderPreview from "@/components/home/FounderPreview"
 import FinalCta from "@/components/home/FinalCta"
 import { getCurrentMenu } from "@/lib/content/load-menu"
-import {
-  getDisabledOrderMessageAsync,
-  isMenuOpenAsync,
-} from "@/lib/menu/ordering"
+import { getOrderingPublicStateAsync } from "@/lib/menu/ordering-gate"
 
 export default async function HomePage() {
   const menu = await getCurrentMenu()
-  const orderingOpen = await isMenuOpenAsync()
-  const closedMessage = orderingOpen
-    ? ""
-    : await getDisabledOrderMessageAsync()
+  const ordering = await getOrderingPublicStateAsync()
+  const orderingOpen = ordering.isOpen
+  const closedMessage = ordering.closedMessage
 
   return (
     <>
@@ -23,12 +19,17 @@ export default async function HomePage() {
         featured={menu.featured}
         orderingOpen={orderingOpen}
         closedMessage={closedMessage}
+        comingSoon={ordering.comingSoon}
       />
-      <ThisWeekMenuSpotlight menu={menu} orderingOpen={orderingOpen} />
+      <ThisWeekMenuSpotlight
+        menu={menu}
+        orderingOpen={orderingOpen}
+        comingSoon={ordering.comingSoon}
+      />
       <HowItWorks />
       <FounderPreview />
       <WildFlowerFundBanner />
-      <FinalCta orderingOpen={orderingOpen} />
+      <FinalCta orderingOpen={orderingOpen} comingSoon={ordering.comingSoon} />
     </>
   )
 }

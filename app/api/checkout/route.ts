@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { validateDeliveryCheckoutAddress, normalizeDeliveryZip } from "@/lib/delivery/address-validation"
 import { isDeliveryCity } from "@/lib/content/fulfillment"
 import { getDisabledOrderMessageAsync, isMenuOpenAsync } from "@/lib/menu/ordering"
+import { getCheckoutBlockedMessage } from "@/lib/order/checkout-availability"
 import { getWeeklyCatalog } from "@/lib/order/catalog"
 import {
   clampString,
@@ -23,6 +24,14 @@ const MAX_CART_QUANTITY = 40
 
 export async function POST(req: NextRequest) {
   try {
+    const checkoutBlockedMessage = getCheckoutBlockedMessage()
+    if (checkoutBlockedMessage) {
+      return NextResponse.json(
+        { error: checkoutBlockedMessage },
+        { status: 403 }
+      )
+    }
+
     const rateKey = `checkout:${getClientIpFromRequest(req)}`
     const limit = await consumeRateLimitAsync(rateKey, CHECKOUT_LIMIT)
     if (!limit.allowed) {

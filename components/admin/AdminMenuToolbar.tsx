@@ -51,7 +51,7 @@ export default function AdminMenuToolbar({
   const hasQuery = searchQuery.trim().length > 0
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-5" data-sop="admin-menu-toolbar">
         <MetricStrip
           className="mb-1"
           metrics={[
@@ -64,13 +64,19 @@ export default function AdminMenuToolbar({
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-5 sm:pt-6 border-t border-espresso/10">
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-            <button type="button" onClick={onAddItem} className={`${adminBtnPrimary} w-full sm:w-auto`}>
+            <button
+              type="button"
+              onClick={onAddItem}
+              data-sop="menu-item-add"
+              className={`${adminBtnPrimary} w-full sm:w-auto`}
+            >
               Add item
             </button>
             <button
               type="button"
               onClick={onRefresh}
               disabled={refreshing}
+              data-sop="admin-menu-refresh"
               className={`${adminBtnSecondary} w-full sm:w-auto`}
             >
               {refreshing ? "Refreshing…" : "Refresh"}
@@ -104,6 +110,7 @@ export default function AdminMenuToolbar({
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   placeholder="Search…"
+                  data-sop="admin-menu-search"
                   className="w-full rounded-md border border-espresso/15 bg-cream/50 pl-3 pr-16 py-2 text-sm text-espresso placeholder:text-espresso/40 focus:outline-none focus:ring-2 focus:ring-sage-deep/30 focus:border-sage-deep/40"
                   aria-label="Search menu items"
                 />
@@ -148,6 +155,7 @@ export default function AdminMenuToolbar({
                     key={id}
                     type="button"
                     onClick={() => onScopeChange(id)}
+                    data-sop={`admin-menu-filter-${id}`}
                     aria-pressed={selected}
                     aria-label={label}
                     title={label}

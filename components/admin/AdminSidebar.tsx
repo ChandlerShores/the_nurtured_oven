@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import {
   IconDashboard,
   IconDelivery,
+  IconDocs,
   IconFinancials,
   IconMenu,
   IconMessages,
@@ -42,6 +43,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/pickup", label: "Pickup", icon: IconPickup },
       { href: "/admin/deliveries", label: "Deliveries", icon: IconDelivery },
       { href: "/admin/messages", label: "Messages", icon: IconMessages },
+      { href: "/admin/docs", label: "Docs", icon: IconDocs },
     ],
   },
   {
@@ -121,6 +123,7 @@ export default function AdminSidebar({
                   key={href}
                   href={href}
                   onClick={onNavigate}
+                  data-sop={`admin-nav-${label.toLowerCase().replaceAll(" ", "-")}`}
                   className={`flex items-center gap-3 rounded-soft px-3 py-3 min-h-[44px] text-sm font-body transition-colors touch-manipulation ${
                     active
                       ? "bg-espresso text-cream shadow-gentle"

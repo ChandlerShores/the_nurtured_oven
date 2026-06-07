@@ -68,12 +68,13 @@ Full variable list: [ENV.md](./ENV.md).
 
 1. Confirm the target branch and Vercel deployment tier.
 2. Confirm `pnpm env:check` reports the expected tier and Square mode.
-3. Confirm `/menu` shows the intended current menu.
-4. Confirm `/contact?intent=weekly-order` can start checkout when ordering is open.
-5. Confirm `/admin/login` accepts the production admin password.
-6. Confirm `/admin/orders`, `/admin/menu`, and `/admin/financials` load from Sheets.
-7. Confirm Square webhook delivery after a test payment.
-8. Confirm owner/customer paid-order emails.
+3. Confirm `COMING_SOON_MODE` is unset/false for live ordering, or `true` for launch mode.
+4. Confirm `/menu` shows the intended current menu.
+5. Confirm `/contact?intent=weekly-order` can start checkout when ordering is open.
+6. Confirm `/admin/login` accepts the production admin password.
+7. Confirm `/admin/orders`, `/admin/menu`, and `/admin/financials` load from Sheets.
+8. Confirm Square webhook delivery after a test payment.
+9. Confirm owner/customer paid-order emails.
 
 ## Rollback
 
@@ -87,6 +88,14 @@ For operational configuration mistakes:
 - Admin lockout: verify `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, and Vercel deployment tier.
 
 ## Emergency Ordering Close
+
+For pre-launch, use coming-soon mode:
+
+```text
+COMING_SOON_MODE=true
+```
+
+This keeps the public site polished and visible while blocking checkout.
 
 Set this in the relevant Vercel environment:
 

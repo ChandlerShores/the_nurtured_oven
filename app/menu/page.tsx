@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "./menu-curate.css"
 import { getCurrentMenu } from "@/lib/content/load-menu"
-import { isMenuOpenAsync } from "@/lib/menu/ordering"
+import { getOrderingPublicStateAsync } from "@/lib/menu/ordering-gate"
 import MenuHero from "@/components/menu/MenuHero"
 import FeaturedProduct from "@/components/menu/FeaturedProduct"
 import OrderingStrip from "@/components/menu/OrderingStrip"
@@ -20,11 +20,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function MenuPage() {
   const menu = await getCurrentMenu()
-  const orderingOpen = await isMenuOpenAsync()
+  const ordering = await getOrderingPublicStateAsync()
+  const orderingOpen = ordering.isOpen
 
   return (
-    <div className="bg-cream">
-      <MenuHero menu={menu} />
+    <div className="bg-cream" data-sop="public-menu-page">
+      <MenuHero menu={menu} comingSoon={ordering.comingSoon} />
       <FeaturedProduct
         product={menu.featured}
         orderingOpen={orderingOpen}
@@ -34,7 +35,7 @@ export default async function MenuPage() {
       {orderingOpen ? (
         <OrderCTA menu={menu} />
       ) : (
-        <ClosedMenuCTA menu={menu} />
+        <ClosedMenuCTA menu={menu} comingSoon={ordering.comingSoon} />
       )}
     </div>
   )

@@ -1,0 +1,192 @@
+import type { SopWorkflow } from "../types"
+
+export const updateWeeklyMenuWorkflow: SopWorkflow = {
+  slug: "update-weekly-menu",
+  title: "Update weekly menu",
+  ownerFacingTitle: "How to update this week's menu",
+  purpose:
+    "Help Kori update the bakes customers can see and order for the current week.",
+  whenToUse: [
+    "Use this when the weekly bake lineup changes.",
+    "Use this when a menu item needs a new name, description, price, photo, or display status.",
+    "Use this before opening ordering for a new weekly drop.",
+  ],
+  prerequisites: [
+    "Kori can log in to the admin area.",
+    "The new menu details are ready.",
+    "Any new item photo is saved on the computer.",
+  ],
+  steps: [
+    {
+      id: "open-admin-dashboard",
+      title: "Open the admin area",
+      ownerInstruction:
+        "Open the admin area. Start here when you want to make changes to the bakery website.",
+      route: "adminDashboard",
+      dataSop: "admin-dashboard-page",
+      highlightDataSop: "admin-dashboard-page",
+      captureMode: "viewport",
+      screenshotName: "01-admin-dashboard.png",
+      expectedResult: "You can see the baker portal.",
+    },
+    {
+      id: "open-menu-area",
+      title: "Go to Menu",
+      ownerInstruction:
+        "Click Menu in the admin area. This is where you control what customers can see and order this week.",
+      route: "adminDashboard",
+      dataSop: "admin-nav-menu",
+      highlightDataSop: "admin-nav-menu",
+      captureMode: "viewport",
+      screenshotName: "02-open-menu-area.png",
+      expectedResult: "The Menu page opens.",
+    },
+    {
+      id: "review-menu-page",
+      title: "Review the menu page",
+      ownerInstruction:
+        "Check the Live section first. These are the items customers can see on the website.",
+      route: "adminMenu",
+      dataSop: "admin-menu-page",
+      highlightDataSop: "admin-menu-live-section",
+      captureMode: "element-with-context",
+      screenshotName: "03-review-live-menu.png",
+      expectedResult: "You can see the current live menu items.",
+    },
+    {
+      id: "find-menu-item",
+      title: "Find the item",
+      ownerInstruction:
+        "Find the item you want to update. If you do not see it, check the Hidden section or use Search.",
+      route: "adminMenu",
+      dataSop: "menu-item-card",
+      highlightDataSop: "menu-item-card",
+      captureMode: "element-with-context",
+      screenshotName: "04-find-menu-item.png",
+      expectedResult: "The item you want to change is visible.",
+    },
+    {
+      id: "open-editor",
+      title: "Open the item editor",
+      ownerInstruction:
+        "Click Edit on the item. This opens the place where you can update the details.",
+      route: "adminMenu",
+      dataSop: "menu-item-edit",
+      highlightDataSop: "menu-item-edit",
+      captureMode: "element-with-context",
+      screenshotName: "05-open-item-editor.png",
+      expectedResult: "The item editor opens from the side of the screen.",
+    },
+    {
+      id: "update-main-details",
+      title: "Update the main details",
+      ownerInstruction:
+        "Update the name, description, price, and any helpful notes. Keep the wording short and clear for customers.",
+      route: "adminMenu",
+      dataSop: "menu-item-editor",
+      highlightDataSop: "menu-item-name",
+      captureMode: "element-with-context",
+      screenshotName: "06-update-main-details.png",
+      expectedResult: "The item details match what customers should see.",
+    },
+    {
+      id: "set-live-and-featured",
+      title: "Choose what is live or featured",
+      ownerInstruction:
+        "Check Live if customers should see this item. Check Featured if this should be the main item on the home page.",
+      route: "adminMenu",
+      dataSop: "menu-item-active-toggle",
+      highlightDataSop: "menu-item-active-toggle",
+      captureMode: "element-with-context",
+      screenshotName: "07-set-live-featured.png",
+      expectedResult: "The item is set to show or hide the way you want.",
+    },
+    {
+      id: "update-photo",
+      title: "Update the photo if needed",
+      ownerInstruction:
+        "Add a new photo if this item needs one. A clear photo helps customers know what they are ordering.",
+      route: "adminMenu",
+      dataSop: "menu-item-image",
+      highlightDataSop: "menu-item-image",
+      captureMode: "element-with-context",
+      screenshotName: "08-update-photo.png",
+      expectedResult: "The preview shows the photo you want customers to see.",
+    },
+    {
+      id: "save-item",
+      title: "Save the item",
+      ownerInstruction:
+        "Click Save. Wait for the editor to close before moving on.",
+      route: "adminMenu",
+      dataSop: "menu-item-save",
+      highlightDataSop: "menu-item-save",
+      captureMode: "element-with-context",
+      screenshotName: "09-save-item.png",
+      expectedResult: "The Menu page shows the updated item.",
+    },
+    {
+      id: "mark-sold-out-if-needed",
+      title: "Mark sold out if needed",
+      ownerInstruction:
+        "If an item is still visible but cannot be ordered, open Admin and mark that item sold out.",
+      route: "adminSettings",
+      dataSop: "menu-item-sold-out-toggle",
+      highlightDataSop: "menu-item-sold-out-toggle",
+      captureMode: "element-with-context",
+      screenshotName: "10-mark-sold-out.png",
+      notesForAgent:
+        "Sold-out status is managed from Admin notes > Ordering & menu, not inside the menu edit drawer.",
+      expectedResult: "The item stays visible, but customers can see it is sold out.",
+    },
+    {
+      id: "check-public-menu",
+      title: "Check the public menu",
+      ownerInstruction:
+        "Open the public menu when you are done. Check that the item looks right for customers.",
+      route: "publicMenu",
+      dataSop: "public-menu-page",
+      highlightDataSop: "public-menu-page",
+      captureMode: "page",
+      screenshotName: "11-check-public-menu.png",
+      expectedResult: "The public menu matches what you saved.",
+    },
+    {
+      id: "pause-ordering-if-unsure",
+      title: "Pause ordering if you are unsure",
+      ownerInstruction:
+        "If something looks wrong and customers should not order yet, open Admin and click Close ordering now.",
+      route: "adminSettings",
+      dataSop: "ordering-toggle",
+      highlightDataSop: "ordering-toggle",
+      captureMode: "element-with-context",
+      screenshotName: "12-pause-ordering.png",
+      expectedResult: "Customers cannot place new orders while you fix the menu.",
+    },
+  ],
+  successCheck: [
+    "The public menu shows the correct items.",
+    "The featured item is the one Kori wants to highlight.",
+    "Prices, descriptions, and photos look right.",
+    "Ordering is closed if Kori is unsure or still making changes.",
+  ],
+  commonMistakes: [
+    "Forgetting to click Save after editing an item.",
+    "Leaving an old item Live when it should be Hidden.",
+    "Featuring the wrong item.",
+    "Forgetting to check the public menu after saving.",
+  ],
+  troubleshooting: [
+    "If the public page looks wrong, go back to Menu and check the item again.",
+    "If an item should not be ordered, mark it sold out or hide it.",
+    "If Kori is unsure, close ordering before customers order.",
+    "If saving does not work, stop and ask Chandler for help.",
+  ],
+  relatedWorkflows: [
+    "pause-ordering-if-overwhelmed",
+    "review-paid-orders",
+    "send-customer-updates",
+  ],
+  riskLevel: "medium",
+  recommendedTrainingFormat: "guided walkthrough",
+}

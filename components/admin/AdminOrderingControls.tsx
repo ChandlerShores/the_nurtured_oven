@@ -95,110 +95,124 @@ export default function AdminOrderingControls({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <DashboardCard title="Stop all ordering">
-        <div className="space-y-4 text-sm">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-semibold text-espresso">Weekly ordering</p>
-              <p className="text-caption mt-1">
-                {killSwitch.active
-                  ? "Customers cannot place new orders right now."
-                  : "Normal schedule applies (Fri 9 AM – Wed noon ET) unless the window is closed."}
-              </p>
+      <div data-sop="ordering-status-card">
+        <DashboardCard title="Stop all ordering">
+          <div className="space-y-4 text-sm">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="font-semibold text-espresso">Weekly ordering</p>
+                <p className="text-caption mt-1">
+                  {killSwitch.active
+                    ? "Customers cannot place new orders right now."
+                    : "Normal schedule applies (Fri 9 AM – Wed noon ET) unless the window is closed."}
+                </p>
+              </div>
+              <StatusPill
+                status={killSwitch.active ? "Issue" : "Active"}
+              />
             </div>
-            <StatusPill
-              status={killSwitch.active ? "Issue" : "Active"}
-            />
+            {killSwitch.envLocked ? (
+              <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-soft px-3 py-2">
+                {killSwitch.storageHint}
+              </p>
+            ) : (
+              <p className="text-caption text-xs">{killSwitch.storageHint}</p>
+            )}
+            {globalError ? (
+              <p className="text-sm text-red-800" role="alert">
+                {globalError}
+              </p>
+            ) : null}
+            <div className="flex flex-wrap gap-2">
+              {killSwitch.canToggle ? (
+                killSwitch.adminToggle ? (
+                  <button
+                    type="button"
+                    disabled={globalPhase === "saving"}
+                    onClick={() => void setGlobalKillSwitch(false)}
+                    data-sop="ordering-toggle"
+                    className={adminBtnPrimary}
+                  >
+                    {globalPhase === "saving"
+                      ? "Saving…"
+                      : "Re-open ordering"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={globalPhase === "saving"}
+                    onClick={() => void setGlobalKillSwitch(true)}
+                    data-sop="ordering-toggle"
+                    className="rounded-md border border-terracotta bg-terracotta text-cream px-4 py-2 font-semibold hover:opacity-90 disabled:opacity-50"
+                  >
+                    {globalPhase === "saving"
+                      ? "Saving…"
+                      : "Close ordering now"}
+                  </button>
+                )
+              ) : null}
+              <a
+                href="/menu"
+                className={adminBtnSecondary}
+                target="_blank"
+                rel="noreferrer"
+                data-sop="public-menu-link"
+              >
+                View public menu
+              </a>
+            </div>
           </div>
-          {killSwitch.envLocked ? (
-            <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-soft px-3 py-2">
-              {killSwitch.storageHint}
+        </DashboardCard>
+      </div>
+
+      <div data-sop="item-sold-out-card">
+        <DashboardCard title="Item sold-out">
+          {activeMenuItems.length === 0 ? (
+            <p className="text-sm text-caption">
+              No active menu items. Add or show items on the Menu page first.
             </p>
           ) : (
-            <p className="text-caption text-xs">{killSwitch.storageHint}</p>
+            <ul className="space-y-2 text-sm">
+              {activeMenuItems.map((item) => {
+                const soldOut = soldOutBySlug[item.slug] ?? item.soldOut
+                const phase = itemPhase[item.slug] ?? "idle"
+                return (
+                  <li
+                    key={item.slug}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-espresso/10 bg-linen/30 px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="font-semibold text-espresso">{item.name}</p>
+                      <p className="text-caption text-xs">{item.slug}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {soldOut ? (
+                        <StatusPill status="Issue" />
+                      ) : (
+                        <StatusPill status="Active" />
+                      )}
+                      <button
+                        type="button"
+                        disabled={phase === "saving"}
+                        onClick={() => void toggleSoldOut(item, !soldOut)}
+                        data-sop="menu-item-sold-out-toggle"
+                        data-sop-item-slug={item.slug}
+                        className={adminBtnSecondary}
+                      >
+                        {phase === "saving"
+                          ? "Saving…"
+                          : soldOut
+                            ? "Back in stock"
+                            : "Mark sold out"}
+                      </button>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
           )}
-          {globalError ? (
-            <p className="text-sm text-red-800" role="alert">
-              {globalError}
-            </p>
-          ) : null}
-          <div className="flex flex-wrap gap-2">
-            {killSwitch.canToggle ? (
-              killSwitch.adminToggle ? (
-                <button
-                  type="button"
-                  disabled={globalPhase === "saving"}
-                  onClick={() => void setGlobalKillSwitch(false)}
-                  className={adminBtnPrimary}
-                >
-                  {globalPhase === "saving"
-                    ? "Saving…"
-                    : "Re-open ordering"}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  disabled={globalPhase === "saving"}
-                  onClick={() => void setGlobalKillSwitch(true)}
-                  className="rounded-md border border-terracotta bg-terracotta text-cream px-4 py-2 font-semibold hover:opacity-90 disabled:opacity-50"
-                >
-                  {globalPhase === "saving"
-                    ? "Saving…"
-                    : "Close ordering now"}
-                </button>
-              )
-            ) : null}
-            <a href="/menu" className={adminBtnSecondary} target="_blank" rel="noreferrer">
-              View public menu
-            </a>
-          </div>
-        </div>
-      </DashboardCard>
-
-      <DashboardCard title="Item sold-out">
-        {activeMenuItems.length === 0 ? (
-          <p className="text-sm text-caption">
-            No active menu items. Add or show items on the Menu page first.
-          </p>
-        ) : (
-          <ul className="space-y-2 text-sm">
-            {activeMenuItems.map((item) => {
-              const soldOut = soldOutBySlug[item.slug] ?? item.soldOut
-              const phase = itemPhase[item.slug] ?? "idle"
-              return (
-                <li
-                  key={item.slug}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-espresso/10 bg-linen/30 px-3 py-2"
-                >
-                  <div className="min-w-0">
-                    <p className="font-semibold text-espresso">{item.name}</p>
-                    <p className="text-caption text-xs">{item.slug}</p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    {soldOut ? (
-                      <StatusPill status="Issue" />
-                    ) : (
-                      <StatusPill status="Active" />
-                    )}
-                    <button
-                      type="button"
-                      disabled={phase === "saving"}
-                      onClick={() => void toggleSoldOut(item, !soldOut)}
-                      className={adminBtnSecondary}
-                    >
-                      {phase === "saving"
-                        ? "Saving…"
-                        : soldOut
-                          ? "Back in stock"
-                          : "Mark sold out"}
-                    </button>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </DashboardCard>
+        </DashboardCard>
+      </div>
     </div>
   )
 }

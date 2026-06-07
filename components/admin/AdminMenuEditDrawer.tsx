@@ -214,6 +214,8 @@ export default function AdminMenuEditDrawer({
       role="dialog"
       aria-modal="true"
       aria-labelledby="menu-edit-title"
+      data-sop="menu-item-editor"
+      data-sop-item-slug={form.slug}
     >
       <button
         type="button"
@@ -238,6 +240,7 @@ export default function AdminMenuEditDrawer({
             <button
               type="button"
               onClick={onClose}
+              data-sop="menu-item-cancel"
               className="text-caption text-sm underline-offset-2 hover:underline shrink-0"
             >
               Close
@@ -256,6 +259,7 @@ export default function AdminMenuEditDrawer({
                 type="checkbox"
                 checked={form.active}
                 onChange={(e) => update("active", e.target.checked)}
+                data-sop="menu-item-active-toggle"
                 className="rounded border-oatmeal/80"
               />
               Live
@@ -266,6 +270,7 @@ export default function AdminMenuEditDrawer({
                 checked={form.featured}
                 disabled={!form.active}
                 onChange={(e) => update("featured", e.target.checked)}
+                data-sop="menu-item-featured-toggle"
                 className="rounded border-oatmeal/80 disabled:opacity-50"
               />
               Featured
@@ -281,6 +286,7 @@ export default function AdminMenuEditDrawer({
               required
               value={form.name}
               onChange={(e) => update("name", e.target.value)}
+              data-sop="menu-item-name"
               className={inputClass}
             />
           </div>
@@ -298,6 +304,7 @@ export default function AdminMenuEditDrawer({
               rows={3}
               value={form.description}
               onChange={(e) => update("description", e.target.value)}
+              data-sop="menu-item-description"
               className={inputClass}
             />
           </div>
@@ -313,6 +320,7 @@ export default function AdminMenuEditDrawer({
                 inputMode="decimal"
                 value={form.price}
                 onChange={(e) => update("price", e.target.value)}
+                data-sop="menu-item-price"
                 className={inputClass}
               />
             </div>
@@ -326,6 +334,7 @@ export default function AdminMenuEditDrawer({
                 inputMode="numeric"
                 value={form.sortOrder}
                 onChange={(e) => update("sortOrder", e.target.value)}
+                data-sop="menu-item-sort-order"
                 className={inputClass}
               />
             </div>
@@ -340,6 +349,7 @@ export default function AdminMenuEditDrawer({
               value={form.category}
               onChange={(e) => update("category", e.target.value)}
               placeholder="e.g. Signature Staple"
+              data-sop="menu-item-category"
               className={inputClass}
             />
           </div>
@@ -353,6 +363,7 @@ export default function AdminMenuEditDrawer({
               value={form.notes}
               onChange={(e) => update("notes", e.target.value)}
               placeholder="e.g. 4-pack"
+              data-sop="menu-item-notes"
               className={inputClass}
             />
           </div>
@@ -366,6 +377,7 @@ export default function AdminMenuEditDrawer({
               value={form.allergens}
               onChange={(e) => update("allergens", e.target.value)}
               placeholder="wheat, eggs, dairy"
+              data-sop="menu-item-allergens"
               className={inputClass}
             />
           </div>
@@ -379,6 +391,7 @@ export default function AdminMenuEditDrawer({
               type="file"
               accept="image/jpeg,image/png,image/webp"
               onChange={handleImageChange}
+              data-sop="menu-item-image"
               className="w-full text-sm font-body file:mr-3 file:rounded-full file:border-0 file:bg-linen file:px-3 file:py-1.5 file:text-espresso"
             />
             <p className="text-caption text-xs mt-1">JPEG, PNG, or WebP · 5 MB max</p>
@@ -405,6 +418,7 @@ export default function AdminMenuEditDrawer({
               value={form.imageUrl}
               onChange={(e) => update("imageUrl", e.target.value)}
               placeholder="/images/… or https://…"
+              data-sop="menu-item-image-url"
               className={inputClass}
             />
           </div>
@@ -420,6 +434,7 @@ export default function AdminMenuEditDrawer({
               value={form.slug}
               onChange={(e) => update("slug", e.target.value)}
               placeholder="brown-butter-blondie"
+              data-sop="menu-item-slug"
               className={
                 isCreate
                   ? inputClass
@@ -434,6 +449,7 @@ export default function AdminMenuEditDrawer({
           <button
             type="submit"
             disabled={saving}
+            data-sop="menu-item-save"
             className="w-full rounded-soft bg-espresso text-cream py-3 font-medium disabled:opacity-60"
           >
             {saving ? "Saving…" : isCreate ? "Add" : "Save"}

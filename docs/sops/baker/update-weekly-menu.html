@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SOP: How to update this week's menu</title>
+  <style>
+    :root {
+      --cream: #fbf7ef;
+      --paper: #fffdf8;
+      --espresso: #3c2418;
+      --muted: #725c4d;
+      --linen: #e9dccb;
+      --oat: #f1e6d7;
+      --sage: #6f7f5f;
+      --blush: #b86b5e;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--espresso);
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.6;
+    }
+
+    main {
+      width: min(920px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--paper);
+      border: 1px solid var(--linen);
+      border-radius: 18px;
+      padding: 40px;
+      box-shadow: 0 18px 50px rgba(60, 36, 24, 0.08);
+    }
+
+    header {
+      border-bottom: 2px solid var(--linen);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--blush);
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--espresso);
+      line-height: 1.2;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    h2 {
+      margin-top: 34px;
+      padding-top: 10px;
+      font-size: 1.55rem;
+    }
+
+    h3 {
+      margin-top: 28px;
+      font-size: 1.2rem;
+    }
+
+    p,
+    li {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    ul {
+      padding-left: 1.3rem;
+    }
+
+    .note {
+      background: var(--oat);
+      border-left: 5px solid var(--sage);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin: 18px 0;
+      color: var(--espresso);
+    }
+
+    .step {
+      border-top: 1px solid var(--linen);
+      padding-top: 22px;
+      margin-top: 26px;
+    }
+
+    figure {
+      margin: 14px 0 16px;
+      border: 1px dashed var(--linen);
+      border-radius: 14px;
+      background: #fff8ee;
+      overflow: hidden;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      min-height: 180px;
+      object-fit: contain;
+      background: linear-gradient(135deg, #fff7ea, #f3e5d3);
+    }
+
+    figcaption {
+      padding: 10px 14px;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-size: 0.88rem;
+      border-top: 1px solid var(--linen);
+    }
+
+    .expected {
+      background: #f5efe4;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-family: Arial, sans-serif;
+      color: var(--muted);
+    }
+
+    .expected strong {
+      color: var(--espresso);
+    }
+
+    .safe {
+      background: #f8ede7;
+      border: 1px solid #e7c7bd;
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      main {
+        width: 100%;
+        margin: 0;
+        padding: 24px;
+        border: 0;
+        box-shadow: none;
+      }
+
+      .step {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">The Nurtured Oven</p>
+      <h1>How to update this week's menu</h1>
+      <p class="note">Use this guide when you need to update the bakes customers can see and order for the current week.</p>
+    </header>
+
+    <section>
+      <h2>Purpose</h2>
+      <p>Use this guide when you need to update the bakes customers can see and order for the current week.</p>
+      <p>The goal is simple: make the menu match what you want customers to see.</p>
+    </section>
+
+    <section>
+      <h2>When to use this</h2>
+      <ul>
+        <li>The weekly bake lineup changes.</li>
+        <li>A menu item needs a new name, description, price, photo, or display setting.</li>
+        <li>You are getting ready for a new weekly drop.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Before you start</h2>
+      <ul>
+        <li>Your admin login.</li>
+        <li>The new menu details.</li>
+        <li>Any new item photo saved on your computer.</li>
+      </ul>
+      <p class="note">If you are not sure the menu is ready, you can turn ordering off before customers order.</p>
+    </section>
+
+    <section>
+      <h2>Steps</h2>
+
+      <div class="step">
+        <h3>1. Open the admin area</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/01-admin-dashboard.png" alt="Admin dashboard">
+          <figcaption>Admin dashboard.</figcaption>
+        </figure>
+        <p>Open the admin area. Start here when you want to make changes to the bakery website.</p>
+        <p class="expected"><strong>Expected result:</strong> You can see the baker portal.</p>
+      </div>
+
+      <div class="step">
+        <h3>2. Go to Menu</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/02-open-menu-area.png" alt="Menu link">
+          <figcaption>Menu link.</figcaption>
+        </figure>
+        <p>Click Menu in the admin area. This is where you control what customers can see and order this week.</p>
+        <p class="expected"><strong>Expected result:</strong> The Menu page opens.</p>
+      </div>
+
+      <div class="step">
+        <h3>3. Review the menu page</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/03-review-live-menu.png" alt="Live menu section">
+          <figcaption>Live menu section.</figcaption>
+        </figure>
+        <p>Check the Live section first. These are the items customers can see on the website.</p>
+        <p class="expected"><strong>Expected result:</strong> You can see the current live menu items.</p>
+      </div>
+
+      <div class="step">
+        <h3>4. Find the item</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/04-find-menu-item.png" alt="Menu item card">
+          <figcaption>Menu item card.</figcaption>
+        </figure>
+        <p>Find the item you want to update. If you do not see it, check the Hidden section or use Search.</p>
+        <p class="expected"><strong>Expected result:</strong> The item you want to change is visible.</p>
+      </div>
+
+      <div class="step">
+        <h3>5. Open the item editor</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/05-open-item-editor.png" alt="Edit button">
+          <figcaption>Edit button.</figcaption>
+        </figure>
+        <p>Click Edit on the item. This opens the place where you can update the details.</p>
+        <p class="expected"><strong>Expected result:</strong> The item editor opens from the side of the screen.</p>
+      </div>
+
+      <div class="step">
+        <h3>6. Update the main details</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/06-update-main-details.png" alt="Item details">
+          <figcaption>Item details.</figcaption>
+        </figure>
+        <p>Update the name, description, price, and any helpful notes. Keep the wording short and clear for customers.</p>
+        <p>While you are here, check the live setting, featured setting, and photo before saving.</p>
+        <p class="expected"><strong>Expected result:</strong> The item details match what customers should see.</p>
+      </div>
+
+      <div class="step">
+        <h3>7. Choose what is live or featured</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/07-set-live-featured.png" alt="Live and featured settings">
+          <figcaption>Live and Featured settings.</figcaption>
+        </figure>
+        <p>Check Live if customers should see this item.</p>
+        <p>Check Featured if this should be the main item on the home page.</p>
+        <p class="expected"><strong>Expected result:</strong> The item is set to show or hide the way you want.</p>
+      </div>
+
+      <div class="step">
+        <h3>8. Update the photo if needed</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/08-update-photo.png" alt="Photo field">
+          <figcaption>Photo field.</figcaption>
+        </figure>
+        <p>Add a new photo if this item needs one. A clear photo helps customers know what they are ordering.</p>
+        <p class="expected"><strong>Expected result:</strong> The preview shows the photo you want customers to see.</p>
+      </div>
+
+      <div class="step">
+        <h3>9. Save the item</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/09-save-item.png" alt="Save button">
+          <figcaption>Save button.</figcaption>
+        </figure>
+        <p>Click Save. Wait for the editor to close before moving on.</p>
+        <p class="expected"><strong>Expected result:</strong> The Menu page shows the updated item.</p>
+      </div>
+
+      <div class="step">
+        <h3>10. Mark sold out if needed</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/10-mark-sold-out.png" alt="Sold out button">
+          <figcaption>Sold out button.</figcaption>
+        </figure>
+        <p>If an item is still visible but cannot be ordered, open Admin and mark that item sold out.</p>
+        <p class="expected"><strong>Expected result:</strong> The item stays visible, but customers can see it is sold out.</p>
+      </div>
+
+      <div class="step">
+        <h3>11. Check the public menu</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/11-check-public-menu.png" alt="Public menu">
+          <figcaption>Public menu.</figcaption>
+        </figure>
+        <p>Open the public menu when you are done. Check that the item looks right for customers.</p>
+        <p class="expected"><strong>Expected result:</strong> The public menu matches what you saved.</p>
+      </div>
+
+      <div class="step">
+        <h3>12. Pause ordering if you are unsure</h3>
+        <figure>
+          <img src="./images/update-weekly-menu/12-pause-ordering.png" alt="Close ordering button">
+          <figcaption>Close ordering button.</figcaption>
+        </figure>
+        <p>If something looks wrong and customers should not order yet, open Admin and click Close ordering now.</p>
+        <p class="expected"><strong>Expected result:</strong> Customers cannot place new orders while you fix the menu.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Success check</h2>
+      <ul>
+        <li>The public menu shows the correct items.</li>
+        <li>The featured item is the one you want to highlight.</li>
+        <li>Prices, descriptions, and photos look right.</li>
+        <li>Ordering is closed if you are unsure or still making changes.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Common mistakes</h2>
+      <ul>
+        <li>Forgetting to click Save after editing an item.</li>
+        <li>Leaving an old item Live when it should be Hidden.</li>
+        <li>Featuring the wrong item.</li>
+        <li>Forgetting to check the public menu after saving.</li>
+      </ul>
+    </section>
+
+    <section class="safe">
+      <h2>If something goes wrong</h2>
+      <p>Stay calm. You have a safe option.</p>
+      <p>If the public page looks wrong, go back to Menu and check the item again.</p>
+      <p>If an item should not be ordered, mark it sold out or hide it.</p>
+      <p>If you are unsure, close ordering before customers order.</p>
+      <p>If saving does not work, stop and ask Chandler for help.</p>
+    </section>
+
+    <section>
+      <h2>Need help?</h2>
+      <p>If anything feels off, pause ordering first. Then send Chandler a note with what you were trying to change and what you saw on the screen.</p>
+    </section>
+  </main>
+</body>
+</html>

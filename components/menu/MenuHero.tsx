@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Divider from "@/components/ui/Divider"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
 import type { CurrentMenu } from "@/lib/content/menu-types"
 
 interface MenuHeroProps {
@@ -7,9 +8,10 @@ interface MenuHeroProps {
     CurrentMenu,
     "weekLabel" | "cutoffText" | "fulfillmentText" | "announcementBarText"
   >
+  comingSoon?: boolean
 }
 
-export default function MenuHero({ menu }: MenuHeroProps) {
+export default function MenuHero({ menu, comingSoon = false }: MenuHeroProps) {
   return (
     <>
       {menu.announcementBarText && (
@@ -38,18 +40,20 @@ export default function MenuHero({ menu }: MenuHeroProps) {
 
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-16 sm:pt-20 pb-10 text-center">
           <p className="font-accent text-eyebrow text-lg mb-2">
-            this week&apos;s preorder menu
+            {comingSoon ? COMING_SOON_COPY.eyebrow : "this week's preorder menu"}
           </p>
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl text-espresso tracking-wide">
-            {menu.weekLabel}
+            {comingSoon ? "A softer way to order is almost here" : menu.weekLabel}
           </h1>
           <Divider icon="flourish" className="mt-4 mb-2" />
           <p className="text-muted text-lg font-body max-w-xl mx-auto leading-relaxed">
-            {menu.cutoffText}
+            {comingSoon ? COMING_SOON_COPY.shortBody : menu.cutoffText}
           </p>
-          <p className="mt-2 text-caption text-sm font-body">
-            {menu.fulfillmentText}
-          </p>
+          {!comingSoon && (
+            <p className="mt-2 text-caption text-sm font-body">
+              {menu.fulfillmentText}
+            </p>
+          )}
         </div>
       </div>
     </>

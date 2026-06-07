@@ -1,0 +1,40 @@
+import type { SopAudience } from "./types"
+
+export const bakerAudience: SopAudience = {
+  name: "Kori",
+  role: "bakery owner",
+  technicalComfort: "non-technical",
+  tone: ["calm", "clear", "encouraging", "practical"],
+  readingLevel: "simple, short sentences",
+  documentationGoals: [
+    "help her operate the bakery independently",
+    "make the app feel safe",
+    "avoid overwhelming her",
+    "explain only what she needs for the workflow",
+    "show what success looks like",
+    "include what to do if something goes wrong",
+  ],
+  preferWordsAndPhrases: [
+    "Click",
+    "Open",
+    "Check",
+    "Save",
+    "This controls what customers see",
+    "You can turn ordering off if you are unsure",
+    "Check the public page when you are done",
+  ],
+  avoidWordsAndPhrases: [
+    "API",
+    "endpoint",
+    "route",
+    "mutation",
+    "cache",
+    "revalidate",
+    "webhook",
+    "Redis",
+    "environment variable",
+    "database",
+    "selector",
+    "technical implementation details",
+  ],
+}

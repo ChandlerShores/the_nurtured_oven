@@ -112,7 +112,7 @@ export default function AdminPickupView({
   }
 
   return (
-    <div className="pb-4">
+    <div className="pb-4" data-sop="admin-pickup-page">
       {error ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
           {error}
@@ -120,6 +120,7 @@ export default function AdminPickupView({
       ) : null}
 
       <AdminPortalSection first collapsible={false} title="Overview">
+        <div data-sop="pickup-overview">
         <MetricStrip
           metrics={[
             { label: "Orders", value: pickupOrders.length },
@@ -127,14 +128,17 @@ export default function AdminPickupView({
             { label: "Waiting", value: active.length },
           ]}
         />
+        </div>
       </AdminPortalSection>
 
       <AdminPortalSection title="Notify" collapsible={false}>
+        <div data-sop="pickup-notify">
         <AdminBulkCustomerEmail
           emailType="ready_pickup"
           weekKey={weekKey}
           emptyHint="Mark Ready first. Missing emails are skipped."
         />
+        </div>
       </AdminPortalSection>
 
       <AdminPortalSection
@@ -143,6 +147,7 @@ export default function AdminPickupView({
         titleSuffix={batchLabel || undefined}
       >
         <DashboardCard>
+        <div data-sop="pickup-queue">
         {paidPickups.length === 0 ? (
           <EmptyState
             title="No pickups"
@@ -157,6 +162,7 @@ export default function AdminPickupView({
               return (
                 <li
                   key={key}
+                  data-sop="pickup-order-card"
                   className="rounded-lg border border-espresso/15 bg-warm-white px-4 py-3 text-sm"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
@@ -189,6 +195,7 @@ export default function AdminPickupView({
                       }
                       className={`w-full sm:max-w-[12rem] rounded-md border px-3 py-2.5 min-h-[44px] font-body text-base font-semibold disabled:opacity-60 ${statusControlClass(status)}`}
                       aria-label={`Status for ${order.customerName || order.internalRef}`}
+                      data-sop="pickup-status-select"
                     >
                       {ORDER_STATUS_OPTIONS.map((opt) => (
                         <option key={opt} value={opt}>
@@ -201,6 +208,7 @@ export default function AdminPickupView({
                       disabled={busy}
                       onClick={() => void markPickedUp(order)}
                       className={`${adminBtnSecondary} w-full sm:w-auto`}
+                      data-sop="pickup-picked-up-button"
                     >
                       {busy ? "Saving…" : "Picked up"}
                     </button>
@@ -216,6 +224,7 @@ export default function AdminPickupView({
             })}
           </ul>
         )}
+        </div>
         </DashboardCard>
       </AdminPortalSection>
 

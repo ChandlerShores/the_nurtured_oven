@@ -33,6 +33,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
         catalog={catalog}
         featuredSlug={menu.featured.slug}
         prefillSlug={prefillSlug}
+        comingSoon={ordering.comingSoon}
       />
     </Suspense>
   )

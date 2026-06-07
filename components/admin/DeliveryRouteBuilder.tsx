@@ -269,12 +269,14 @@ export default function DeliveryRouteBuilder({
 
   return (
     <DashboardCard title="Delivery route builder">
+      <div data-sop="delivery-route-builder">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:flex-wrap">
         <button
           type="button"
           onClick={handleOptimize}
           disabled={optimizing || locking}
           className={`${adminBtnPrimary} w-full sm:w-auto`}
+          data-sop="delivery-optimize-route"
         >
           {optimizing ? "Optimizing…" : "Optimize route"}
         </button>
@@ -283,6 +285,7 @@ export default function DeliveryRouteBuilder({
           onClick={handleLockRoute}
           disabled={locking || optimizing || stops.length === 0}
           className={`${adminBtnSecondary} w-full sm:w-auto`}
+          data-sop="delivery-lock-route"
         >
           {locking ? "Locking…" : "Lock route"}
         </button>
@@ -292,6 +295,7 @@ export default function DeliveryRouteBuilder({
             target="_blank"
             rel="noopener noreferrer"
             className={`${adminBtnSecondary} w-full sm:w-auto text-center`}
+            data-sop="delivery-open-maps"
           >
             Open in Google Maps
           </a>
@@ -375,6 +379,7 @@ export default function DeliveryRouteBuilder({
             return (
               <li
                 key={stop.sheetRow}
+                data-sop="delivery-stop-card"
                 draggable={allowDragReorder}
                 onDragStart={
                   allowDragReorder ? () => handleDragStart(index) : undefined
@@ -466,6 +471,7 @@ export default function DeliveryRouteBuilder({
                       disabled={savingRef === adminOrderKey(order)}
                       onClick={() => onMarkDelivered(order)}
                       className={`${adminBtnPrimary} w-full sm:w-auto`}
+                      data-sop="delivery-mark-delivered"
                     >
                       {savingRef === adminOrderKey(order)
                         ? "Saving…"
@@ -502,6 +508,7 @@ export default function DeliveryRouteBuilder({
           </ul>
         </div>
       ) : null}
+      </div>
     </DashboardCard>
   )
 }

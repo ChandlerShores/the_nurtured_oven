@@ -1,0 +1,34 @@
+{
+  "workflowSlug": "pickup-orders",
+  "capturedAt": "2026-06-07T16:36:35.300Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-pickup",
+      "title": "Open Pickup",
+      "file": "docs\\sops\\baker\\images\\pickup-orders\\01-pickup-queue.png"
+    },
+    {
+      "stepId": "review-overview",
+      "title": "Review the overview",
+      "file": "docs\\sops\\baker\\images\\pickup-orders\\02-pickup-overview.png"
+    },
+    {
+      "stepId": "notify-ready-orders",
+      "title": "Send pickup notes if used",
+      "file": "docs\\sops\\baker\\images\\pickup-orders\\03-pickup-notify.png"
+    },
+    {
+      "stepId": "work-through-queue",
+      "title": "Work through the queue",
+      "file": "docs\\sops\\baker\\images\\pickup-orders\\04-pickup-order-card.png"
+    },
+    {
+      "stepId": "mark-picked-up",
+      "title": "Mark picked up",
+      "file": "docs\\sops\\baker\\images\\pickup-orders\\05-mark-picked-up.png"
+    }
+  ],
+  "missingSelectors": [],
+  "skippedSteps": []
+}

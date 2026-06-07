@@ -264,7 +264,7 @@ export default function AdminOrdersTable({
   }
 
   return (
-    <div className="pb-4">
+    <div className="pb-4" data-sop="admin-orders-page">
       {error ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-3 py-2 font-body mb-6">
           {error}
@@ -273,7 +273,10 @@ export default function AdminOrdersTable({
 
       <AdminPortalSection first collapsible={false} title={batchLabel}>
         {newOrderCount > 0 ? (
-          <div className="mb-4 rounded-lg border-2 border-blush/70 bg-blush/15 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div
+            className="mb-4 rounded-lg border-2 border-blush/70 bg-blush/15 px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            data-sop="orders-new-review-card"
+          >
             <p className="text-sm font-body text-espresso">
               <span className="font-semibold">
                 {newOrderCount} {newOrderCount === 1 ? "order" : "orders"} still at New
@@ -339,6 +342,7 @@ export default function AdminOrdersTable({
                 : ""}
             </button>
         </div>
+        <div data-sop="orders-filters">
         <AdminOrderSlicers
           statusOptions={statusOptions}
           fulfillmentOptions={fulfillmentOptions}
@@ -368,6 +372,7 @@ export default function AdminOrdersTable({
             setSearchQuery("")
           }}
         />
+        </div>
       {filteredOrders.length === 0 ? (
         <p className="text-caption font-body rounded-soft bg-linen/80 border border-oatmeal/60 px-4 py-6 text-center">
           No matches.
@@ -375,7 +380,7 @@ export default function AdminOrdersTable({
       ) : (
         <DashboardCard>
           <div className="hidden md:block overflow-x-auto -mx-2 sm:mx-0">
-            <table className="w-full text-left text-sm font-body">
+            <table className="w-full text-left text-sm font-body" data-sop="orders-table">
               <thead className="bg-sage-deep text-cream sticky top-0 z-[1]">
                 <tr>
                   <th className="px-3 py-3 font-medium">Customer</th>
@@ -389,11 +394,12 @@ export default function AdminOrdersTable({
                 {filteredOrders.map((order, index) => (
                   <tr
                     key={order.internalRef}
+                    data-sop="order-row"
                     className={`border-t border-espresso/15 align-top ${
                       index % 2 === 0 ? zebraEven : zebraOdd
                     }`}
                   >
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3" data-sop="order-customer">
                       <p className="font-semibold text-espresso">
                         {order.customerName || "—"}
                       </p>
@@ -404,7 +410,7 @@ export default function AdminOrdersTable({
                         {order.customerPhone || "—"}
                       </p>
                     </td>
-                    <td className="px-3 py-3 text-caption max-w-xs">
+                    <td className="px-3 py-3 text-caption max-w-xs" data-sop="order-items">
                       <p className={expandedRefs.has(order.internalRef) ? "" : "line-clamp-2"}>
                         {order.itemsSummary || "—"}
                       </p>
@@ -419,7 +425,7 @@ export default function AdminOrdersTable({
                       ) : null}
                       <NoteTags order={order} />
                     </td>
-                    <td className="px-3 py-3 text-espresso/80">
+                    <td className="px-3 py-3 text-espresso/80" data-sop="order-fulfillment">
                       <p className="font-semibold">{formatMethod(order.fulfillmentMethod)}</p>
                       {order.fulfillmentMethod === "delivery" &&
                       formatDeliveryLocation(order) ? (
@@ -432,7 +438,7 @@ export default function AdminOrdersTable({
                         </span>
                       ) : null}
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-3" data-sop="order-status">
                       <StatusSelect
                         value={
                           statusByRef[adminOrderKey(order)] ??
@@ -448,6 +454,7 @@ export default function AdminOrdersTable({
                       <Link
                         href={`/admin/orders/${encodeURIComponent(order.internalRef)}`}
                         className={`${adminBtnSecondary} inline-block text-xs px-3 py-1.5`}
+                        data-sop="order-open"
                       >
                         Open
                       </Link>
@@ -462,6 +469,7 @@ export default function AdminOrdersTable({
             {filteredOrders.map((order, index) => (
               <li
                 key={order.internalRef}
+                data-sop="order-row"
                 className={`rounded-lg border border-espresso/15 p-4 shadow-gentle font-body ${
                   index % 2 === 0 ? zebraEven : zebraOdd
                 }`}

@@ -24,7 +24,7 @@ export default async function AdminMenuPage() {
   }
 
   return (
-    <>
+    <div data-sop="admin-menu-page">
       <SectionHeader title="Menu" />
 
       {loadError ? (
@@ -38,6 +38,6 @@ export default async function AdminMenuPage() {
           tabName={tabName}
         />
       )}
-    </>
+    </div>
   )
 }

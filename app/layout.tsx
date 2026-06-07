@@ -47,7 +47,12 @@ export default async function RootLayout({
             Skip to main content
           </a>
         ) : null}
-        {!isAdmin ? <Header bannerNote={ordering.bannerNote} /> : null}
+        {!isAdmin ? (
+          <Header
+            bannerNote={ordering.bannerNote}
+            comingSoon={ordering.comingSoon}
+          />
+        ) : null}
         <main
           id={isAdmin ? undefined : "main-content"}
           className="flex-1"

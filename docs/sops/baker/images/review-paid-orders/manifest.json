@@ -1,0 +1,29 @@
+{
+  "workflowSlug": "review-paid-orders",
+  "capturedAt": "2026-06-07T16:36:09.622Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-orders",
+      "title": "Open Orders",
+      "file": "docs\\sops\\baker\\images\\review-paid-orders\\01-orders-dashboard.png"
+    },
+    {
+      "stepId": "check-new-orders",
+      "title": "Check new orders",
+      "file": "docs\\sops\\baker\\images\\review-paid-orders\\02-new-orders.png"
+    },
+    {
+      "stepId": "review-order-list",
+      "title": "Review the list",
+      "file": "docs\\sops\\baker\\images\\review-paid-orders\\03-order-list.png"
+    },
+    {
+      "stepId": "open-order-if-needed",
+      "title": "Open an order if needed",
+      "file": "docs\\sops\\baker\\images\\review-paid-orders\\04-open-order.png"
+    }
+  ],
+  "missingSelectors": [],
+  "skippedSteps": []
+}

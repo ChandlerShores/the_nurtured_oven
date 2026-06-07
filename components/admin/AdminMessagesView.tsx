@@ -107,7 +107,7 @@ export default function AdminMessagesView({
   }
 
   return (
-    <div className="pb-4 space-y-0">
+    <div className="pb-4 space-y-0" data-sop="admin-messages-page">
       <AdminPortalSection first title="Overview">
         <MetricStrip
           metrics={[
@@ -124,7 +124,11 @@ export default function AdminMessagesView({
       </AdminPortalSection>
 
       <AdminPortalSection title="Send">
-        <div id="messages-compose" className="pb-6 sm:pb-8">
+        <div
+          id="messages-compose"
+          className="pb-6 sm:pb-8"
+          data-sop="messages-compose"
+        >
           <AdminMessagesComposer
             orders={orders}
             batchLabel={batchLabel}
@@ -134,6 +138,7 @@ export default function AdminMessagesView({
       </AdminPortalSection>
 
       <AdminPortalSection title="Log">
+        <div data-sop="messages-log">
         <AdminCollapsibleFilters
           className="mb-4"
           defaultOpen={
@@ -267,6 +272,7 @@ export default function AdminMessagesView({
             </ul>
           </DashboardCard>
         )}
+        </div>
       </AdminPortalSection>
     </div>
   )

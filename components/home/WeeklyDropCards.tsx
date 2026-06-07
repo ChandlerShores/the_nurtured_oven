@@ -6,11 +6,13 @@ interface WeeklyDropCardsProps {
   items: HomepageDropItem[]
   /** When false, cards are static (admin preview). Default true on the live site. */
   linkToMenu?: boolean
+  actionLabel?: string
 }
 
 export default function WeeklyDropCards({
   items,
   linkToMenu = true,
+  actionLabel = "Order this bake",
 }: WeeklyDropCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
@@ -47,7 +49,7 @@ export default function WeeklyDropCards({
               </p>
               {linkToMenu ? (
                 <span className="mt-auto font-body text-sm font-semibold text-olive group-hover:text-espresso transition-colors">
-                  Order this bake
+                  {actionLabel}
                 </span>
               ) : null}
             </div>

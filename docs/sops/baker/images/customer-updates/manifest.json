@@ -1,0 +1,29 @@
+{
+  "workflowSlug": "customer-updates",
+  "capturedAt": "2026-06-07T18:05:02.299Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-messages",
+      "title": "Open Messages",
+      "file": "docs\\sops\\baker\\images\\customer-updates\\01-messages-page.png"
+    },
+    {
+      "stepId": "choose-order",
+      "title": "Choose the order",
+      "file": "docs\\sops\\baker\\images\\customer-updates\\02-choose-order.png"
+    },
+    {
+      "stepId": "send-update",
+      "title": "Choose the update type",
+      "file": "docs\\sops\\baker\\images\\customer-updates\\03-send-update.png"
+    },
+    {
+      "stepId": "check-message-log",
+      "title": "Check the message log",
+      "file": "docs\\sops\\baker\\images\\customer-updates\\04-message-log.png"
+    }
+  ],
+  "missingSelectors": [],
+  "skippedSteps": []
+}

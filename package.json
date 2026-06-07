@@ -17,7 +17,9 @@
     "sheets:seed-financials": "tsx scripts/seed-sheets-financials.ts",
     "sheets:seed-weekly-goals": "tsx scripts/seed-sheets-weekly-goals.ts",
     "sheets:append-menu": "tsx scripts/append-menu-row.ts",
-    "screenshots": "tsx scripts/capture-screenshots.ts"
+    "screenshots": "tsx scripts/capture-screenshots.ts",
+    "sop:generate": "tsx scripts/generate-sop-placeholder.ts",
+    "sop:capture": "tsx scripts/capture-sop-screenshots.ts"
   },
   "dependencies": {
     "@vercel/blob": "^2.4.0",

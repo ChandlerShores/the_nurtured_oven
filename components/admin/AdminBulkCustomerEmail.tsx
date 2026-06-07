@@ -104,22 +104,25 @@ export default function AdminBulkCustomerEmail({
 
   return (
     <DashboardCard title={title}>
+      <div data-sop="bulk-customer-email">
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
         <button
           type="button"
           className={adminBtnSecondary}
           onClick={() => void loadPreview()}
           disabled={phase === "previewing" || phase === "sending"}
+          data-sop="bulk-email-preview"
         >
           {phase === "previewing" ? "Loading…" : "Preview"}
         </button>
         {preview && preview.sendCount > 0 ? (
           <button
             type="button"
-            className={adminBtnPrimary}
-            onClick={() => void confirmSend()}
-            disabled={phase === "sending"}
-          >
+          className={adminBtnPrimary}
+          onClick={() => void confirmSend()}
+          disabled={phase === "sending"}
+          data-sop="bulk-email-send"
+        >
             {phase === "sending"
               ? "Sending…"
               : `Send (${preview.sendCount})`}
@@ -178,6 +181,7 @@ export default function AdminBulkCustomerEmail({
       ) : (
         <p className="text-caption text-sm mt-3">{emptyHint}</p>
       )}
+      </div>
     </DashboardCard>
   )
 }

@@ -4,6 +4,7 @@ import { useEffect, useRef, type RefObject } from "react"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
 import { getPublicNav } from "@/lib/content/launch"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import { useFocusTrap } from "@/hooks/useFocusTrap"
@@ -12,12 +13,14 @@ interface MobileNavProps {
   open: boolean
   onClose: () => void
   returnFocusRef?: RefObject<HTMLButtonElement | null>
+  comingSoon?: boolean
 }
 
 export default function MobileNav({
   open,
   onClose,
   returnFocusRef,
+  comingSoon = false,
 }: MobileNavProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
@@ -107,8 +110,12 @@ export default function MobileNav({
         </nav>
 
         <div className="px-6 mt-4 space-y-6">
-          <Button href="/menu" className="w-full" onClick={onClose}>
-            {siteConfig.orderCta}
+          <Button
+            href={comingSoon ? "/contact?intent=reminder" : "/menu"}
+            className="w-full whitespace-nowrap"
+            onClick={onClose}
+          >
+            {comingSoon ? COMING_SOON_COPY.primaryCta : siteConfig.orderCta}
           </Button>
           <div className="flex justify-center">
             <SocialIcons iconSize={20} />

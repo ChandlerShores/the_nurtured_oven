@@ -1,6 +1,7 @@
 import Divider from "@/components/ui/Divider"
 import Button from "@/components/ui/Button"
 import WeeklyDropCards from "@/components/home/WeeklyDropCards"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
 import { getHomepageDropItems } from "@/lib/content/homepage-menu"
 import type { CurrentMenu } from "@/lib/content/menu-types"
 import { siteConfig } from "@/lib/content/site"
@@ -8,11 +9,13 @@ import { siteConfig } from "@/lib/content/site"
 interface ThisWeekMenuSpotlightProps {
   menu: CurrentMenu
   orderingOpen: boolean
+  comingSoon?: boolean
 }
 
 export default function ThisWeekMenuSpotlight({
   menu,
   orderingOpen,
+  comingSoon = false,
 }: ThisWeekMenuSpotlightProps) {
   const { cutoffText } = menu
   const homepageItems = getHomepageDropItems(menu)
@@ -27,14 +30,26 @@ export default function ThisWeekMenuSpotlight({
           </h2>
           <Divider icon="flourish" className="mt-4 mb-3" />
           <p className="text-muted text-sm sm:text-base font-body max-w-xl mx-auto leading-relaxed">
-            {cutoffText}
+            {comingSoon ? COMING_SOON_COPY.shortBody : cutoffText}
           </p>
         </div>
 
-        <WeeklyDropCards items={homepageItems} />
+        <WeeklyDropCards
+          items={homepageItems}
+          linkToMenu={!comingSoon}
+          actionLabel={comingSoon ? "Preview the bake" : undefined}
+        />
 
         <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-          {orderingOpen ? (
+          {comingSoon ? (
+            <Button
+              href="/contact?intent=reminder"
+              size="lg"
+              className="whitespace-nowrap"
+            >
+              {COMING_SOON_COPY.primaryCta}
+            </Button>
+          ) : orderingOpen ? (
             <Button href="/contact?intent=weekly-order" size="lg">
               {siteConfig.orderCta}
             </Button>
@@ -46,6 +61,16 @@ export default function ThisWeekMenuSpotlight({
           <Button href="/menu" variant="outline" size="lg">
             See the full menu
           </Button>
+          {comingSoon && (
+            <Button
+              href={siteConfig.social.instagram.url}
+              variant="ghost"
+              size="lg"
+              className="whitespace-nowrap"
+            >
+              {COMING_SOON_COPY.secondaryCta}
+            </Button>
+          )}
         </div>
       </div>
     </section>

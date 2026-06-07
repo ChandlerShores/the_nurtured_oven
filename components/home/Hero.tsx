@@ -1,4 +1,7 @@
 import Image from "next/image"
+import Button from "@/components/ui/Button"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
+import { siteConfig } from "@/lib/content/site"
 import { buildHeroCopy } from "@/lib/content/hero-copy"
 import type { FeaturedMenuProduct } from "@/lib/content/menu-types"
 
@@ -6,14 +9,22 @@ interface HeroProps {
   featured: FeaturedMenuProduct
   orderingOpen: boolean
   closedMessage: string
+  comingSoon?: boolean
 }
 
 export default function Hero({
   featured,
   orderingOpen,
   closedMessage,
+  comingSoon = false,
 }: HeroProps) {
-  const copy = buildHeroCopy(featured, orderingOpen, closedMessage)
+  const copy = comingSoon
+    ? {
+        eyebrow: COMING_SOON_COPY.eyebrow,
+        headline: COMING_SOON_COPY.headline,
+        body: COMING_SOON_COPY.body,
+      }
+    : buildHeroCopy(featured, orderingOpen, closedMessage)
 
   return (
     <section className="relative min-h-[70vh] sm:min-h-[64vh] flex items-center">
@@ -48,6 +59,25 @@ export default function Hero({
           <p className="text-cream/95 text-base sm:text-lg leading-relaxed font-body mt-5">
             {copy.body}
           </p>
+          {comingSoon && (
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Button
+                href="/contact?intent=reminder"
+                size="lg"
+                className="whitespace-nowrap"
+              >
+                {COMING_SOON_COPY.primaryCta}
+              </Button>
+              <Button
+                href={siteConfig.social.instagram.url}
+                variant="secondary"
+                size="lg"
+                className="whitespace-nowrap"
+              >
+                {COMING_SOON_COPY.secondaryCta}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>

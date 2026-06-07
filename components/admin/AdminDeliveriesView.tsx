@@ -100,7 +100,7 @@ export default function AdminDeliveriesView({
   }
 
   return (
-    <div className="pb-4">
+    <div className="pb-4" data-sop="admin-deliveries-page">
       {error ? (
         <p className="text-sm text-red-800 bg-red-50 border border-red-200 rounded-soft px-4 py-3 mb-6">
           {error}
@@ -108,24 +108,28 @@ export default function AdminDeliveriesView({
       ) : null}
 
       <AdminPortalSection first title="Delivery overview">
+        <div data-sop="delivery-overview">
         <MetricStrip
           metrics={[
             { label: "Deliveries", value: deliveryOrders.length },
             { label: "Delivered", value: completed.length },
           ]}
         />
+        </div>
       </AdminPortalSection>
 
       <AdminPortalSection title="Notify customers">
+        <div data-sop="delivery-notify">
         <AdminBulkCustomerEmail
           emailType="out_for_delivery"
           weekKey={weekKey}
           emptyHint="Use when you leave for the route. Eligible: paid delivery orders in Ready or In progress."
         />
+        </div>
       </AdminPortalSection>
 
       <AdminPortalSection title="Friday route">
-        <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-5">
+        <div className="grid grid-cols-1 xl:grid-cols-[1.4fr_0.8fr] gap-5" data-sop="delivery-route-area">
           <DeliveryRouteBuilder
           orders={orders}
           batchLabel={batchLabel}

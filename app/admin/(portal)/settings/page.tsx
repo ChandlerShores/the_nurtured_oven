@@ -88,7 +88,11 @@ export default async function AdminSettingsPage() {
             {menuError}
           </p>
         ) : (
-          <AdminPortalSection first={orderingFirst} title="Ordering & menu">
+          <AdminPortalSection
+            first={orderingFirst}
+            title="Ordering & menu"
+            dataSop="admin-ordering-menu-section"
+          >
             <AdminOrderingControls
               killSwitch={killSwitch}
               menuItems={menuItems}

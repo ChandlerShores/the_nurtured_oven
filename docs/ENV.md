@@ -45,11 +45,18 @@ pnpm env:check
 | `EMAIL_FROM_NAME` | Display name for transactional email. |
 | `EMAIL_REPLY_TO` | Reply-to address. |
 | `BLOB_READ_WRITE_TOKEN` | Required for admin menu image uploads on Vercel. Local dev writes to `public/images/menu/`. |
+| `COMING_SOON_MODE` | Launch mode for the public site. Set exactly `true` to show polished coming-soon CTAs and block checkout server-side. |
 | `WEEKLY_ORDERING_DISABLED` | Emergency kill switch. Set `true`, `1`, or `yes` to close weekly checkout. |
 | `ORDERING_TEST_WEEKDAY` | Local `pnpm dev` only. Fakes weekly ordering schedule for development. Ignored on Vercel. |
 | `FINANCIAL_LABOR_RATE_PER_HOUR` | Labor estimate for financials. Default: `22`. |
 | `FINANCIAL_SQUARE_FEE_BPS` | Square fee basis points for estimates. Default: `290`. |
 | `FINANCIAL_SQUARE_FEE_FIXED_CENTS` | Square fixed fee estimate. Default: `30`. |
+
+## Coming-Soon Mode
+
+Set `COMING_SOON_MODE=true` when the website should stay public before online ordering opens. Public pages keep the menu and brand experience visible, replace order-oriented CTAs with menu reminders and Instagram contact, hide the weekly-order contact intent, and reject `/api/checkout` server-side.
+
+Unset it or set it to anything other than `true` to return to normal schedule-based ordering and the `WEEKLY_ORDERING_DISABLED` kill switch behavior.
 
 ## App URL Resolution
 

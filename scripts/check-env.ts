@@ -11,6 +11,7 @@ import {
 } from "../lib/env/deployment"
 import { isSquareConfigured } from "../lib/square/client"
 import { isRedisConfigured } from "../lib/square/redis-client"
+import { isComingSoonMode } from "../lib/server/coming-soon-mode"
 import {
   isOrderingKillSwitchActive,
   isWeeklyOrderingAccepted,
@@ -119,6 +120,7 @@ console.log(
 console.log("  Home base: 549 Hopewell Park, Lexington, KY 40511 (fixed)")
 console.log("")
 console.log("Ordering")
+console.log("  Coming soon mode (COMING_SOON_MODE):", isComingSoonMode())
 console.log("  Kill switch (WEEKLY_ORDERING_DISABLED):", isOrderingKillSwitchActive())
 console.log("  Weekly ordering accepted now:", isWeeklyOrderingAccepted())
 console.log("")

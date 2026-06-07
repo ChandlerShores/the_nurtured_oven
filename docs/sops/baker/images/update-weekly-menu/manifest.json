@@ -1,0 +1,69 @@
+{
+  "workflowSlug": "update-weekly-menu",
+  "capturedAt": "2026-06-07T16:18:00.297Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-admin-dashboard",
+      "title": "Open the admin area",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\01-admin-dashboard.png"
+    },
+    {
+      "stepId": "open-menu-area",
+      "title": "Go to Menu",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\02-open-menu-area.png"
+    },
+    {
+      "stepId": "review-menu-page",
+      "title": "Review the menu page",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\03-review-live-menu.png"
+    },
+    {
+      "stepId": "find-menu-item",
+      "title": "Find the item",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\04-find-menu-item.png"
+    },
+    {
+      "stepId": "open-editor",
+      "title": "Open the item editor",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\05-open-item-editor.png"
+    },
+    {
+      "stepId": "update-main-details",
+      "title": "Update the main details",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\06-update-main-details.png"
+    },
+    {
+      "stepId": "set-live-and-featured",
+      "title": "Choose what is live or featured",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\07-set-live-featured.png"
+    },
+    {
+      "stepId": "update-photo",
+      "title": "Update the photo if needed",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\08-update-photo.png"
+    },
+    {
+      "stepId": "save-item",
+      "title": "Save the item",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\09-save-item.png"
+    },
+    {
+      "stepId": "mark-sold-out-if-needed",
+      "title": "Mark sold out if needed",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\10-mark-sold-out.png"
+    },
+    {
+      "stepId": "check-public-menu",
+      "title": "Check the public menu",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\11-check-public-menu.png"
+    },
+    {
+      "stepId": "pause-ordering-if-unsure",
+      "title": "Pause ordering if you are unsure",
+      "file": "docs\\sops\\baker\\images\\update-weekly-menu\\12-pause-ordering.png"
+    }
+  ],
+  "missingSelectors": [],
+  "skippedSteps": []
+}

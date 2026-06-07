@@ -110,7 +110,7 @@ export default function AdminMessagesComposer({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-sop="customer-updates-composer">
       <div ref={rootRef} className="relative">
         <label className="block">
           <span className="text-xs uppercase tracking-wide font-semibold text-espresso/70">
@@ -126,7 +126,8 @@ export default function AdminMessagesComposer({
             role="combobox"
             aria-expanded={listOpen && suggestions.length > 0}
             aria-controls="messages-order-suggestions"
-            className="mt-1 w-full rounded-soft border border-oatmeal/80 bg-warm-white px-4 py-3 text-espresso font-body text-base shadow-gentle focus:border-sage"
+          className="mt-1 w-full rounded-soft border border-oatmeal/80 bg-warm-white px-4 py-3 text-espresso font-body text-base shadow-gentle focus:border-sage"
+            data-sop="customer-updates-order-search"
           />
         </label>
 

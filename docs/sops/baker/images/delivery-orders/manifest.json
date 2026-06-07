@@ -1,0 +1,42 @@
+{
+  "workflowSlug": "delivery-orders",
+  "capturedAt": "2026-06-07T18:05:42.170Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-deliveries",
+      "title": "Open Deliveries",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\01-delivery-dashboard.png"
+    },
+    {
+      "stepId": "check-delivery-overview",
+      "title": "Check the overview",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\02-delivery-overview.png"
+    },
+    {
+      "stepId": "send-delivery-notes",
+      "title": "Send delivery notes if used",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\03-delivery-notify.png"
+    },
+    {
+      "stepId": "plan-delivery-path",
+      "title": "Plan the delivery path",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\04-delivery-path.png"
+    },
+    {
+      "stepId": "mark-delivered",
+      "title": "Mark delivered",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\05-mark-delivered.png",
+      "missingSelector": "delivery-mark-delivered"
+    }
+  ],
+  "missingSelectors": [
+    {
+      "stepId": "mark-delivered",
+      "title": "Mark delivered",
+      "file": "docs\\sops\\baker\\images\\delivery-orders\\05-mark-delivered.png",
+      "missingSelector": "delivery-mark-delivered"
+    }
+  ],
+  "skippedSteps": []
+}

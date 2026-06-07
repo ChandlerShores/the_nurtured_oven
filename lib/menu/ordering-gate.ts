@@ -1,5 +1,7 @@
 import { availability } from "@/lib/content/availability"
 import { resolveOrderingKillSwitchActive } from "@/lib/admin/ordering-kill-switch"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
+import { isComingSoonMode } from "@/lib/server/coming-soon-mode"
 import {
   isWeeklyOrderingWindowOpen,
   WEEKLY_ORDERING_CLOSED_MESSAGE,
@@ -19,16 +21,21 @@ export function isOrderingKillSwitchActive(): boolean {
 export async function isWeeklyOrderingAcceptedAsync(
   now: Date = new Date()
 ): Promise<boolean> {
+  if (isComingSoonMode()) return false
   if (await resolveOrderingKillSwitchActive()) return false
   return isWeeklyOrderingWindowOpen(now)
 }
 
 export function isWeeklyOrderingAccepted(now: Date = new Date()): boolean {
+  if (isComingSoonMode()) return false
   if (isEnvOrderingKillSwitchActive()) return false
   return isWeeklyOrderingWindowOpen(now)
 }
 
 export async function getOrderingClosedMessageAsync(): Promise<string> {
+  if (isComingSoonMode()) {
+    return COMING_SOON_COPY.checkoutMessage
+  }
   if (await resolveOrderingKillSwitchActive()) {
     return availability.closedNote
   }
@@ -36,6 +43,9 @@ export async function getOrderingClosedMessageAsync(): Promise<string> {
 }
 
 export function getOrderingClosedMessage(): string {
+  if (isComingSoonMode()) {
+    return COMING_SOON_COPY.checkoutMessage
+  }
   if (isEnvOrderingKillSwitchActive()) {
     return availability.closedNote
   }
@@ -43,33 +53,47 @@ export function getOrderingClosedMessage(): string {
 }
 
 export async function getOrderingPublicStateAsync(now: Date = new Date()) {
+  const comingSoon = isComingSoonMode()
   const killSwitch = await resolveOrderingKillSwitchActive()
-  const isOpen = killSwitch ? false : isWeeklyOrderingWindowOpen(now)
+  const isOpen = comingSoon || killSwitch ? false : isWeeklyOrderingWindowOpen(now)
+  const closedMessage = comingSoon
+    ? COMING_SOON_COPY.checkoutMessage
+    : availability.closedNote
 
   return {
     isOpen,
     bannerNote: isOpen
       ? availability.openNote
-      : killSwitch
-        ? availability.closedNote
-        : "",
+      : comingSoon
+        ? COMING_SOON_COPY.shortBody
+        : killSwitch
+          ? availability.closedNote
+          : "",
     weeklyOrderIntentAvailable: isOpen,
-    closedMessage: isOpen ? "" : availability.closedNote,
+    closedMessage: isOpen ? "" : closedMessage,
+    comingSoon,
   }
 }
 
 export function getOrderingPublicState(now: Date = new Date()) {
+  const comingSoon = isComingSoonMode()
   const killSwitch = isEnvOrderingKillSwitchActive()
-  const isOpen = isWeeklyOrderingAccepted(now)
+  const isOpen = comingSoon ? false : isWeeklyOrderingAccepted(now)
+  const closedMessage = comingSoon
+    ? COMING_SOON_COPY.checkoutMessage
+    : availability.closedNote
 
   return {
     isOpen,
     bannerNote: isOpen
       ? availability.openNote
-      : killSwitch
-        ? availability.closedNote
-        : "",
+      : comingSoon
+        ? COMING_SOON_COPY.shortBody
+        : killSwitch
+          ? availability.closedNote
+          : "",
     weeklyOrderIntentAvailable: isOpen,
-    closedMessage: isOpen ? "" : availability.closedNote,
+    closedMessage: isOpen ? "" : closedMessage,
+    comingSoon,
   }
 }

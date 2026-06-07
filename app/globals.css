@@ -87,4 +87,57 @@
     content: "";
     @apply h-px bg-linen flex-1 max-w-[120px];
   }
+
+  .admin-doc-content {
+    @apply font-body text-charcoal leading-relaxed;
+  }
+
+  .admin-doc-content h1 {
+    @apply text-3xl sm:text-4xl text-espresso mb-4 leading-tight;
+  }
+
+  .admin-doc-content h2 {
+    @apply text-2xl text-espresso mt-8 mb-3 leading-tight;
+  }
+
+  .admin-doc-content h3 {
+    @apply text-xl text-espresso mt-7 mb-3 leading-tight;
+  }
+
+  .admin-doc-content p {
+    @apply text-base text-charcoal mb-4 max-w-3xl;
+  }
+
+  .admin-doc-content .expected-label {
+    @apply font-semibold text-espresso mb-1;
+  }
+
+  .admin-doc-content ul {
+    @apply space-y-2 mb-5 pl-0 list-none;
+  }
+
+  .admin-doc-content li {
+    @apply text-base text-charcoal pl-5 relative;
+  }
+
+  .admin-doc-content li::before {
+    content: "";
+    @apply absolute left-0 top-[0.7em] h-1.5 w-1.5 rounded-full bg-brown-sugar/70;
+  }
+
+  .admin-doc-content figure {
+    @apply my-5 rounded-lg border border-espresso/10 bg-linen/35 p-3;
+  }
+
+  .admin-doc-content img {
+    @apply block w-full rounded-md border border-espresso/10 bg-warm-white;
+  }
+
+  .admin-doc-content figcaption {
+    @apply mt-2 text-xs text-espresso/65 font-body;
+  }
+
+  .admin-doc-content a {
+    @apply font-semibold text-espresso underline underline-offset-4;
+  }
 }

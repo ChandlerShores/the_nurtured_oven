@@ -17,6 +17,8 @@ interface AdminPortalSectionProps {
   anchorId?: string
   /** Show expand/collapse on the section body. Defaults to true. */
   collapsible?: boolean
+  /** Stable handle for SOP screenshots and agent navigation. */
+  dataSop?: string
   /** Initial open state when uncontrolled. Defaults to true. */
   defaultOpen?: boolean
   /** Controlled open state (e.g. collapse all on Menu). */
@@ -51,6 +53,7 @@ export default function AdminPortalSection({
   first = false,
   anchorId,
   collapsible = true,
+  dataSop,
   defaultOpen = true,
   open: controlledOpen,
   onOpenChange,
@@ -96,6 +99,7 @@ export default function AdminPortalSection({
         id={sectionId}
         aria-labelledby={headingId}
         className={sectionClass}
+        data-sop={dataSop}
       >
         <header className="flex flex-col gap-1 pb-1">
           <h2
@@ -122,7 +126,12 @@ export default function AdminPortalSection({
   }
 
   return (
-    <section id={sectionId} aria-labelledby={headingId} className={sectionClass}>
+    <section
+      id={sectionId}
+      aria-labelledby={headingId}
+      className={sectionClass}
+      data-sop={dataSop}
+    >
       <header className="pb-1">
         <button
           type="button"

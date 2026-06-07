@@ -57,8 +57,15 @@ export default function AdminMenuCard({
   const busy = saveStatus === "saving"
   const [imageFailed, setImageFailed] = useState(false)
   return (
-    <article className="rounded-lg border border-espresso/15 bg-warm-white shadow-gentle overflow-hidden">
-      <div className="relative aspect-[4/3] bg-linen">
+    <article
+      className="rounded-lg border border-espresso/15 bg-warm-white shadow-gentle overflow-hidden"
+      data-sop="menu-item-card"
+      data-sop-item-slug={item.slug}
+    >
+      <div
+        className="relative aspect-[4/3] bg-linen"
+        data-sop="menu-item-card-image"
+      >
         {imageFailed || !item.image ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-linen text-center px-4">
             <p className="font-heading text-lg text-espresso">No image</p>
@@ -126,6 +133,8 @@ export default function AdminMenuCard({
             type="button"
             disabled={busy}
             onClick={() => onToggleActive(!item.active)}
+            data-sop="menu-item-card-active-toggle"
+            data-sop-item-slug={item.slug}
             className={`${adminBtnSecondary} w-full px-3 py-2 text-sm whitespace-nowrap`}
           >
             {item.active ? "Hide" : "Show"}
@@ -135,6 +144,8 @@ export default function AdminMenuCard({
               type="button"
               disabled={busy || item.featured}
               onClick={() => onToggleFeatured(true)}
+              data-sop="menu-item-card-featured-toggle"
+              data-sop-item-slug={item.slug}
               className="rounded-md border border-blush bg-blush/10 text-espresso px-3 py-2 font-body text-sm font-semibold text-center whitespace-nowrap hover:bg-blush/20 disabled:opacity-50"
             >
               {item.featured ? "Featured" : "Feature"}
@@ -144,6 +155,8 @@ export default function AdminMenuCard({
             type="button"
             disabled={busy}
             onClick={onEdit}
+            data-sop="menu-item-edit"
+            data-sop-item-slug={item.slug}
             className={`${adminBtnPrimary} w-full px-3 py-2 text-sm whitespace-nowrap ${
               item.active ? "col-span-2" : ""
             }`}

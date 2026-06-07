@@ -284,6 +284,7 @@ export default function AdminMenuManager({
       <AdminPortalSection
         first
         title="Homepage"
+        dataSop="admin-menu-homepage-preview"
         open={homepageOpen}
         onOpenChange={setHomepageOpen}
       >
@@ -292,6 +293,7 @@ export default function AdminMenuManager({
 
       <AdminPortalSection
         title="Menu preview"
+        dataSop="admin-menu-preview"
         open={menuPreviewOpen}
         onOpenChange={setMenuPreviewOpen}
       >
@@ -301,6 +303,7 @@ export default function AdminMenuManager({
       <AdminPortalSection
         title="Live"
         titleSuffix={onWebsiteSuffix}
+        dataSop="admin-menu-live-section"
         open={onWebsiteOpen}
         onOpenChange={setOnWebsiteOpen}
       >
@@ -349,6 +352,7 @@ export default function AdminMenuManager({
       {inactive.length > 0 ? (
         <AdminPortalSection
           title="Hidden"
+          dataSop="admin-menu-hidden-section"
           titleSuffix={
             hasSearch
               ? `(${filteredInactive.length} shown)`

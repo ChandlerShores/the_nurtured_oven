@@ -1,0 +1,24 @@
+{
+  "workflowSlug": "open-close-ordering",
+  "capturedAt": "2026-06-07T18:03:36.614Z",
+  "localAppUrl": "http://localhost:3000",
+  "screenshots": [
+    {
+      "stepId": "open-admin-notes",
+      "title": "Open Admin notes and check ordering",
+      "file": "docs\\sops\\baker\\images\\open-close-ordering\\01-ordering-status.png"
+    },
+    {
+      "stepId": "open-or-close",
+      "title": "Open or close ordering",
+      "file": "docs\\sops\\baker\\images\\open-close-ordering\\03-ordering-toggle.png"
+    },
+    {
+      "stepId": "check-public-menu",
+      "title": "Check the public menu",
+      "file": "docs\\sops\\baker\\images\\open-close-ordering\\04-check-public-menu.png"
+    }
+  ],
+  "missingSelectors": [],
+  "skippedSteps": []
+}

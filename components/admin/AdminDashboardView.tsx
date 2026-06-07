@@ -44,7 +44,7 @@ export default function AdminDashboardView({
     : buildDashboardWeekContext(stats, { orderingClosesIn })
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-sop="admin-dashboard-page">
       <header className="flex flex-col gap-4 border-b border-espresso/15 pb-5 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="min-w-0">
           <p className="text-caption text-sm">{greeting}</p>

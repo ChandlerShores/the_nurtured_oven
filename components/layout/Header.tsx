@@ -5,15 +5,17 @@ import Image from "next/image"
 import Link from "next/link"
 import { siteConfig } from "@/lib/content/site"
 import { getPublicNav } from "@/lib/content/launch"
+import { COMING_SOON_COPY } from "@/lib/content/coming-soon"
 import SocialIcons from "@/components/ui/SocialIcons"
 import Button from "@/components/ui/Button"
 import MobileNav from "./MobileNav"
 
 interface HeaderProps {
   bannerNote: string
+  comingSoon?: boolean
 }
 
-export default function Header({ bannerNote }: HeaderProps) {
+export default function Header({ bannerNote, comingSoon = false }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -59,8 +61,12 @@ export default function Header({ bannerNote }: HeaderProps) {
 
           <div className="hidden md:flex items-center gap-4">
             <SocialIcons iconSize={17} />
-            <Button href="/menu" size="sm">
-              {siteConfig.orderCta}
+            <Button
+              href={comingSoon ? "/contact?intent=reminder" : "/menu"}
+              size="sm"
+              className="whitespace-nowrap"
+            >
+              {comingSoon ? COMING_SOON_COPY.primaryCta : siteConfig.orderCta}
             </Button>
           </div>
 
@@ -86,6 +92,7 @@ export default function Header({ bannerNote }: HeaderProps) {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         returnFocusRef={menuButtonRef}
+        comingSoon={comingSoon}
       />
     </>
   )
